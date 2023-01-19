@@ -1,0 +1,4 @@
+This is a work-in-progress framework made for outer space mods. A wiki with what features it can provide and how to utilize these in your mod will be provided soon.
+
+Current mods who depends on this:
+- [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2880599514]RimNauts 2[/url]
