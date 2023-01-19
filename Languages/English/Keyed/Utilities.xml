@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <Universum.utilities>Utilities</Universum.utilities>
+    <Universum.enabled>Enabled</Universum.enabled>
+    <Universum.default>Default</Universum.default>
+    <!-- vacuum_decompression -->
+    <Universum.Utility.Label.vacuum_decompression>Decompression</Universum.Utility.Label.vacuum_decompression>
+    <Universum.Utility.Description.vacuum_decompression>Handles the decompression system.</Universum.Utility.Description.vacuum_decompression>
+    <!-- vacuum_suffocation -->
+    <Universum.Utility.Label.vacuum_suffocation>Suffocation</Universum.Utility.Label.vacuum_suffocation>
+    <Universum.Utility.Description.vacuum_suffocation>Handles the oxygen system.</Universum.Utility.Description.vacuum_suffocation>
+    <!-- temperature -->
+    <Universum.Utility.Label.temperature>Temperature</Universum.Utility.Label.temperature>
+    <Universum.Utility.Description.temperature>Handles the temperature system.</Universum.Utility.Description.temperature>
+    <!-- ocean_masking -->
+    <Universum.Utility.Label.ocean_masking>Ocean Masking</Universum.Utility.Label.ocean_masking>
+    <Universum.Utility.Description.ocean_masking>Hides the planet tile masking it as the ocean.</Universum.Utility.Description.ocean_masking>
+    <!-- vacuum -->
+    <Universum.Utility.Label.vacuum>Vacuum</Universum.Utility.Label.vacuum>
+    <Universum.Utility.Description.vacuum>Handles the vacuum system.</Universum.Utility.Description.vacuum>
+</LanguageData>
