@@ -1,5 +1,5 @@
-[img]https://raw.githubusercontent.com/sindre0830/RimNauts2/main/Workshop/PNG/header_universum.png[/img]
+[img]https://raw.githubusercontent.com/RimNauts/Universum/main/Workshop/PNG/header_universum.png[/img]
 Universum is a work-in-progress [b]outer space framework[/b]. Universum's features include [b]automatic caching[/b] for performance and [b]customizability[/b], as every module added through this will be toggleable in the mod settings. A wiki with what features it can provide and how to utilize these in your mod will be provided soon.
 
-Current mods who depends on this:
+[h1]Current mods that depends on this framework[/h1]
 - [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2880599514]RimNauts 2[/url]
