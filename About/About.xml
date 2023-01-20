@@ -17,5 +17,6 @@
 	</modDependencies>
 	<loadAfter>
 		<li>brrainz.harmony</li>
+		<li>yrtwof.rimpedia</li>
 	</loadAfter>
 </ModMetaData>
