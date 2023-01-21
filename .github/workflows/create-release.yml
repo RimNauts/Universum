@@ -1,9 +1,10 @@
-name: create release
+name: create-release
 # when to run the workflow
 on:
   push:
     tags:
     - '*'
+# instructions the workflow will perform
 jobs:
   build:
     # environment to run on
@@ -25,6 +26,7 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: 'Universum.zip'
+        bodyFile: "Changelog.md"
 
     - name: Unzip folder to a temporary location
       run: |
@@ -38,6 +40,7 @@ jobs:
         appID: 294100
         publishedFileID: 2920558019
         path: "Universum/"
+        changelog: "Update $GITHUB_REF_NAME. Check out the details for this update on the [url=https://github.com/RimNauts/Universum/releases/$GITHUB_REF_NAME]GitHub[/url]"
       env:
         STEAM_ACCOUNT_NAME: ${{ secrets.accountname }}
         STEAM_PASSWORD: ${{ secrets.password }}
