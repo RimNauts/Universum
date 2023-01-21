@@ -20,4 +20,4 @@ jobs:
         webhook_id: ${{ secrets.WEBHOOK_ID }}
         webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
         username: "GitHub Bot"
-        message: "Update $GITHUB_REF_NAME is out! Check out the changelog here https://github.com/RimNauts/RimNauts2/releases/$GITHUB_REF_NAME"
+        message: "New update is out! Check out the changelog here https://github.com/RimNauts/Universum/releases"

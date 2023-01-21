@@ -40,7 +40,7 @@ jobs:
         appID: 294100
         publishedFileID: 2920558019
         path: "Universum/"
-        changelog: "Update $GITHUB_REF_NAME. Check out the details for this update on the [url=https://github.com/RimNauts/Universum/releases/$GITHUB_REF_NAME]GitHub[/url]"
+        changelog: "New update is out! Check out the changelog [url=https://github.com/RimNauts/Universum/releases]here[/url]"
       env:
         STEAM_ACCOUNT_NAME: ${{ secrets.accountname }}
         STEAM_PASSWORD: ${{ secrets.password }}
