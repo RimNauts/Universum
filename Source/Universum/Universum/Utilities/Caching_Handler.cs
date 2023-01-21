@@ -78,7 +78,7 @@ namespace Universum.Utilities {
             if (pawn_protection_level.TryGetValue(pawn.thingIDNumber, out var protection)) return protection;
             // get value and cache result
             Vacuum_Protection value = Vacuum_Protection.None;
-            if (pawn.RaceProps.IsMechanoid || !pawn.RaceProps.IsFlesh) {
+            if (pawn.RaceProps.IsMechanoid || !pawn.RaceProps.IsFlesh || (pawn.def.tradeTags?.Contains("AnimalInsectSpace") ?? false)) {
                 value = Vacuum_Protection.All;
             } else if (pawn.apparel == null) {
                 value = Vacuum_Protection.None;

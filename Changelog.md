@@ -1,2 +1,2 @@
 # Changelog
-- Add load order fix for Rimpedia (Tells you to load Rimpedia before this mod)
+- Allow pawns with AnimalInsectSpace trade tag to survive space
