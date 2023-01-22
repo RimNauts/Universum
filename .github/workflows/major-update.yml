@@ -63,4 +63,4 @@ jobs:
         webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
         username: "GitHub"
         avatar_url: "https://gitlab.com/uploads/-/system/group/avatar/10532272/github.png"
-        message: "New major update is released! Check out the changelog here https://github.com/RimNauts/Universum/releases"
+        message: "New major update is released! Check out the changelog here <https://github.com/RimNauts/Universum/releases>"
