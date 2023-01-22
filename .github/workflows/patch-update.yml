@@ -8,15 +8,59 @@ jobs:
     if: github.actor == 'sindre0830'
     # environment to run on
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     # steps to perform
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: '0'
+        ref: ${{ github.sha }}
 
     - name: Bump version and push tag
+      id: tag
       uses: anothrNick/github-tag-action@1.61.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         DEFAULT_BUMP: "patch"
+
+    - name: Create zipped folder
+      uses: thedoctor0/zip-release@0.7.0
+      with:
+        type: 'zip'
+        filename: 'Universum.zip'
+        exclusions: '*.zip* *.git* /*Workshop/* /*Source/* /*.github/* .gitignore Changelog.md LICENSE README.md'
+
+    - name: Create release and attach the zipped folder
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: 'Universum.zip'
+        bodyFile: "Changelog.md"
+        tag: ${{ steps.tag.outputs.new_tag }}
+
+    - name: Unzip folder to a temporary location
+      run: |
+        sudo apt-get install unzip
+        mkdir Universum/
+        unzip Universum.zip -d Universum
+    
+    - name: Push folder to steam
+      uses: AnarkisGaming/workshop@v1
+      with: 
+        appID: 294100
+        publishedFileID: 2920558019
+        path: "Universum/"
+        changelog: "New bug fix is out! Check out the changelog [url=https://github.com/RimNauts/Universum/releases]here[/url]"
+      env:
+        STEAM_ACCOUNT_NAME: ${{ secrets.accountname }}
+        STEAM_PASSWORD: ${{ secrets.password }}
+
+    - name: Send message to Discord server
+      uses: appleboy/discord-action@master
+      with:
+        webhook_id: ${{ secrets.WEBHOOK_ID }}
+        webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+        username: "GitHub"
+        avatar_url: "https://gitlab.com/uploads/-/system/group/avatar/10532272/github.png"
+        message: "New bug fix released! Check out the changelog here https://github.com/RimNauts/Universum/releases"
