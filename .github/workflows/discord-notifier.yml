@@ -2,7 +2,6 @@ name: discord-notifier
 # when to run the workflow
 on:
   release:
-    types: [published]
   workflow_dispatch:
 # instructions the workflow will perform
 jobs:
@@ -20,5 +19,5 @@ jobs:
         webhook_id: ${{ secrets.WEBHOOK_ID }}
         webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
         username: "GitHub"
-        avatar: "https://gitlab.com/uploads/-/system/group/avatar/10532272/github.png"
+        avatar_url: "https://gitlab.com/uploads/-/system/group/avatar/10532272/github.png"
         message: "New update is out! Check out the changelog here https://github.com/RimNauts/Universum/releases"
