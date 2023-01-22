@@ -22,3 +22,33 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         DEFAULT_BUMP: "minor"
+
+    - name: Create zipped folder
+      uses: thedoctor0/zip-release@0.7.0
+      with:
+        type: 'zip'
+        filename: 'Universum.zip'
+        exclusions: '*.zip* *.git* /*Workshop/* /*Source/* /*.github/* .gitignore Changelog.md LICENSE README.md'
+
+    - name: Create release and attach the zipped folder
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: 'Universum.zip'
+        bodyFile: "Changelog.md"
+
+    - name: Unzip folder to a temporary location
+      run: |
+        sudo apt-get install unzip
+        mkdir Universum/
+        unzip Universum.zip -d Universum
+    
+    - name: Push folder to steam
+      uses: AnarkisGaming/workshop@v1
+      with: 
+        appID: 294100
+        publishedFileID: 2920558019
+        path: "Universum/"
+        changelog: "New update is out! Check out the changelog [url=https://github.com/RimNauts/Universum/releases]here[/url]"
+      env:
+        STEAM_ACCOUNT_NAME: ${{ secrets.accountname }}
+        STEAM_PASSWORD: ${{ secrets.password }}
