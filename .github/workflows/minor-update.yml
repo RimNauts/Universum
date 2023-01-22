@@ -23,6 +23,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         DEFAULT_BUMP: "minor"
+        PRERELEASE: true
 
     - name: Create zipped folder
       uses: thedoctor0/zip-release@0.7.0
