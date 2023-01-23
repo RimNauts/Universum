@@ -21,7 +21,6 @@ namespace Universum {
                 prefix: Style.tab,
                 args: new Verse.NamedArgument[] { total_configurations_found }
             );
-            Utilities.Cache.clear_utility_toggle();
         }
 
         public static bool utility_turned_on(string id) {
@@ -44,7 +43,6 @@ namespace Universum {
             base.ExposeData();
             Verse.Scribe_Collections.Look(ref saved_settings, "saved_settings", Verse.LookMode.Value, Verse.LookMode.Value);
             if (saved_settings == null) saved_settings = new Dictionary<string, bool>();
-            Utilities.Cache.clear_utility_toggle();
         }
     }
 
@@ -122,7 +120,6 @@ namespace Universum {
                 Settings.saved_settings.Add(utility.Value.id, utility.Value.toggle);
             }
             base.WriteSettings();
-            Utilities.Cache.clear_utility_toggle();
         }
     }
 }
