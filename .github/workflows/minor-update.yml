@@ -64,3 +64,4 @@ jobs:
         username: "GitHub"
         avatar_url: "https://github.blog/wp-content/uploads/2013/04/074d0b06-a5e3-11e2-8b7f-9f09eb2ddfae.jpg"
         message: "New update is out! Check out the changelog here <https://github.com/RimNauts/Universum/releases>"
+        file: "./Changelog.md"
