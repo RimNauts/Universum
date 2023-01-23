@@ -18,4 +18,7 @@
     <!-- vacuum -->
     <Universum.Utility.Label.vacuum>Vacuum</Universum.Utility.Label.vacuum>
     <Universum.Utility.Description.vacuum>Handles the vacuum system.</Universum.Utility.Description.vacuum>
+    <!-- vacuum -->
+    <Universum.Utility.Label.vacuum_overlay>Vacuum Overlay</Universum.Utility.Label.vacuum_overlay>
+    <Universum.Utility.Description.vacuum_overlay>Handles the vacuum overlay system which shows the planet on the vacuum. If you toggle this mid-game, you need to reload the save.</Universum.Utility.Description.vacuum_overlay>
 </LanguageData>

@@ -27,6 +27,7 @@ namespace Universum.Utilities {
         public const float altitude = 1100f;
 
         public static void Prefix() {
+            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
             Map map = Find.CurrentMap;
             if (Globals.rendered || !Cache.allowed_utility(map, "Universum.vacuum")) return;
 
@@ -77,6 +78,7 @@ namespace Universum.Utilities {
     [HarmonyPatch(typeof(SectionLayer), "FinalizeMesh", null)]
     public static class SectionLayer_FinalizeMesh {
         public static bool Prefix(SectionLayer __instance, Section ___section) {
+            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return true;
             if (__instance.GetType().Name != "SectionLayer_Terrain" || !Cache.allowed_utility(___section.map, "Universum.vacuum")) return true;
             bool foundSpace = false;
             foreach (IntVec3 cell in ___section.CellRect.Cells) {
@@ -142,6 +144,7 @@ namespace Universum.Utilities {
         }
 
         public static void Prefix() {
+            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
             if (!MapInterface_Notify_SwitchedMap.MapIsSpace || !MapSections.ContainsKey(Find.CurrentMap)) return;
             Center = GameCamera.transform.position;
             var ratio = (float) UI.screenWidth / UI.screenHeight;
@@ -233,6 +236,7 @@ namespace Universum.Utilities {
         }
 
         public static void Postfix(Map map, Section __instance, List<SectionLayer> ___layers) {
+            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
             if (!Cache.allowed_utility(map, "Universum.vacuum")) return;
             // Kill shadows
             ___layers.RemoveAll(layer => SunShadowsType.IsInstanceOfType(layer));
@@ -247,6 +251,7 @@ namespace Universum.Utilities {
      */
     public class SectionLayer_Terrain_Regenerate {
         public static void Postfix(SectionLayer __instance, Section ___section) {
+            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
             if (!Cache.allowed_utility(___section.map, "Universum.vacuum")) return;
             MeshRecalculateHelper.recalculate_layer(__instance);
         }
