@@ -196,7 +196,11 @@ namespace Universum.Utilities {
 
         private static void recalculate_mesh(object info) {
             if (!(info is LayerSubMesh mesh)) {
-                Log.Error("RimNauts tried to start a calculate thread with an incorrect info object type");
+                Logger.print(
+                    Logger.Importance.Error,
+                    key: "Universum.Error.thread_with_wrong_type",
+                    prefix: Style.name_prefix
+                );
                 return;
             }
             lock (mesh) {
