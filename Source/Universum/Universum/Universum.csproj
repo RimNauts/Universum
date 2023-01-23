@@ -69,6 +69,7 @@
     <Compile Include="Utilities\Temperature.cs" />
     <Compile Include="Utilities\Terrain\Handler.cs" />
     <Compile Include="Utilities\Terrain\Properties.cs" />
+    <Compile Include="Utilities\Transparent_Vacuum.cs" />
     <Compile Include="Utilities\Vacuum_Damage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
