@@ -5,6 +5,7 @@ namespace Universum.Utilities {
      * Keeps all the cache collections and their methods.
      */
     public class Caching_Handler : Verse.GameComponent {
+        public Dictionary<string, bool> utilities;
         public Dictionary<int, Dictionary<string, bool>> map_utilities;
         public Dictionary<string, Dictionary<string, bool>> biome_utilities;
         public Dictionary<string, Dictionary<string, bool>> terrain_utilities;
@@ -17,10 +18,19 @@ namespace Universum.Utilities {
             Cache.caching_handler = this;
         }
 
+        public bool allowed_utility(string utility) {
+            if (utilities.TryGetValue(utility, out var value)) {
+                return value;
+            }
+            var toggle = Settings.utility_turned_on(utility);
+            utilities.Add(utility, toggle);
+            return toggle;
+        }
+
         public bool allowed_utility(Verse.Map map, string utility) {
             if (map == null) return false;
             // branch if not enabled in settings
-            if (!Settings.utility_turned_on(utility)) return false;
+            if (!allowed_utility(utility)) return false;
             // branch if map is cached
             if (map_utilities.TryGetValue(map.uniqueID, out var utilities)) {
                 // branch if utility is cached
@@ -35,7 +45,7 @@ namespace Universum.Utilities {
         public bool allowed_utility(RimWorld.BiomeDef biome, string utility) {
             if (biome == null) return false;
             // branch if not enabled in settings
-            if (!Settings.utility_turned_on(utility)) return false;
+            if (!allowed_utility(utility)) return false;
             // branch if map is cached
             if (biome_utilities.TryGetValue(biome.defName, out var utilities)) {
                 // branch if utility is cached
@@ -50,7 +60,7 @@ namespace Universum.Utilities {
         public bool allowed_utility(Verse.TerrainDef terrain, string utility) {
             if (terrain == null) return false;
             // branch if not enabled in settings
-            if (!Settings.utility_turned_on(utility)) return false;
+            if (!allowed_utility(utility)) return false;
             // branch if map is cached
             if (terrain_utilities.TryGetValue(terrain.defName, out var utilities)) {
                 // branch if utility is cached
@@ -119,7 +129,12 @@ namespace Universum.Utilities {
             }
         }
 
+        public void clear_utility_toggle() {
+            utilities = new Dictionary<string, bool>();
+        }
+
         public void clear() {
+            utilities = new Dictionary<string, bool>();
             map_utilities = new Dictionary<int, Dictionary<string, bool>>();
             biome_utilities = new Dictionary<string, Dictionary<string, bool>>();
             terrain_utilities = new Dictionary<string, Dictionary<string, bool>>();
@@ -134,6 +149,8 @@ namespace Universum.Utilities {
     public static class Cache {
         public static Caching_Handler caching_handler;
 
+        public static bool allowed_utility(string utility) => caching_handler.allowed_utility(utility);
+
         public static bool allowed_utility(Verse.Map map, string utility) => caching_handler.allowed_utility(map, utility);
 
         public static bool allowed_utility(RimWorld.BiomeDef biome, string utility) => caching_handler.allowed_utility(biome, utility);
@@ -147,6 +164,8 @@ namespace Universum.Utilities {
         public static void remove(Verse.Map map) => caching_handler.remove(map);
 
         public static void remove(Verse.Pawn pawn) => caching_handler.remove(pawn);
+
+        public static void clear_utility_toggle() => caching_handler.clear_utility_toggle();
 
         public static void clear() => caching_handler.clear();
     }

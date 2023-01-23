@@ -59,6 +59,7 @@ namespace Universum {
             buttons_view.Begin(buttons_rectangle);
             if (buttons_view.ButtonText(Verse.TranslatorFormattedStringExtensions.Translate("Universum.default"))) {
                 foreach (KeyValuePair<string, ObjectsDef.Metadata> utility in Settings.utilities) Settings.utilities[utility.Key].toggle = Settings.utilities[utility.Key].default_toggle;
+                Utilities.Cache.clear_utility_toggle();
             }
             buttons_view.End();
             // table header
@@ -101,7 +102,11 @@ namespace Universum {
                     } catch { /* couldn't find the language key provided */ }
                 }
                 table_header_content.CheckboxLabeled(label, ref checkOn, tooltip: utility_description);
-                Settings.utilities[utility.Key].toggle = checkOn;
+                if (Settings.utilities[utility.Key].toggle != checkOn) {
+                    Settings.utilities[utility.Key].toggle = checkOn;
+                    Utilities.Cache.clear_utility_toggle();
+                }
+                
             }
             table_header_content.End();
             Verse.Widgets.EndScrollView();

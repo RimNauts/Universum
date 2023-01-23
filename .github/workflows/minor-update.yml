@@ -51,16 +51,16 @@ jobs:
         appID: 294100
         publishedFileID: 2920558019
         path: "Universum/"
-        changelog: "New minor update is out! Check out the changelog [url=https://github.com/RimNauts/Universum/releases]here[/url]"
+        changelog: "[b]{{ steps.tag.outputs.new_tag }}[/b] New update is out! Check out the changelog [url=https://github.com/RimNauts/Universum/releases/tag/{{ steps.tag.outputs.new_tag }}]here[/url]"
       env:
         STEAM_ACCOUNT_NAME: ${{ secrets.accountname }}
         STEAM_PASSWORD: ${{ secrets.password }}
 
     - name: Send message to Discord server
-      uses: appleboy/discord-action@master
+      uses: Ilshidur/action-discord@0.3.2
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        DISCORD_USERNAME: "sindre0830"
+        DISCORD_AVATAR: "https://i.imgur.com/cEgyvGu.jpg"
       with:
-        webhook_id: ${{ secrets.WEBHOOK_ID }}
-        webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
-        username: "GitHub"
-        avatar_url: "https://gitlab.com/uploads/-/system/group/avatar/10532272/github.png"
-        message: "New minor update is released! Check out the changelog here <https://github.com/RimNauts/Universum/releases>"
+        args: "**{{ steps.tag.outputs.new_tag }}** New update is out! Check out the changelog here <https://github.com/RimNauts/Universum/releases/tag/{{ steps.tag.outputs.new_tag }}> <@&1067088339813023774>"

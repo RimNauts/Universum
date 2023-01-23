@@ -43,6 +43,14 @@
                 <default_toggle>true</default_toggle>
                 <hide_in_settings>false</hide_in_settings>
             </li>
+            <li>
+                <id>Universum.vacuum_overlay</id>
+                <mod_name>Universum</mod_name>
+                <label_key>Universum.Utility.Label.vacuum_overlay</label_key>
+                <description_key>Universum.Utility.Description.vacuum_overlay</description_key>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>false</hide_in_settings>
+            </li>
         </Utilities>
   	</Universum.ObjectsDef>
 </Defs>
