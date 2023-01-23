@@ -61,7 +61,7 @@ jobs:
       with:
         webhook_id: ${{ secrets.WEBHOOK_ID }}
         webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
-        username: "GitHub"
-        avatar_url: "https://github.blog/wp-content/uploads/2013/04/074d0b06-a5e3-11e2-8b7f-9f09eb2ddfae.jpg"
+        username: "sindre0830"
+        avatar_url: "https://i.imgur.com/cEgyvGu.jpg"
         message: "@Universum Notifications New bug fix is out! Check out the changelog here <https://github.com/RimNauts/Universum/releases>"
         file: "./Changelog.md"
