@@ -118,6 +118,7 @@ namespace Universum.Utilities {
     [HarmonyPatch(typeof(Game), "LoadGame")]
     public class Game_LoadGame {
         public static void Postfix() {
+            Globals.rendered = false;
             MapInterface_Notify_SwitchedMap.Postfix();
         }
     }
@@ -255,5 +256,18 @@ namespace Universum.Utilities {
             if (!Cache.allowed_utility(___section.map, "Universum.vacuum")) return;
             MeshRecalculateHelper.recalculate_layer(__instance);
         }
+    }
+
+    /**
+     * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/main/Source/1.4/ShipInteriorMod2.cs#L4402
+     */
+    [HarmonyPatch(typeof(RimWorld.Scenario), "PostWorldGenerate")]
+    public class Scenario_PostWorldGenerate {
+        public static void Prefix() => Globals.rendered = false;
+    }
+
+    [HarmonyPatch(typeof(Game), "InitNewGame")]
+    public class Game_GameInitData {
+        public static void Prefix() => Globals.rendered = false;
     }
 }
