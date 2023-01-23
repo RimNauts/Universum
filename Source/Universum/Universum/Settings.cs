@@ -21,6 +21,7 @@ namespace Universum {
                 prefix: Style.tab,
                 args: new Verse.NamedArgument[] { total_configurations_found }
             );
+            Utilities.Cache.clear_utility_toggle();
         }
 
         public static bool utility_turned_on(string id) {
@@ -43,6 +44,7 @@ namespace Universum {
             base.ExposeData();
             Verse.Scribe_Collections.Look(ref saved_settings, "saved_settings", Verse.LookMode.Value, Verse.LookMode.Value);
             if (saved_settings == null) saved_settings = new Dictionary<string, bool>();
+            Utilities.Cache.clear_utility_toggle();
         }
     }
 
@@ -59,6 +61,7 @@ namespace Universum {
             buttons_view.Begin(buttons_rectangle);
             if (buttons_view.ButtonText(Verse.TranslatorFormattedStringExtensions.Translate("Universum.default"))) {
                 foreach (KeyValuePair<string, ObjectsDef.Metadata> utility in Settings.utilities) Settings.utilities[utility.Key].toggle = Settings.utilities[utility.Key].default_toggle;
+                Utilities.Cache.clear_utility_toggle();
             }
             buttons_view.End();
             // table header
@@ -101,7 +104,11 @@ namespace Universum {
                     } catch { /* couldn't find the language key provided */ }
                 }
                 table_header_content.CheckboxLabeled(label, ref checkOn, tooltip: utility_description);
-                Settings.utilities[utility.Key].toggle = checkOn;
+                if (Settings.utilities[utility.Key].toggle != checkOn) {
+                    Settings.utilities[utility.Key].toggle = checkOn;
+                    Utilities.Cache.clear_utility_toggle();
+                }
+                
             }
             table_header_content.End();
             Verse.Widgets.EndScrollView();
@@ -115,6 +122,7 @@ namespace Universum {
                 Settings.saved_settings.Add(utility.Value.id, utility.Value.toggle);
             }
             base.WriteSettings();
+            Utilities.Cache.clear_utility_toggle();
         }
     }
 }
