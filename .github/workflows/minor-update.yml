@@ -51,7 +51,7 @@ jobs:
         appID: 294100
         publishedFileID: 2920558019
         path: "Universum/"
-        changelog: "New minor update is out! Check out the changelog [url=https://github.com/RimNauts/Universum/releases]here[/url]"
+        changelog: "New update is out! Check out the changelog [url=https://github.com/RimNauts/Universum/releases]here[/url]"
       env:
         STEAM_ACCOUNT_NAME: ${{ secrets.accountname }}
         STEAM_PASSWORD: ${{ secrets.password }}
@@ -62,5 +62,5 @@ jobs:
         webhook_id: ${{ secrets.WEBHOOK_ID }}
         webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
         username: "GitHub"
-        avatar_url: "https://gitlab.com/uploads/-/system/group/avatar/10532272/github.png"
-        message: "New minor update is released! Check out the changelog here <https://github.com/RimNauts/Universum/releases>"
+        avatar_url: "https://github.blog/wp-content/uploads/2013/04/074d0b06-a5e3-11e2-8b7f-9f09eb2ddfae.jpg"
+        message: "New update is out! Check out the changelog here <https://github.com/RimNauts/Universum/releases>"
