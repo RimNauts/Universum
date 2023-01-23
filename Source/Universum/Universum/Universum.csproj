@@ -57,6 +57,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Defs\DefOf.cs" />
     <Compile Include="Defs\ObjectsDef.cs" />
+    <Compile Include="Globals.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Settings.cs" />
@@ -69,7 +70,7 @@
     <Compile Include="Utilities\Temperature.cs" />
     <Compile Include="Utilities\Terrain\Handler.cs" />
     <Compile Include="Utilities\Terrain\Properties.cs" />
-    <Compile Include="Utilities\Transparent_Vacuum.cs" />
+    <Compile Include="Utilities\Vacuum_Overlay.cs" />
     <Compile Include="Utilities\Vacuum_Damage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
