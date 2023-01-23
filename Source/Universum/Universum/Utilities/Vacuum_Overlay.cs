@@ -23,10 +23,10 @@ namespace Universum.Utilities {
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/ShipInteriorMod2.cs#L2220
      */
     [HarmonyPatch(typeof(MapDrawer), "DrawMapMesh", null)]
-    public static class RenderPlanetBehindMap {
+    public static class MapDrawer_DrawMapMesh {
         public const float altitude = 1100f;
-        [HarmonyPrefix]
-        public static void PreDraw() {
+
+        public static void Prefix() {
             Map map = Find.CurrentMap;
             if (Globals.rendered || !Cache.allowed_utility(map, "Universum.vacuum")) return;
 
@@ -75,9 +75,8 @@ namespace Universum.Utilities {
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/ShipInteriorMod2.cs#L2283
      */
     [HarmonyPatch(typeof(SectionLayer), "FinalizeMesh", null)]
-    public static class GenerateSpaceSubMesh {
-        [HarmonyPrefix]
-        public static bool GenerateMesh(SectionLayer __instance, Section ___section) {
+    public static class SectionLayer_FinalizeMesh {
+        public static bool Prefix(SectionLayer __instance, Section ___section) {
             if (__instance.GetType().Name != "SectionLayer_Terrain" || !Cache.allowed_utility(___section.map, "Universum.vacuum")) return true;
             bool foundSpace = false;
             foreach (IntVec3 cell in ___section.CellRect.Cells) {
@@ -102,7 +101,7 @@ namespace Universum.Utilities {
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L110
      */
     [HarmonyPatch(typeof(RimWorld.MapInterface), "Notify_SwitchedMap")]
-    public class MapChangeHelper {
+    public class MapInterface_Notify_SwitchedMap {
         public static bool MapIsSpace;
 
         public static void Postfix() {
@@ -115,9 +114,9 @@ namespace Universum.Utilities {
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L126
      */
     [HarmonyPatch(typeof(Game), "LoadGame")]
-    public class GameLoadHelper {
+    public class Game_LoadGame {
         public static void Postfix() {
-            MapChangeHelper.Postfix();
+            MapInterface_Notify_SwitchedMap.Postfix();
         }
     }
 
@@ -125,7 +124,7 @@ namespace Universum.Utilities {
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L153
      */
     [HarmonyPatch(typeof(Game), "UpdatePlay")]
-    public class SectionThreadManager {
+    public class Game_UpdatePlay {
         public static CameraDriver Driver;
         public static Camera GameCamera;
         public static Vector3 Center;
@@ -134,7 +133,7 @@ namespace Universum.Utilities {
         public static Dictionary<Map, Dictionary<Section, SectionLayer>> MapSections = new Dictionary<Map, Dictionary<Section, SectionLayer>>();
         private static Vector3 lastCameraPosition = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
-        public static void AddSection(Map map, Section section, SectionLayer layer) {
+        public static void add_section(Map map, Section section, SectionLayer layer) {
             if (!MapSections.TryGetValue(map, out Dictionary<Section, SectionLayer> sections)) {
                 sections = new Dictionary<Section, SectionLayer>();
                 MapSections.Add(map, sections);
@@ -143,7 +142,7 @@ namespace Universum.Utilities {
         }
 
         public static void Prefix() {
-            if (!MapChangeHelper.MapIsSpace || !MapSections.ContainsKey(Find.CurrentMap)) return;
+            if (!MapInterface_Notify_SwitchedMap.MapIsSpace || !MapSections.ContainsKey(Find.CurrentMap)) return;
             Center = GameCamera.transform.position;
             var ratio = (float) UI.screenWidth / UI.screenHeight;
             CellsHigh = UI.screenHeight / Find.CameraDriver.CellSizePixels;
@@ -154,7 +153,7 @@ namespace Universum.Utilities {
             var visibleRect = Driver.CurrentViewRect;
             foreach (var entry in sections) {
                 if (!visibleRect.Overlaps(entry.Key.CellRect)) continue;
-                MeshRecalculateHelper.RecalculatePlanetLayer(entry.Value);
+                MeshRecalculateHelper.recalculate_layer(entry.Value);
             }
         }
 
@@ -175,10 +174,10 @@ namespace Universum.Utilities {
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L138
      */
     [HarmonyPatch(typeof(Game), "FinalizeInit")]
-    public class FinalizeInitHelper {
+    public class Game_FinalizeInit {
         public static void Postfix() {
-            SectionThreadManager.Driver = Find.CameraDriver;
-            SectionThreadManager.GameCamera = Find.CameraDriver.GetComponent<Camera>();
+            Game_UpdatePlay.Driver = Find.CameraDriver;
+            Game_UpdatePlay.GameCamera = Find.CameraDriver.GetComponent<Camera>();
         }
     }
 
@@ -189,13 +188,13 @@ namespace Universum.Utilities {
         public static List<Task> Tasks = new List<Task>();
         public static List<SectionLayer> LayersToDraw = new List<SectionLayer>();
 
-        public static void RecalculatePlanetLayer(SectionLayer instance) {
+        public static void recalculate_layer(SectionLayer instance) {
             var mesh = instance.GetSubMesh(Globals.planet_mat);
-            Tasks.Add(Task.Factory.StartNew(() => RecalculateMesh(mesh)));
+            Tasks.Add(Task.Factory.StartNew(() => recalculate_mesh(mesh)));
             LayersToDraw.Add(instance);
         }
 
-        private static void RecalculateMesh(object info) {
+        private static void recalculate_mesh(object info) {
             if (!(info is LayerSubMesh mesh)) {
                 Log.Error("RimNauts tried to start a calculate thread with an incorrect info object type");
                 return;
@@ -204,11 +203,11 @@ namespace Universum.Utilities {
                 mesh.finalized = false;
                 mesh.Clear(MeshParts.UVs);
                 for (var i = 0; i < mesh.verts.Count; i++) {
-                    var xdiff = mesh.verts[i].x - SectionThreadManager.Center.x;
-                    var xfromEdge = xdiff + SectionThreadManager.CellsWide / 2.0f;
-                    var zdiff = mesh.verts[i].z - SectionThreadManager.Center.z;
-                    var zfromEdge = zdiff + SectionThreadManager.CellsHigh / 2.0f;
-                    mesh.uvs.Add(new Vector3(xfromEdge / SectionThreadManager.CellsWide, zfromEdge / SectionThreadManager.CellsHigh, 0.0f));
+                    var xdiff = mesh.verts[i].x - Game_UpdatePlay.Center.x;
+                    var xfromEdge = xdiff + Game_UpdatePlay.CellsWide / 2.0f;
+                    var zdiff = mesh.verts[i].z - Game_UpdatePlay.Center.z;
+                    var zfromEdge = zdiff + Game_UpdatePlay.CellsHigh / 2.0f;
+                    mesh.uvs.Add(new Vector3(xfromEdge / Game_UpdatePlay.CellsWide, zfromEdge / Game_UpdatePlay.CellsHigh, 0.0f));
                 }
                 mesh.FinalizeMesh(MeshParts.UVs);
             }
@@ -220,11 +219,11 @@ namespace Universum.Utilities {
      */
     [HarmonyPatch(typeof(Section), MethodType.Constructor, typeof(IntVec3), typeof(Map))]
     [StaticConstructorOnStartup]
-    public class SectionConstructorPatch {
+    public class Section_Constructor {
         private static readonly Type SunShadowsType;
         private static readonly Type TerrainType;
 
-        static SectionConstructorPatch() {
+        static Section_Constructor() {
             SunShadowsType = AccessTools.TypeByName("SectionLayer_SunShadows");
             TerrainType = AccessTools.TypeByName("SectionLayer_Terrain");
         }
@@ -235,17 +234,17 @@ namespace Universum.Utilities {
             ___layers.RemoveAll(layer => SunShadowsType.IsInstanceOfType(layer));
             // Get and store terrain layer for recalculation
             var terrain = ___layers.Find(layer => TerrainType.IsInstanceOfType(layer));
-            SectionThreadManager.AddSection(map, __instance, terrain);
+            Game_UpdatePlay.add_section(map, __instance, terrain);
         }
     }
 
     /**
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L56
      */
-    public class SectionRegenerateHelper {
+    public class SectionLayer_Terrain_Regenerate {
         public static void Postfix(SectionLayer __instance, Section ___section) {
             if (!Cache.allowed_utility(___section.map, "Universum.vacuum")) return;
-            MeshRecalculateHelper.RecalculatePlanetLayer(__instance);
+            MeshRecalculateHelper.recalculate_layer(__instance);
         }
     }
 }
