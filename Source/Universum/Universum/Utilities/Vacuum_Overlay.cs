@@ -14,7 +14,7 @@ namespace Universum.Utilities {
     [HarmonyPatch(typeof(SkyManager), "SkyManagerUpdate")]
     public class SkyManager_SkyManagerUpdate {
         public static void Postfix() {
-            if (Cache.allowed_utility(Find.CurrentMap, "Universum.vacuum")) return;
+            if (!Cache.allowed_utility(Find.CurrentMap, "Universum.vacuum")) return;
             MatBases.LightOverlay.color = new Color(1.0f, 1.0f, 1.0f);
         }
     }
