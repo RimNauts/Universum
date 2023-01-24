@@ -2,7 +2,7 @@
 Universum is a work-in-progress [b]outer space framework[/b]. Universum's features include [b]automatic caching[/b] for performance and [b]customizability[/b], as every module added through this will be toggleable in the mod settings. A wiki with what features it can provide and how to utilize these in your mod will be provided soon.
 
 
-[url=https://discord.gg/6hU5VXbvCV][img]https://raw.githubusercontent.com/RimNauts/RimNauts2/main/Workshop/PNG/info_discord.png[/img][/url]
+[url=https://discord.gg/FcZX5jDqTj][img]https://raw.githubusercontent.com/RimNauts/RimNauts2/main/Workshop/PNG/info_discord.png[/img][/url]
 
 [url=https://github.com/RimNauts/Universum/releases/latest][img]https://raw.githubusercontent.com/RimNauts/RimNauts2/main/Workshop/PNG/info_github.png[/img][/url]
 
