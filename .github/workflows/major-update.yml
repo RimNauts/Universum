@@ -50,12 +50,11 @@ jobs:
       env:
         STEAM_ACCOUNT_NAME: ${{ secrets.accountname }}
         STEAM_PASSWORD: ${{ secrets.password }}
-        TAG: ${{ steps.tag.outputs.new_tag }}
       with: 
         appID: 294100
         publishedFileID: 2920558019
         path: "Universum/"
-        changelog: "[b]{{ TAG }}[/b] New major update is out! Check out the changelog [url=https://github.com/RimNauts/Universum/releases/tag/{{ TAG }}]here[/url]"
+        changelog: "New major update is out! Check out the changelog [url=https://github.com/RimNauts/Universum/releases]here[/url]"
 
     - name: Send message to Discord server
       uses: Ilshidur/action-discord@0.3.2
