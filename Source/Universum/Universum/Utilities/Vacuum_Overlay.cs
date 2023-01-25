@@ -9,17 +9,6 @@ using Verse;
 
 namespace Universum.Utilities {
     /**
-     * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L14
-     */
-    [HarmonyPatch(typeof(SkyManager), "SkyManagerUpdate")]
-    public class SkyManager_SkyManagerUpdate {
-        public static void Postfix() {
-            if (!Cache.allowed_utility(Find.CurrentMap, "Universum.vacuum")) return;
-            MatBases.LightOverlay.color = new Color(1.0f, 1.0f, 1.0f);
-        }
-    }
-
-    /**
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/ShipInteriorMod2.cs#L2220
      */
     [HarmonyPatch(typeof(MapDrawer), "DrawMapMesh", null)]
@@ -240,7 +229,7 @@ namespace Universum.Utilities {
             if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
             if (!Cache.allowed_utility(map, "Universum.vacuum")) return;
             // Kill shadows
-            ___layers.RemoveAll(layer => SunShadowsType.IsInstanceOfType(layer));
+            if (Cache.allowed_utility("Universum.remove_shadows")) ___layers.RemoveAll(layer => SunShadowsType.IsInstanceOfType(layer));
             // Get and store terrain layer for recalculation
             var terrain = ___layers.Find(layer => TerrainType.IsInstanceOfType(layer));
             Game_UpdatePlay.add_section(map, __instance, terrain);
