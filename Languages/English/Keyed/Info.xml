@@ -3,5 +3,6 @@
     <Universum.Info.mod_loaded>{0} (v{1}) has successfully loaded.</Universum.Info.mod_loaded>
     <Universum.Info.biome_handler_done>{0} biomes found, {1} configurations found</Universum.Info.biome_handler_done>
     <Universum.Info.terrain_handler_done>{0} terrains found, {1} configurations found</Universum.Info.terrain_handler_done>
+    <Universum.Info.stat_handler_done>{0} stats found, {1} configurations found</Universum.Info.stat_handler_done>
     <Universum.Info.settings_loader_done>{0} utilities found</Universum.Info.settings_loader_done>
 </LanguageData>

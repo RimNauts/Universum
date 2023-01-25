@@ -209,4 +209,12 @@ namespace Universum.Utilities {
     public static class Pawn_Kill {
         public static void Postfix(Verse.Pawn __instance) => Cache.remove(__instance);
     }
+
+    /**
+     * Remove pawn from cache if dead.
+     */
+    [HarmonyLib.HarmonyPatch(typeof(Verse.Pawn), "Kill")]
+    public static class Pawn_Kill {
+        public static void Postfix(Verse.Pawn __instance) => Cache.remove(__instance);
+    }
 }

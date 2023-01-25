@@ -21,6 +21,7 @@ namespace Universum {
             Settings.init();
             Utilities.Biome.Handler.init();
             Utilities.Terrain.Handler.init();
+            Utilities.Stat.Handler.init();
         }
     }
 }
