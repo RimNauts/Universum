@@ -1,2 +1,3 @@
 # Changelog
-- Fix lighting working only on non vacuum maps
+- Add Remove Shadows utility
+- Add debug tool to update SkyManager

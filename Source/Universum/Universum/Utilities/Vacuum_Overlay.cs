@@ -14,6 +14,7 @@ namespace Universum.Utilities {
     [HarmonyPatch(typeof(SkyManager), "SkyManagerUpdate")]
     public class SkyManager_SkyManagerUpdate {
         public static void Postfix() {
+            if (!Cache.allowed_utility("Universum.remove_shadows")) return;
             if (!Cache.allowed_utility(Find.CurrentMap, "Universum.vacuum")) return;
             MatBases.LightOverlay.color = new Color(1.0f, 1.0f, 1.0f);
         }
@@ -240,7 +241,7 @@ namespace Universum.Utilities {
             if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
             if (!Cache.allowed_utility(map, "Universum.vacuum")) return;
             // Kill shadows
-            ___layers.RemoveAll(layer => SunShadowsType.IsInstanceOfType(layer));
+            if (Cache.allowed_utility("Universum.remove_shadows")) ___layers.RemoveAll(layer => SunShadowsType.IsInstanceOfType(layer));
             // Get and store terrain layer for recalculation
             var terrain = ___layers.Find(layer => TerrainType.IsInstanceOfType(layer));
             Game_UpdatePlay.add_section(map, __instance, terrain);
