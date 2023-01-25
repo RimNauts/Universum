@@ -3,8 +3,8 @@
 
 <svg
    width="620"
-   height="100"
-   viewBox="0 0 8.6111111 1.3888889"
+   height="100.00001"
+   viewBox="0 0 8.6111111 1.388889"
    version="1.1"
    id="svg5"
    xml:space="preserve"
@@ -94,18 +94,15 @@
          x="-0.37950227"
          y="0.41792363">RimNauts 2</tspan></text><text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.222222px;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;inline-size:7.15953;display:inline;fill:#ffffff;stroke:#000000;stroke-width:0.00416667"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.333333px;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;inline-size:7.15953;display:inline;fill:#ffffff;stroke:#000000;stroke-width:0.00416667"
        x="-0.36315268"
        y="0.65046906"
        id="text1137"
-       transform="translate(0.0044685,0.03897471)"><tspan
+       transform="translate(-0.00253019,0.12230795)"><tspan
          x="-0.36315268"
          y="0.65046906"
-         id="tspan2024">This mod adds Near-Earth Objects like moons, asteroids, space debris, </tspan><tspan
+         id="tspan348">This mod adds Near-Earth Objects like moons, </tspan><tspan
          x="-0.36315268"
-         y="0.92824657"
-         id="tspan2026">and artificial-satellites. Everything is visible and animated as an orbit on </tspan><tspan
-         x="-0.36315268"
-         y="1.206024"
-         id="tspan2028">the world map. Check it out by clicking here!
+         y="1.0671353"
+         id="tspan350">asteroids, space debris, and artificial-satellites...
 </tspan></text></g></svg>
