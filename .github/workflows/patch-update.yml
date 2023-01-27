@@ -68,5 +68,5 @@ jobs:
     - name: Send Changelog file to Discord server
       uses: tsickert/discord-webhook@v5.3.0
       with:
-        webhook-url: ${{ secrets.WEBHOOK_URL }}
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
         filename: Changelog.md
