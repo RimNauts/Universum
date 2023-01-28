@@ -1,3 +1,2 @@
 # Changelog
-- Add Remove Shadows utility
-- Add debug tool to update SkyManager
+- Add support for any terrain to have vacuum overlay

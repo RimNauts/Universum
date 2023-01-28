@@ -84,7 +84,7 @@ namespace Universum.Utilities {
             bool foundSpace = false;
             foreach (IntVec3 cell in ___section.CellRect.Cells) {
                 TerrainDef terrain1 = ___section.map.terrainGrid.TerrainAt(cell);
-                if (Cache.allowed_utility(terrain1, "Universum.vacuum")) {
+                if (Cache.allowed_utility(terrain1, "Universum.vacuum_overlay")) {
                     foundSpace = true;
                     Printer_Mesh.PrintMesh(__instance, Matrix4x4.TRS(cell.ToVector3() + new Vector3(0.5f, 0f, 0.5f), Quaternion.identity, Vector3.one), MeshMakerPlanes.NewPlaneMesh(1f), Globals.planet_mat);
                 }
