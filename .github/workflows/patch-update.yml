@@ -60,8 +60,13 @@ jobs:
       uses: Ilshidur/action-discord@0.3.2
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        DISCORD_USERNAME: "sindre0830"
-        DISCORD_AVATAR: "https://i.imgur.com/cEgyvGu.jpg"
         TAG: ${{ steps.tag.outputs.new_tag }}
+        ROLE_ID: ${{ secrets.DISCORD_ROLE }}
       with:
-        args: "**{{ TAG }}** New bug fix is out! Check out the changelog here <https://github.com/RimNauts/Universum/releases/tag/{{ TAG }}> <@&1067088339813023774>"
+        args: "**{{ TAG }}** New bug fix is out! Check out the changelog here <https://github.com/RimNauts/Universum/releases/tag/{{ TAG }}> <@&{{ ROLE_ID }}>"
+
+    - name: Send Changelog file to Discord server
+      uses: tsickert/discord-webhook@v5.3.0
+      with:
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+        filename: Changelog.md
