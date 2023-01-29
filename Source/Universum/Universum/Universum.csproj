@@ -55,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="Debug\Actions.cs" />
+    <Compile Include="Debug_Tools\Actions.cs" />
     <Compile Include="Defs\DefOf.cs" />
     <Compile Include="Defs\ObjectsDef.cs" />
     <Compile Include="Globals.cs" />
