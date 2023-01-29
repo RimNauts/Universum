@@ -68,6 +68,7 @@
     <Compile Include="Utilities\Biome\Properties.cs" />
     <Compile Include="Utilities\Caching_Handler.cs" />
     <Compile Include="Utilities\Ocean_Masking.cs" />
+    <Compile Include="Utilities\Pollution.cs" />
     <Compile Include="Utilities\Temperature.cs" />
     <Compile Include="Utilities\Terrain\Handler.cs" />
     <Compile Include="Utilities\Terrain\Properties.cs" />
