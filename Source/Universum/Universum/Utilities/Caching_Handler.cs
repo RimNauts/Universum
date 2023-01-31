@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
+using Verse;
 
 namespace Universum.Utilities {
     /**
      * Keeps all the cache collections and their methods.
      */
-    public class Caching_Handler : Verse.GameComponent {
+    public class Caching_Handler : GameComponent {
         public Dictionary<string, bool> utilities;
         public Dictionary<int, Dictionary<string, bool>> map_utilities;
         public Dictionary<string, Dictionary<string, bool>> biome_utilities;
         public Dictionary<string, Dictionary<string, bool>> terrain_utilities;
+        public Dictionary<string, Dictionary<string, bool>> gene_utilities;
         public Dictionary<int, float> map_temperature;
         public Dictionary<int, Vacuum_Protection> pawn_protection_level;
 
-        public Caching_Handler(Verse.Game game) : base() {
+        public Caching_Handler(Game game) : base() {
             // initilize empty caches
             clear();
             Cache.caching_handler = this;
@@ -27,7 +29,7 @@ namespace Universum.Utilities {
             return toggle;
         }
 
-        public bool allowed_utility(Verse.Map map, string utility) {
+        public bool allowed_utility(Map map, string utility) {
             if (map == null) return false;
             // branch if not enabled in settings
             if (!allowed_utility(utility)) return false;
@@ -57,7 +59,7 @@ namespace Universum.Utilities {
             return property_value;
         }
 
-        public bool allowed_utility(Verse.TerrainDef terrain, string utility) {
+        public bool allowed_utility(TerrainDef terrain, string utility) {
             if (terrain == null) return false;
             // branch if not enabled in settings
             if (!allowed_utility(utility)) return false;
@@ -72,7 +74,22 @@ namespace Universum.Utilities {
             return property_value;
         }
 
-        public float temperature(Verse.Map map) {
+        public bool allowed_utility(GeneDef gene, string utility) {
+            if (!ModsConfig.BiotechActive || gene == null) return false;
+            // branch if not enabled in settings
+            if (!allowed_utility(utility)) return false;
+            // branch if map is cached
+            if (gene_utilities.TryGetValue(gene.defName, out var utilities)) {
+                // branch if utility is cached
+                if (utilities.TryGetValue(utility, out var cached_property_value)) return cached_property_value;
+            } else gene_utilities.Add(gene.defName, new Dictionary<string, bool>());
+            // get value and cache result
+            var property_value = Gene.Handler.get_properties(gene).allowed_utilities.Contains(utility);
+            gene_utilities[gene.defName].Add(utility, property_value);
+            return property_value;
+        }
+
+        public float temperature(Map map) {
             if (map == null) return 0.0f;
             // branch if map is cached
             if (map_temperature.TryGetValue(map.uniqueID, out var temp)) return temp;
@@ -82,7 +99,7 @@ namespace Universum.Utilities {
             return property_value;
         }
 
-        public Vacuum_Protection spacesuit_protection(Verse.Pawn pawn) {
+        public Vacuum_Protection spacesuit_protection(Pawn pawn) {
             if (pawn == null) return Vacuum_Protection.None;
             // branch if pawn is cached
             if (pawn_protection_level.TryGetValue(pawn.thingIDNumber, out var protection)) return protection;
@@ -95,13 +112,26 @@ namespace Universum.Utilities {
             } else {
                 bool helmet = false;
                 bool suit = false;
-                foreach (RimWorld.Apparel apparel in pawn.apparel.WornApparel) {
-                    if (apparel.def.apparel.tags.Contains("EVA")) {
+                // check genes
+                if (ModsConfig.BiotechActive) {
+                    List<Verse.Gene> genes = pawn.genes.GenesListForReading;
+                    foreach (Verse.Gene gene in genes) {
+                        if (Cache.allowed_utility(gene.def, "Universum.vacuum_suffocation_protection")) helmet = true;
+                        if (Cache.allowed_utility(gene.def, "Universum.vacuum_decompression_protection")) suit = true;
+                        if (helmet && suit) break;
+                    }
+                }
+                // check apparel
+                if (helmet && suit) {
+                    List<RimWorld.Apparel> apparels = pawn.apparel.WornApparel;
+                    foreach (RimWorld.Apparel apparel in apparels) {
+                        if (!apparel.def.apparel.tags.Contains("EVA")) continue;
                         if (apparel.def.apparel.layers.Contains(RimWorld.ApparelLayerDefOf.Overhead)) helmet = true;
                         if (apparel.def.apparel.layers.Contains(RimWorld.ApparelLayerDefOf.Shell) || apparel.def.apparel.layers.Contains(RimWorld.ApparelLayerDefOf.Middle)) suit = true;
                         if (helmet && suit) break;
                     }
                 }
+                // set protection value
                 if (helmet && suit) {
                     value = Vacuum_Protection.All;
                 } else if (helmet) {
@@ -112,7 +142,7 @@ namespace Universum.Utilities {
             return value;
         }
 
-        public void remove(Verse.Map map) {
+        public void remove(Map map) {
             if (map == null) {
                 clear();
             } else {
@@ -121,7 +151,7 @@ namespace Universum.Utilities {
             }
         }
 
-        public void remove(Verse.Pawn pawn) {
+        public void remove(Pawn pawn) {
             if (pawn == null) {
                 clear();
             } else {
@@ -138,6 +168,7 @@ namespace Universum.Utilities {
             map_utilities = new Dictionary<int, Dictionary<string, bool>>();
             biome_utilities = new Dictionary<string, Dictionary<string, bool>>();
             terrain_utilities = new Dictionary<string, Dictionary<string, bool>>();
+            gene_utilities = new Dictionary<string, Dictionary<string, bool>>();
             map_temperature = new Dictionary<int, float>();
             pawn_protection_level = new Dictionary<int, Vacuum_Protection>();
         }
@@ -151,19 +182,21 @@ namespace Universum.Utilities {
 
         public static bool allowed_utility(string utility) => caching_handler.allowed_utility(utility);
 
-        public static bool allowed_utility(Verse.Map map, string utility) => caching_handler.allowed_utility(map, utility);
+        public static bool allowed_utility(Map map, string utility) => caching_handler.allowed_utility(map, utility);
 
         public static bool allowed_utility(RimWorld.BiomeDef biome, string utility) => caching_handler.allowed_utility(biome, utility);
 
-        public static bool allowed_utility(Verse.TerrainDef terrain, string utility) => caching_handler.allowed_utility(terrain, utility);
+        public static bool allowed_utility(TerrainDef terrain, string utility) => caching_handler.allowed_utility(terrain, utility);
 
-        public static float temperature(Verse.Map map) => caching_handler.temperature(map);
+        public static bool allowed_utility(GeneDef gene, string utility) => caching_handler.allowed_utility(gene, utility);
 
-        public static Vacuum_Protection spacesuit_protection(Verse.Pawn pawn) => caching_handler.spacesuit_protection(pawn);
+        public static float temperature(Map map) => caching_handler.temperature(map);
 
-        public static void remove(Verse.Map map) => caching_handler.remove(map);
+        public static Vacuum_Protection spacesuit_protection(Pawn pawn) => caching_handler.spacesuit_protection(pawn);
 
-        public static void remove(Verse.Pawn pawn) => caching_handler.remove(pawn);
+        public static void remove(Map map) => caching_handler.remove(map);
+
+        public static void remove(Pawn pawn) => caching_handler.remove(pawn);
 
         public static void clear_utility_toggle() => caching_handler.clear_utility_toggle();
 
@@ -173,7 +206,7 @@ namespace Universum.Utilities {
     /**
      * Makes sure all cache is cleared when switching between worlds.
      */
-    [HarmonyLib.HarmonyPatch(typeof(Verse.Game), "ClearCaches")]
+    [HarmonyLib.HarmonyPatch(typeof(Game), "ClearCaches")]
     public static class Game_ClearCaches {
         public static void Postfix() => Cache.clear();
     }
@@ -181,9 +214,9 @@ namespace Universum.Utilities {
     /**
      * Remove map from cache when map is deleted.
      */
-    [HarmonyLib.HarmonyPatch(typeof(Verse.MapDeiniter), "Deinit_NewTemp")]
+    [HarmonyLib.HarmonyPatch(typeof(MapDeiniter), "Deinit_NewTemp")]
     public static class MapParent_Deinit_NewTemp {
-        public static void Postfix(Verse.Map map) => Cache.remove(map);
+        public static void Postfix(Map map) => Cache.remove(map);
     }
 
     /**
@@ -205,16 +238,40 @@ namespace Universum.Utilities {
     /**
      * Remove pawn from cache if dead.
      */
-    [HarmonyLib.HarmonyPatch(typeof(Verse.Pawn), "Kill")]
+    [HarmonyLib.HarmonyPatch(typeof(Pawn), "Kill")]
     public static class Pawn_Kill {
-        public static void Postfix(Verse.Pawn __instance) => Cache.remove(__instance);
+        public static void Postfix(Pawn __instance) => Cache.remove(__instance);
     }
 
     /**
-     * Remove pawn from cache if dead.
+     * Remove pawn from cache if genes are reimplanted.
      */
-    [HarmonyLib.HarmonyPatch(typeof(Verse.Pawn), "Kill")]
-    public static class Pawn_Kill {
-        public static void Postfix(Verse.Pawn __instance) => Cache.remove(__instance);
+    [HarmonyLib.HarmonyPatch(typeof(RimWorld.GeneUtility), "ReimplantXenogerm")]
+    public static class GeneUtility_ReimplantXenogerm {
+        public static void Postfix(Pawn caster, Pawn recipient) => Cache.remove(caster);
+    }
+
+    /**
+     * Remove pawn from cache if genes are extracted.
+     */
+    [HarmonyLib.HarmonyPatch(typeof(RimWorld.GeneUtility), "ExtractXenogerm")]
+    public static class GeneUtility_ExtractXenogerm {
+        public static void Postfix(Pawn pawn, int overrideDurationTicks = -1) => Cache.remove(pawn);
+    }
+
+    /**
+     * Remove pawn from cache if genes are implanted.
+     */
+    [HarmonyLib.HarmonyPatch(typeof(RimWorld.GeneUtility), "ImplantXenogermItem")]
+    public static class GeneUtility_ImplantXenogermItem {
+        public static void Postfix(Pawn pawn, RimWorld.Xenogerm xenogerm) => Cache.remove(pawn);
+    }
+
+    /**
+     * Remove pawn from cache if genes are updated.
+     */
+    [HarmonyLib.HarmonyPatch(typeof(RimWorld.GeneUtility), "UpdateXenogermReplication")]
+    public static class GeneUtility_UpdateXenogermReplication {
+        public static void Postfix(Pawn pawn) => Cache.remove(pawn);
     }
 }
