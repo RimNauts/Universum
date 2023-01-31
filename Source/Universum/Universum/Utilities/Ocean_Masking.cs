@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Verse;
 
 namespace Universum.Utilities {
     /**
@@ -7,7 +8,7 @@ namespace Universum.Utilities {
     [HarmonyLib.HarmonyPatch(typeof(RimWorld.BiomeDef), "DrawMaterial", HarmonyLib.MethodType.Getter)]
     public static class BiomeDef_DrawMaterial {
         public static void Prefix(ref RimWorld.BiomeDef __instance) {
-            if (Cache.allowed_utility(__instance, "Universum.ocean_masking")) __instance = RimWorld.BiomeDefOf.Ocean;
+            if (Cache.allowed_utility(__instance, "universum.ocean_masking")) __instance = RimWorld.BiomeDefOf.Ocean;
         }
     }
 
@@ -19,7 +20,7 @@ namespace Universum.Utilities {
     public static class WorldLayer_CurrentMapTile_Tile {
         public static void Postfix(ref int __result) {
             if (__result == -1) return;
-            if (Cache.allowed_utility(Verse.Find.World.grid.tiles.ElementAt(__result).biome, "Universum.ocean_masking")) __result = -1;
+            if (Cache.allowed_utility(Find.World.grid.tiles.ElementAt(__result).biome, "universum.ocean_masking")) __result = -1;
         }
     }
 }

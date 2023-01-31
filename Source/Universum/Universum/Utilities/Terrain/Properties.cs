@@ -2,14 +2,14 @@
 using Verse;
 
 namespace Universum.Utilities.Terrain {
-    public class Properties : Verse.DefModExtension {
+    public class Properties : DefModExtension {
         public List<string> allowed_utilities = new List<string>();
         private static readonly Dictionary<string, Properties> DefaultsByPackageId = new Dictionary<string, Properties>();
         private static readonly Dictionary<string, Properties> DefaultsByDefName = new Dictionary<string, Properties>();
 
         public static Properties[] GetAll() {
-            Properties[] terrainPropertiesArray = new Properties[Verse.DefDatabase<Verse.TerrainDef>.DefCount];
-            foreach (Verse.TerrainDef terrain in Verse.DefDatabase<Verse.TerrainDef>.AllDefs) {
+            Properties[] terrainPropertiesArray = new Properties[DefDatabase<TerrainDef>.DefCount];
+            foreach (TerrainDef terrain in DefDatabase<TerrainDef>.AllDefs) {
                 Properties terrainProperties = new Properties();
                 try {
                     terrainProperties = ((terrain.GetModExtension<Properties>() ?? DefaultsByDefName.TryGetValue(terrain.defName)) ?? DefaultsByPackageId.TryGetValue(terrain.modContentPack.ModMetaData.PackageIdNonUnique)) ?? new Properties();

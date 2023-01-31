@@ -1,2 +1,5 @@
 # Changelog
-- Add support for any terrain to have vacuum overlay
+- Add Harmony Patch to stop Universum vacuum terrain from being polluted
+- Add Harmony Patch that sets ExitMapGrid.Color.a = 0 on vacuum maps, allowing full transparency for preset vanilla green overlay present on perimeter of vacuum map
+- Add GeneDef support
+- Add disable_weather_change utility
