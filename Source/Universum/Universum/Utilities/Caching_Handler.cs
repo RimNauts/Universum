@@ -116,8 +116,8 @@ namespace Universum.Utilities {
                 if (ModsConfig.BiotechActive) {
                     List<Verse.Gene> genes = pawn.genes.GenesListForReading;
                     foreach (Verse.Gene gene in genes) {
-                        if (Cache.allowed_utility(gene.def, "Universum.vacuum_suffocation_protection")) helmet = true;
-                        if (Cache.allowed_utility(gene.def, "Universum.vacuum_decompression_protection")) suit = true;
+                        if (Cache.allowed_utility(gene.def, "universum.vacuum_suffocation_protection")) helmet = true;
+                        if (Cache.allowed_utility(gene.def, "universum.vacuum_decompression_protection")) suit = true;
                         if (helmet && suit) break;
                     }
                 }

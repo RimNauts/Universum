@@ -17,8 +17,8 @@ namespace Universum.Utilities {
         public override bool Expired => true;
 
         public override void FireEvent() {
-            bool vacuum_decompression = Cache.allowed_utility(map, "Universum.vacuum_decompression");
-            bool vacuum_suffocation = Cache.allowed_utility(map, "Universum.vacuum_suffocation");
+            bool vacuum_decompression = Cache.allowed_utility(map, "universum.vacuum_decompression");
+            bool vacuum_suffocation = Cache.allowed_utility(map, "universum.vacuum_suffocation");
             if (!vacuum_decompression && !vacuum_suffocation) return;
             List<Pawn> pawns = map.mapPawns.AllPawnsSpawned;
             List<Pawn> pawns_to_suffocate = new List<Pawn>();
