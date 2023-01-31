@@ -122,14 +122,13 @@ namespace Universum.Utilities {
                     }
                 }
                 // check apparel
-                if (helmet && suit) {
-                    List<RimWorld.Apparel> apparels = pawn.apparel.WornApparel;
-                    foreach (RimWorld.Apparel apparel in apparels) {
-                        if (!apparel.def.apparel.tags.Contains("EVA")) continue;
+                List<RimWorld.Apparel> apparels = pawn.apparel.WornApparel;
+                foreach (RimWorld.Apparel apparel in apparels) {
+                    if (apparel.def.apparel.tags.Contains("EVA")) {
                         if (apparel.def.apparel.layers.Contains(RimWorld.ApparelLayerDefOf.Overhead)) helmet = true;
                         if (apparel.def.apparel.layers.Contains(RimWorld.ApparelLayerDefOf.Shell) || apparel.def.apparel.layers.Contains(RimWorld.ApparelLayerDefOf.Middle)) suit = true;
-                        if (helmet && suit) break;
                     }
+                    if (helmet && suit) break;
                 }
                 // set protection value
                 if (helmet && suit) {
