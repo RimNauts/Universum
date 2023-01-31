@@ -1,2 +1,2 @@
 # Changelog
-- Fix lighting working only on non vacuum maps
+- Add support for any terrain to have vacuum overlay

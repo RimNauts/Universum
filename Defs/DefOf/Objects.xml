@@ -51,6 +51,14 @@
                 <default_toggle>true</default_toggle>
                 <hide_in_settings>false</hide_in_settings>
             </li>
+            <li>
+                <id>Universum.remove_shadows</id>
+                <mod_name>Universum</mod_name>
+                <label_key>Universum.Utility.Label.remove_shadows</label_key>
+                <description_key>Universum.Utility.Description.remove_shadows</description_key>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>false</hide_in_settings>
+            </li>
             <!-- Hidden settings -->
             <li>
                 <id>Universum.vacuum_decompression_protection</id>

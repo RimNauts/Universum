@@ -1,7 +1,7 @@
 ﻿namespace Universum {
     public static class Info {
         public static readonly string name = "Universum";
-        public static readonly string version = "1.2.1";
+        public static readonly string version = "1.4.0";
     }
 
     public static class Style {
