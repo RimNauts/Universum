@@ -51,6 +51,17 @@
                 <default_toggle>true</default_toggle>
                 <hide_in_settings>false</hide_in_settings>
             </li>
+            <!-- Hidden settings -->
+            <li>
+                <id>Universum.vacuum_decompression_protection</id>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>true</hide_in_settings>
+            </li>
+            <li>
+                <id>Universum.vacuum_suffocation_protection</id>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>true</hide_in_settings>
+            </li>
         </Utilities>
   	</Universum.ObjectsDef>
 </Defs>
