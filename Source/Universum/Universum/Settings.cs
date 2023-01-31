@@ -86,18 +86,19 @@ namespace Universum {
             table_header_content.ColumnWidth = 500f;
             table_header_content.Gap(4f);
             foreach (KeyValuePair<string, ObjectsDef.Metadata> utility in Settings.utilities) {
+                if (utility.Value.hide_in_settings) continue;
                 bool checkOn = utility.Value.toggle;
                 string mod_name = "Unknown source";
-                if (utility.Value.mod_name.Length > 0) mod_name = utility.Value.mod_name;
+                if (utility.Value.mod_name != null && utility.Value.mod_name.Length > 0) mod_name = utility.Value.mod_name;
                 string utility_name = utility.Key;
-                if (utility.Value.label_key.Length > 0) {
+                if (utility.Value.label_key != null && utility.Value.label_key.Length > 0) {
                     try {
                         utility_name = TranslatorFormattedStringExtensions.Translate(utility.Value.label_key);
                     } catch { /* couldn't find the language key provided */ }
                 }
                 string label = "(" + mod_name + ") " + utility_name;
                 string utility_description = null;
-                if (utility.Value.description_key.Length > 0) {
+                if (utility.Value.description_key != null && utility.Value.description_key.Length > 0) {
                     try {
                         utility_description = TranslatorFormattedStringExtensions.Translate(utility.Value.description_key);
                     } catch { /* couldn't find the language key provided */ }
@@ -107,7 +108,6 @@ namespace Universum {
                     Settings.utilities[utility.Key].toggle = checkOn;
                     Utilities.Cache.clear_utility_toggle();
                 }
-                
             }
             table_header_content.End();
             Widgets.EndScrollView();
