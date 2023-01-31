@@ -14,8 +14,8 @@ namespace Universum.Utilities {
     [HarmonyPatch(typeof(SkyManager), "SkyManagerUpdate")]
     public class SkyManager_SkyManagerUpdate {
         public static void Postfix() {
-            if (!Cache.allowed_utility("Universum.remove_shadows")) return;
-            if (!Cache.allowed_utility(Find.CurrentMap, "Universum.vacuum")) return;
+            if (!Cache.allowed_utility("universum.remove_shadows")) return;
+            if (!Cache.allowed_utility(Find.CurrentMap, "universum.vacuum")) return;
             MatBases.LightOverlay.color = new Color(1.0f, 1.0f, 1.0f);
         }
     }
@@ -28,9 +28,9 @@ namespace Universum.Utilities {
         public const float altitude = 1100f;
 
         public static void Prefix() {
-            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
+            if (!Cache.allowed_utility("universum.vacuum_overlay")) return;
             Map map = Find.CurrentMap;
-            if (Globals.rendered || !Cache.allowed_utility(map, "Universum.vacuum")) return;
+            if (Globals.rendered || !Cache.allowed_utility(map, "universum.vacuum")) return;
 
             RenderTexture oldTexture = Find.WorldCamera.targetTexture;
             RenderTexture oldSkyboxTexture = RimWorld.Planet.WorldCameraManager.WorldSkyboxCamera.targetTexture;
@@ -79,12 +79,12 @@ namespace Universum.Utilities {
     [HarmonyPatch(typeof(SectionLayer), "FinalizeMesh", null)]
     public static class SectionLayer_FinalizeMesh {
         public static bool Prefix(SectionLayer __instance, Section ___section) {
-            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return true;
-            if (__instance.GetType().Name != "SectionLayer_Terrain" || !Cache.allowed_utility(___section.map, "Universum.vacuum")) return true;
+            if (!Cache.allowed_utility("universum.vacuum_overlay")) return true;
+            if (__instance.GetType().Name != "SectionLayer_Terrain" || !Cache.allowed_utility(___section.map, "universum.vacuum")) return true;
             bool foundSpace = false;
             foreach (IntVec3 cell in ___section.CellRect.Cells) {
                 TerrainDef terrain1 = ___section.map.terrainGrid.TerrainAt(cell);
-                if (Cache.allowed_utility(terrain1, "Universum.vacuum_overlay")) {
+                if (Cache.allowed_utility(terrain1, "universum.vacuum_overlay")) {
                     foundSpace = true;
                     Printer_Mesh.PrintMesh(__instance, Matrix4x4.TRS(cell.ToVector3() + new Vector3(0.5f, 0f, 0.5f), Quaternion.identity, Vector3.one), MeshMakerPlanes.NewPlaneMesh(1f), Globals.planet_mat);
                 }
@@ -109,7 +109,7 @@ namespace Universum.Utilities {
 
         public static void Postfix() {
             if (Find.CurrentMap == null || Scribe.mode != LoadSaveMode.Inactive) return;
-            MapIsSpace = Cache.allowed_utility(Find.CurrentMap, "Universum.vacuum");
+            MapIsSpace = Cache.allowed_utility(Find.CurrentMap, "universum.vacuum");
         }
     }
 
@@ -146,7 +146,7 @@ namespace Universum.Utilities {
         }
 
         public static void Prefix() {
-            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
+            if (!Cache.allowed_utility("universum.vacuum_overlay")) return;
             if (!MapInterface_Notify_SwitchedMap.MapIsSpace || !MapSections.ContainsKey(Find.CurrentMap)) return;
             Center = GameCamera.transform.position;
             var ratio = (float) UI.screenWidth / UI.screenHeight;
@@ -238,10 +238,10 @@ namespace Universum.Utilities {
         }
 
         public static void Postfix(Map map, Section __instance, List<SectionLayer> ___layers) {
-            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
-            if (!Cache.allowed_utility(map, "Universum.vacuum")) return;
+            if (!Cache.allowed_utility("universum.vacuum_overlay")) return;
+            if (!Cache.allowed_utility(map, "universum.vacuum")) return;
             // Kill shadows
-            if (Cache.allowed_utility("Universum.remove_shadows")) ___layers.RemoveAll(layer => SunShadowsType.IsInstanceOfType(layer));
+            if (Cache.allowed_utility("universum.remove_shadows")) ___layers.RemoveAll(layer => SunShadowsType.IsInstanceOfType(layer));
             // Get and store terrain layer for recalculation
             var terrain = ___layers.Find(layer => TerrainType.IsInstanceOfType(layer));
             Game_UpdatePlay.add_section(map, __instance, terrain);
@@ -253,8 +253,8 @@ namespace Universum.Utilities {
      */
     public class SectionLayer_Terrain_Regenerate {
         public static void Postfix(SectionLayer __instance, Section ___section) {
-            if (!Cache.allowed_utility("Universum.vacuum_overlay")) return;
-            if (!Cache.allowed_utility(___section.map, "Universum.vacuum")) return;
+            if (!Cache.allowed_utility("universum.vacuum_overlay")) return;
+            if (!Cache.allowed_utility(___section.map, "universum.vacuum")) return;
             MeshRecalculateHelper.recalculate_layer(__instance);
         }
     }

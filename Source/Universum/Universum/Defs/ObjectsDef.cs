@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using Verse;
 
 namespace Universum {
-    public class ObjectsDef : Verse.Def {
+    public class ObjectsDef : Def {
         public List<Metadata> Utilities;
         public class Metadata {
             public string id;

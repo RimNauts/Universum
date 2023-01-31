@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Verse;
 
 namespace Universum.Utilities.Terrain {
     public static class Handler {
@@ -6,7 +7,7 @@ namespace Universum.Utilities.Terrain {
         private static int total_configurations_found;
         private static Properties[] terrains;
 
-        public static Properties get_properties(this Verse.TerrainDef terrain_def) {
+        public static Properties get_properties(this TerrainDef terrain_def) {
             try {
                 return terrains[terrain_def.index];
             } catch {
@@ -29,7 +30,7 @@ namespace Universum.Utilities.Terrain {
                 Logger.Importance.Info,
                 key: "Universum.Info.terrain_handler_done",
                 prefix: Style.tab,
-                args: new Verse.NamedArgument[] { total_terrains_found, total_configurations_found }
+                args: new NamedArgument[] { total_terrains_found, total_configurations_found }
             );
         }
     }

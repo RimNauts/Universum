@@ -4,7 +4,7 @@
 		<defName>Objects</defName>
         <Utilities>
             <li>
-                <id>Universum.vacuum_decompression</id>
+                <id>universum.vacuum_decompression</id>
                 <mod_name>Universum</mod_name>
                 <label_key>Universum.Utility.Label.vacuum_decompression</label_key>
                 <description_key>Universum.Utility.Description.vacuum_decompression</description_key>
@@ -12,7 +12,7 @@
                 <hide_in_settings>false</hide_in_settings>
             </li>
             <li>
-                <id>Universum.vacuum_suffocation</id>
+                <id>universum.vacuum_suffocation</id>
                 <mod_name>Universum</mod_name>
                 <label_key>Universum.Utility.Label.vacuum_suffocation</label_key>
                 <description_key>Universum.Utility.Description.vacuum_suffocation</description_key>
@@ -20,7 +20,7 @@
                 <hide_in_settings>false</hide_in_settings>
             </li>
             <li>
-                <id>Universum.temperature</id>
+                <id>universum.temperature</id>
                 <mod_name>Universum</mod_name>
                 <label_key>Universum.Utility.Label.temperature</label_key>
                 <description_key>Universum.Utility.Description.temperature</description_key>
@@ -28,7 +28,7 @@
                 <hide_in_settings>false</hide_in_settings>
             </li>
             <li>
-                <id>Universum.ocean_masking</id>
+                <id>universum.ocean_masking</id>
                 <mod_name>Universum</mod_name>
                 <label_key>Universum.Utility.Label.ocean_masking</label_key>
                 <description_key>Universum.Utility.Description.ocean_masking</description_key>
@@ -36,7 +36,7 @@
                 <hide_in_settings>false</hide_in_settings>
             </li>
             <li>
-                <id>Universum.vacuum</id>
+                <id>universum.vacuum</id>
                 <mod_name>Universum</mod_name>
                 <label_key>Universum.Utility.Label.vacuum</label_key>
                 <description_key>Universum.Utility.Description.vacuum</description_key>
@@ -44,7 +44,7 @@
                 <hide_in_settings>false</hide_in_settings>
             </li>
             <li>
-                <id>Universum.vacuum_overlay</id>
+                <id>universum.vacuum_overlay</id>
                 <mod_name>Universum</mod_name>
                 <label_key>Universum.Utility.Label.vacuum_overlay</label_key>
                 <description_key>Universum.Utility.Description.vacuum_overlay</description_key>
@@ -52,12 +52,23 @@
                 <hide_in_settings>false</hide_in_settings>
             </li>
             <li>
-                <id>Universum.remove_shadows</id>
+                <id>universum.remove_shadows</id>
                 <mod_name>Universum</mod_name>
                 <label_key>Universum.Utility.Label.remove_shadows</label_key>
                 <description_key>Universum.Utility.Description.remove_shadows</description_key>
                 <default_toggle>true</default_toggle>
                 <hide_in_settings>false</hide_in_settings>
+            </li>
+            <!-- Hidden settings -->
+            <li>
+                <id>universum.vacuum_decompression_protection</id>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>true</hide_in_settings>
+            </li>
+            <li>
+                <id>universum.vacuum_suffocation_protection</id>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>true</hide_in_settings>
             </li>
         </Utilities>
   	</Universum.ObjectsDef>

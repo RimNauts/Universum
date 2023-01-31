@@ -1,4 +1,6 @@
-﻿namespace Universum {
+﻿using Verse;
+
+namespace Universum {
     public static class Logger {
         public enum Importance {
             Info = 0,
@@ -10,13 +12,13 @@
             Importance importance,
             string key,
             string prefix = null,
-            Verse.NamedArgument[] args = null
+            NamedArgument[] args = null
         ) {
             string message;
             if (args == null) {
-                message = Verse.TranslatorFormattedStringExtensions.Translate(key);
+                message = TranslatorFormattedStringExtensions.Translate(key);
             } else {
-                message = Verse.TranslatorFormattedStringExtensions.Translate(key, args);
+                message = TranslatorFormattedStringExtensions.Translate(key, args);
             }
             print(importance, text: message, prefix);
         }
@@ -25,13 +27,13 @@
             if (prefix != null) text = prefix + text;
             switch (importance) {
                 case Importance.Info:
-                    Verse.Log.Message(text);
+                    Log.Message(text);
                     return;
                 case Importance.Warning:
-                    Verse.Log.Warning(text);
+                    Log.Warning(text);
                     return;
                 case Importance.Error:
-                    Verse.Log.Error(text);
+                    Log.Error(text);
                     return;
             }
         }

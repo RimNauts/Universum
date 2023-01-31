@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Verse;
 
 namespace Universum.Utilities.Biome {
     public static class Handler {
@@ -27,7 +28,7 @@ namespace Universum.Utilities.Biome {
                 Logger.Importance.Info,
                 key: "Universum.Info.biome_handler_done",
                 prefix: Style.tab,
-                args: new Verse.NamedArgument[] { total_biomes_found, total_configurations_found }
+                args: new NamedArgument[] { total_biomes_found, total_configurations_found }
             );
         }
     }
