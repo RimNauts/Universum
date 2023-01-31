@@ -203,7 +203,7 @@ namespace Universum.Utilities {
             if (!(info is LayerSubMesh mesh)) {
                 Logger.print(
                     Logger.Importance.Error,
-                    key: "universum.Error.thread_with_wrong_type",
+                    key: "Universum.Error.thread_with_wrong_type",
                     prefix: Style.name_prefix
                 );
                 return;
