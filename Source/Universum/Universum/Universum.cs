@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
+using Verse;
 
 namespace Universum {
-    [Verse.StaticConstructorOnStartup]
+    [StaticConstructorOnStartup]
     public static class Universum {
         static Universum() {
             // apply patch on internal class
@@ -15,13 +16,13 @@ namespace Universum {
             Logger.print(
                 Logger.Importance.Info,
                 key: "Universum.Info.mod_loaded",
-                args: new Verse.NamedArgument[] { Info.name, Info.version }
+                args: new NamedArgument[] { Info.name, Info.version }
             );
             // load configuarations
             Settings.init();
             Utilities.Biome.Handler.init();
             Utilities.Terrain.Handler.init();
-            Utilities.Stat.Handler.init();
+            if (ModsConfig.BiotechActive) Utilities.Gene.Handler.init();
         }
     }
 }
