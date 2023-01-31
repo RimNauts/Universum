@@ -18,10 +18,13 @@
     <!-- vacuum -->
     <Universum.Utility.Label.vacuum>Vacuum</Universum.Utility.Label.vacuum>
     <Universum.Utility.Description.vacuum>Handles the vacuum system.</Universum.Utility.Description.vacuum>
-    <!-- vacuum -->
+    <!-- vacuum_overlay -->
     <Universum.Utility.Label.vacuum_overlay>Vacuum Overlay</Universum.Utility.Label.vacuum_overlay>
     <Universum.Utility.Description.vacuum_overlay>Shows the planet rendered over vacuum. If you toggle this mid-game, you need to reload the save.</Universum.Utility.Description.vacuum_overlay>
-    <!-- vacuum -->
+    <!-- remove_shadows -->
     <Universum.Utility.Label.remove_shadows>Remove Shadows</Universum.Utility.Label.remove_shadows>
     <Universum.Utility.Description.remove_shadows>Removes shadows from outer space maps.</Universum.Utility.Description.remove_shadows>
+    <!-- disable_weather_change -->
+    <Universum.Utility.Label.disable_weather_change>Disable Weather Changing</Universum.Utility.Label.disable_weather_change>
+    <Universum.Utility.Description.disable_weather_change>Disbales the weather manager from changing the weather on the biome.</Universum.Utility.Description.disable_weather_change>
 </LanguageData>

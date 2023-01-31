@@ -59,6 +59,14 @@
                 <default_toggle>true</default_toggle>
                 <hide_in_settings>false</hide_in_settings>
             </li>
+            <li>
+                <id>universum.disable_weather_change</id>
+                <mod_name>Universum</mod_name>
+                <label_key>Universum.Utility.Label.disable_weather_change</label_key>
+                <description_key>Universum.Utility.Description.disable_weather_change</description_key>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>false</hide_in_settings>
+            </li>
             <!-- Hidden settings -->
             <li>
                 <id>universum.vacuum_decompression_protection</id>
