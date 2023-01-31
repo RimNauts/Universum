@@ -77,11 +77,11 @@ namespace Universum.Utilities {
         public static void Postfix(ref string __result) {
             if (!Cache.allowed_utility(Find.CurrentMap, "universum.vacuum")) return;
             if (__result.Contains("Indoors".Translate())) {
-                __result = __result.Replace("Indoors".Translate(), "universum.indoors".Translate());
+                __result = __result.Replace("Indoors".Translate(), "Universum.indoors".Translate());
             } else if (__result.Contains("IndoorsUnroofed".Translate())) {
-                __result = __result.Replace("IndoorsUnroofed".Translate(), "universum.unroofed".Translate());
+                __result = __result.Replace("IndoorsUnroofed".Translate(), "Universum.unroofed".Translate());
             } else if (__result.Contains("Outdoors".Translate().CapitalizeFirst())) {
-                __result = __result.Replace("Outdoors".Translate().CapitalizeFirst(), "universum.outdoors".Translate());
+                __result = __result.Replace("Outdoors".Translate().CapitalizeFirst(), "Universum.outdoors".Translate());
             }
         }
     }
