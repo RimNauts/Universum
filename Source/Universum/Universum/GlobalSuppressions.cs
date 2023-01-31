@@ -6,4 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:Universum.Utilities.Caching_Handler.#ctor(Verse.Game)")]
-[assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~M:Universum.Utilities.WeatherEvent_Decompression.#ctor(Verse.Map)")]
+[assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:Universum.Utilities.GeneUtility_ReimplantXenogerm.Postfix(Verse.Pawn,Verse.Pawn)")]

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Verse;
 
 namespace Universum.Utilities {
     /**
@@ -19,7 +20,7 @@ namespace Universum.Utilities {
     public static class WorldLayer_CurrentMapTile_Tile {
         public static void Postfix(ref int __result) {
             if (__result == -1) return;
-            if (Cache.allowed_utility(Verse.Find.World.grid.tiles.ElementAt(__result).biome, "Universum.ocean_masking")) __result = -1;
+            if (Cache.allowed_utility(Find.World.grid.tiles.ElementAt(__result).biome, "Universum.ocean_masking")) __result = -1;
         }
     }
 }
