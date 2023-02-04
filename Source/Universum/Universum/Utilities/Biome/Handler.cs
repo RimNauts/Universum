@@ -21,7 +21,9 @@ namespace Universum.Utilities.Biome {
             total_biomes_found = biomes.Count();
             total_configurations_found = 0;
             foreach (Properties biome in biomes) {
-                total_configurations_found += biome.allowed_utilities.Count();
+                try {
+                    total_configurations_found += biome.allowed_utilities.Count();
+                } catch { }
             }
             // print stats
             Logger.print(

@@ -11,7 +11,10 @@ namespace Universum.Utilities.Biome {
         public static Properties[] GetAll() {
             Properties[] biomePropertiesArray = new Properties[DefDatabase<RimWorld.BiomeDef>.DefCount];
             foreach (RimWorld.BiomeDef biome in DefDatabase<RimWorld.BiomeDef>.AllDefs) {
-                Properties biomeProperties = ((biome.GetModExtension<Properties>() ?? DefaultsByDefName.TryGetValue(biome.defName)) ?? DefaultsByPackageId.TryGetValue(biome.modContentPack.ModMetaData.PackageIdNonUnique)) ?? new Properties();
+                Properties biomeProperties = new Properties();
+                try {
+                    biomeProperties = ((biome.GetModExtension<Properties>() ?? DefaultsByDefName.TryGetValue(biome.defName)) ?? DefaultsByPackageId.TryGetValue(biome.modContentPack.ModMetaData.PackageIdNonUnique)) ?? new Properties();
+                } catch { }
                 biomePropertiesArray[biome.index] = biomeProperties;
             }
             return biomePropertiesArray;
