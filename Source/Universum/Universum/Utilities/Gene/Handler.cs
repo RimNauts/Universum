@@ -21,7 +21,9 @@ namespace Universum.Utilities.Gene {
             total_genes_found = genes.Count();
             total_configurations_found = 0;
             foreach (Properties gene in genes) {
-                total_configurations_found += gene.allowed_utilities.Count();
+                try {
+                    total_configurations_found += gene.allowed_utilities.Count();
+                } catch { }
             }
             // print stats
             Logger.print(

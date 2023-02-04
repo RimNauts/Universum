@@ -10,7 +10,10 @@ namespace Universum.Utilities.Gene {
         public static Properties[] GetAll() {
             Properties[] genePropertiesArray = new Properties[DefDatabase<GeneDef>.DefCount];
             foreach (GeneDef gene in DefDatabase<GeneDef>.AllDefs) {
-                Properties statProperties = ((gene.GetModExtension<Properties>() ?? DefaultsByDefName.TryGetValue(gene.defName)) ?? DefaultsByPackageId.TryGetValue(gene.modContentPack.ModMetaData.PackageIdNonUnique)) ?? new Properties();
+                Properties statProperties = new Properties();
+                try {
+                    statProperties = ((gene.GetModExtension<Properties>() ?? DefaultsByDefName.TryGetValue(gene.defName)) ?? DefaultsByPackageId.TryGetValue(gene.modContentPack.ModMetaData.PackageIdNonUnique)) ?? new Properties();
+                } catch { }
                 genePropertiesArray[gene.index] = statProperties;
             }
             return genePropertiesArray;
