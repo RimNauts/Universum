@@ -106,10 +106,12 @@ namespace Universum.Utilities {
     [HarmonyPatch(typeof(RimWorld.MapInterface), "Notify_SwitchedMap")]
     public class MapInterface_Notify_SwitchedMap {
         public static bool MapIsSpace;
+        public static bool custom_temp_map;
 
         public static void Postfix() {
             if (Find.CurrentMap == null || Scribe.mode != LoadSaveMode.Inactive) return;
             MapIsSpace = Cache.allowed_utility(Find.CurrentMap, "universum.vacuum");
+            custom_temp_map = Cache.allowed_utility(Find.CurrentMap, "universum.temperature");
         }
     }
 
