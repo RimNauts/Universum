@@ -31,7 +31,13 @@ namespace Universum.Utilities {
             if (!Cache.allowed_utility("universum.vacuum_overlay")) return;
             Map map = Find.CurrentMap;
             if (Globals.rendered || !Cache.allowed_utility(map, "universum.vacuum")) return;
+            get_world_map_render();
+            if (!((List<RimWorld.Planet.WorldLayer>) typeof(RimWorld.Planet.WorldRenderer).GetField("layers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Find.World.renderer)).FirstOrFallback().ShouldRegenerate) {
+                Globals.rendered = true;
+            }
+        }
 
+        public static void get_world_map_render() {
             RenderTexture oldTexture = Find.WorldCamera.targetTexture;
             RenderTexture oldSkyboxTexture = RimWorld.Planet.WorldCameraManager.WorldSkyboxCamera.targetTexture;
 
@@ -66,10 +72,6 @@ namespace Universum.Utilities {
             RimWorld.Planet.WorldCameraManager.WorldSkyboxCamera.targetTexture = oldSkyboxTexture;
             Find.World.renderer.wantedMode = RimWorld.Planet.WorldRenderMode.None;
             Find.World.renderer.CheckActivateWorldCamera();
-
-            if (!((List<RimWorld.Planet.WorldLayer>) typeof(RimWorld.Planet.WorldRenderer).GetField("layers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Find.World.renderer)).FirstOrFallback().ShouldRegenerate) {
-                Globals.rendered = true;
-            }
         }
     }
 
