@@ -7,8 +7,8 @@ namespace Universum.Utilities {
      */
     [HarmonyLib.HarmonyPatch(typeof(ExitMapGrid), "Color", HarmonyLib.MethodType.Getter)]
     public static class ExitMapGrid_Color {
-        public static void Postfix(ref Color __result) {
-            if (!MapInterface_Notify_SwitchedMap.MapIsSpace) return;
+        public static void Postfix(ref ExitMapGrid __instance, ref Color __result) {
+            if (!Cache.allowed_utility(__instance.map, "universum.vacuum")) return;
             __result.a = 0;
         }
     }
