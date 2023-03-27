@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
-using System.Reflection;
 using Verse;
 
 namespace Universum.Utilities {
@@ -22,18 +21,18 @@ namespace Universum.Utilities {
 
     [HarmonyPatch(typeof(RoomTempTracker), "WallEqualizationTempChangePerInterval")]
     public static class RoomTempTracker_WallEqualizationTempChangePerInterval {
-        public static void Postfix(ref float __result) {
-            if (!Cache.allowed_utility(Find.CurrentMap, "universum.vacuum")) return;
-            if (!Cache.allowed_utility(Find.CurrentMap, "universum.temperature")) return;
+        public static void Postfix(ref RoomTempTracker __instance, ref float __result) {
+            if (!Cache.allowed_utility(__instance.Map, "universum.vacuum")) return;
+            if (!Cache.allowed_utility(__instance.Map, "universum.temperature")) return;
             __result *= 0.01f;
         }
     }
 
     [HarmonyPatch(typeof(RoomTempTracker), "ThinRoofEqualizationTempChangePerInterval")]
     public static class RoomTempTracker_ThinRoofEqualizationTempChangePerInterval {
-        public static void Postfix(ref float __result) {
-            if (!Cache.allowed_utility(Find.CurrentMap, "universum.vacuum")) return;
-            if (!Cache.allowed_utility(Find.CurrentMap, "universum.temperature")) return;
+        public static void Postfix(ref RoomTempTracker __instance, ref float __result) {
+            if (!Cache.allowed_utility(__instance.Map, "universum.vacuum")) return;
+            if (!Cache.allowed_utility(__instance.Map, "universum.temperature")) return;
             __result *= 0.01f;
         }
     }
@@ -41,11 +40,10 @@ namespace Universum.Utilities {
     [HarmonyPatch(typeof(RoomTempTracker), "EqualizeTemperature")]
     public static class RoomTempTracker_EqualizeTemperature {
         public static void Postfix(RoomTempTracker __instance) {
-            if (!Cache.allowed_utility(Find.CurrentMap, "universum.vacuum")) return;
-            if (!Cache.allowed_utility(Find.CurrentMap, "universum.temperature")) return;
-            Room room = (Room) typeof(RoomTempTracker).GetField("room", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
-            if (room.OpenRoofCount <= 0) return;
-            __instance.Temperature = Cache.temperature(room.Map);
+            if (!Cache.allowed_utility(__instance.Map, "universum.vacuum")) return;
+            if (!Cache.allowed_utility(__instance.Map, "universum.temperature")) return;
+            if (__instance.room.OpenRoofCount <= 0) return;
+            __instance.Temperature = Cache.temperature(__instance.Map);
         }
     }
 
