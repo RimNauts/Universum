@@ -8,5 +8,6 @@ namespace Universum {
         public static RenderTexture render = new RenderTexture(2048, 2048, 16);
         public static Material planet_mat = MaterialPool.MatFrom(planet_screenshot);
         public static bool rendered = false;
+        public static float planet_render_altitude = 1100f;
     }
 }
