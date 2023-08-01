@@ -25,8 +25,6 @@ namespace Universum.Utilities {
      */
     [HarmonyPatch(typeof(MapDrawer), "DrawMapMesh", null)]
     public static class MapDrawer_DrawMapMesh {
-        public const float altitude = 1100f;
-
         public static void Prefix() {
             if (!Cache.allowed_utility("universum.vacuum_overlay")) return;
             Map map = Find.CurrentMap;
@@ -43,10 +41,10 @@ namespace Universum.Utilities {
 
             Find.World.renderer.wantedMode = RimWorld.Planet.WorldRenderMode.Planet;
             Find.WorldCameraDriver.JumpTo(Find.CurrentMap.Tile);
-            Find.WorldCameraDriver.altitude = altitude;
+            Find.WorldCameraDriver.altitude = Globals.planet_render_altitude;
             Find.WorldCameraDriver.GetType()
                 .GetField("desiredAltitude", BindingFlags.NonPublic | BindingFlags.Instance)
-                .SetValue(Find.WorldCameraDriver, altitude);
+                .SetValue(Find.WorldCameraDriver, Globals.planet_render_altitude);
 
             float aspect = (float) UI.screenWidth / UI.screenHeight;
 

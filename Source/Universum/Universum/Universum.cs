@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Verse;
+using UnityEngine;
 
 namespace Universum {
     [StaticConstructorOnStartup]
@@ -23,6 +24,17 @@ namespace Universum {
             Utilities.Biome.Handler.init();
             Utilities.Terrain.Handler.init();
             if (ModsConfig.BiotechActive) Utilities.Gene.Handler.init();
+            // branch if camera+ patch needs to be applied
+            if (ModsConfig.IsActive("brrainz.cameraplus")) {
+                Globals.planet_mat.mainTextureOffset = new Vector2(0.3f, 0.3f);
+                Globals.planet_mat.mainTextureScale = new Vector2(0.4f, 0.4f);
+                Globals.planet_render_altitude *= 1.6f;
+                Logger.print(
+                    Logger.Importance.Info,
+                    key: "Universum.Info.camera_patch_applied",
+                    prefix: Style.tab
+                );
+            }
         }
     }
 }
