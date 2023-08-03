@@ -86,12 +86,14 @@ namespace Universum.Utilities {
                 TerrainDef terrain1 = ___section.map.terrainGrid.TerrainAt(cell);
                 if (Cache.allowed_utility(terrain1, "universum.vacuum_overlay")) {
                     foundSpace = true;
-                    Printer_Mesh.PrintMesh(__instance, Matrix4x4.TRS(cell.ToVector3() + new Vector3(0.5f, 0f, 0.5f), Quaternion.identity, Vector3.one), MeshMakerPlanes.NewPlaneMesh(1f), Globals.planet_mat);
+                    Material mat = Globals.planet_mat;
+                    if (terrain1.defName == "RimNauts2_Vacuum_Glass") mat = Globals.planet_mat_glass;
+                    Printer_Mesh.PrintMesh(__instance, Matrix4x4.TRS(cell.ToVector3() + new Vector3(0.5f, 0f, 0.5f), Quaternion.identity, Vector3.one), MeshMakerPlanes.NewPlaneMesh(1f), mat);
                 }
             }
             if (!foundSpace) {
                 for (int i = 0; i < __instance.subMeshes.Count; i++) {
-                    if (__instance.subMeshes[i].material == Globals.planet_mat) {
+                    if (__instance.subMeshes[i].material == Globals.planet_mat || __instance.subMeshes[i].material == Globals.planet_mat_glass) {
                         __instance.subMeshes.RemoveAt(i);
                     }
                 }
@@ -168,8 +170,9 @@ namespace Universum.Utilities {
             MeshRecalculateHelper.Tasks.Clear();
             foreach (var layer in MeshRecalculateHelper.LayersToDraw) {
                 var mesh = layer.GetSubMesh(Globals.planet_mat);
-                if (!mesh.finalized || mesh.disabled) continue;
-                Graphics.DrawMesh(mesh.mesh, Vector3.zero, Quaternion.identity, mesh.material, 0);
+                var mesh_glass = layer.GetSubMesh(Globals.planet_mat_glass);
+                if (!(!mesh.finalized || mesh.disabled)) Graphics.DrawMesh(mesh.mesh, Vector3.zero, Quaternion.identity, mesh.material, 0);
+                if (!(!mesh_glass.finalized || mesh_glass.disabled)) Graphics.DrawMesh(mesh_glass.mesh, Vector3.zero, Quaternion.identity, mesh_glass.material, 0);
             }
             MeshRecalculateHelper.LayersToDraw.Clear();
         }
@@ -196,6 +199,8 @@ namespace Universum.Utilities {
         public static void recalculate_layer(SectionLayer instance) {
             var mesh = instance.GetSubMesh(Globals.planet_mat);
             Tasks.Add(Task.Factory.StartNew(() => recalculate_mesh(mesh)));
+            var mesh_glass = instance.GetSubMesh(Globals.planet_mat_glass);
+            Tasks.Add(Task.Factory.StartNew(() => recalculate_mesh(mesh_glass)));
             LayersToDraw.Add(instance);
         }
 
