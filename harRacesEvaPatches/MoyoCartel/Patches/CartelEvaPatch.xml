@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+        <!-- CARTEL EXECUTIONER GEAR PATCH -->
+        <Operation Class="PatchOperationConditional">
+            <xpath>Defs/ThingDef[defName="Moyo_CEsuit" or defName="Moyo_CEhelmet"]/apparel/tags</xpath>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/ThingDef[defName="Moyo_CEsuit" or defName="Moyo_CEhelmet"]/apparel</xpath>
+                <value>
+                    <tags />
+                </value>
+            </nomatch>
+        </Operation>
+        <Operation Class="PatchOperationAdd">
+            <xpath>Defs/ThingDef[defName="Moyo_CEsuit" or defName="Moyo_CEhelmet"]/apparel/tags</xpath>
+            <value>
+                <li>EVA</li>
+            </value>
+        </Operation>
+
+        <!-- CARTEL STRIKER GEAR PATCH -->
+        <Operation Class="PatchOperationConditional">
+            <xpath>Defs/ThingDef[defName="Moyo_CSgear" or defName="Moyo_CShelmet"]/apparel/tags</xpath>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/ThingDef[defName="Moyo_CSgear" or defName="Moyo_CShelmet"]/apparel</xpath>
+                <value>
+                    <tags />
+                </value>
+            </nomatch>
+        </Operation>
+        <Operation Class="PatchOperationAdd">
+            <xpath>Defs/ThingDef[defName="Moyo_CSgear" or defName="Moyo_CShelmet"]/apparel/tags</xpath>
+            <value>
+                <li>EVA</li>
+            </value>
+        </Operation>
+</Patch>
