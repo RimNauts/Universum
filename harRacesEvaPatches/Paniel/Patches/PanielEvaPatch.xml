@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+    <!-- PANIEL RACE PATCH -->
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/AlienRace.ThingDef_AlienRace[defName="Paniel_Race"]/tradeTags</xpath>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/AlienRace.ThingDef_AlienRace[defName="Paniel_Race"]</xpath>
+            <value>
+                <tradeTags />
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/AlienRace.ThingDef_AlienRace[defName="Paniel_Race"]/tradeTags</xpath>
+        <value>
+            <li>AnimalInsectSpace</li>
+        </value>
+    </Operation>
+</Patch>
