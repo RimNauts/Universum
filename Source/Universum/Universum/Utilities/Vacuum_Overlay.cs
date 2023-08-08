@@ -8,6 +8,15 @@ using UnityEngine;
 using Verse;
 
 namespace Universum.Utilities {
+    [HarmonyPatch(typeof(RimWorld.GenCelestial), "CelestialSunGlow", argumentTypes: new Type[] { typeof(int), typeof(int) })]
+    public class GenCelestial_CelestialSunGlow {
+        public static bool Prefix(ref float __result, int tile, int ticksAbs) {
+            if (!Cache.allowed_utility(Find.World.grid.tiles.ElementAt(tile).biome, "universum.remove_shadows")) return true;
+            __result = 1.0f;
+            return false;
+        }
+    }
+
     /**
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L14
      */
