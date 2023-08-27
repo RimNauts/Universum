@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Universum.Functionality {
     /**
      * Source: https://github.com/SebLague/Procedural-Planets/blob/master/Procedural%20Planet%20Noise/Noise.cs
+     * 
+     * Some changes made by Sindre Eiklid
      */
     public static class SimplexPerlinNoise {
         // permutation table
@@ -43,10 +46,66 @@ namespace Universum.Functionality {
             new[] {0, -1, -1}
         };
 
+        public static Vector3 ApplyNoiseLayers(
+            Vector3 point,
+            List<bool> isMask,
+            List<bool> useMask,
+            List<float> noiseStrength,
+            List<float> noiseRoughness,
+            List<int> noiseIterations,
+            List<float> noisePersistence,
+            List<float> noiseBaseRoughness,
+            List<float> noiseMinValue,
+            int seed
+        ) {
+            float elevation = 0.0f;
+            float elevationMask = 1.0f;
+            for (int i = 0; i < noiseStrength.Count; i++) {
+                var layerElevation = Noise(
+                    point,
+                    noiseStrength[i],
+                    noiseRoughness[i],
+                    noiseIterations[i],
+                    noisePersistence[i],
+                    noiseBaseRoughness[i],
+                    noiseMinValue[i],
+                    seed
+                );
+                if (useMask[i]) layerElevation *= elevationMask;
+                if (isMask[i]) elevationMask = layerElevation;
+                elevation += layerElevation;
+            }
+
+            return point * (elevation + 1);
+        }
+
+        public static float Noise(
+            Vector3 point,
+            float strength,
+            float roughness,
+            int iterations,
+            float persistence,
+            float baseRoughness,
+            float minValue,
+            int seed
+        ) {
+            float noiseValue = 0;
+            float frequency = baseRoughness;
+            float amplitude = 1.0f;
+            for (int j = 0; j < iterations; j++) {
+                float v = Evaluate(point * frequency, seed);
+                noiseValue += (v + 1) * 0.5f * amplitude;
+                frequency *= roughness;
+                amplitude *= persistence;
+            }
+            noiseValue = Mathf.Max(0.0f, noiseValue - minValue);
+            return noiseValue * strength;
+        }
+
         /**
          * Generates value, typically in range [-1, 1]
          */
-        public static float Noise(Vector3 point, int seed = 0) {
+        public static float Evaluate(Vector3 point, int seed = 0) {
             double x = point.x;
             double y = point.y;
             double z = point.z;
