@@ -3,14 +3,11 @@ using UnityEngine;
 
 namespace Universum.Functionality {
     public static class IcoSphere {
-        public static void Create(Mesh mesh) {
+        public static void Create(Mesh mesh, int recursionLevel, float radius) {
             mesh.Clear();
             Vector3[] vertices = mesh.vertices;
             List<Vector3> vertList = new List<Vector3>();
             Dictionary<long, int> middlePointIndexCache = new Dictionary<long, int>();
-
-            int recursionLevel = 5;
-            float radius = 1f;
             // create 12 vertices of a icosahedron
             float t = (1f + Mathf.Sqrt(5f)) / 2f;
 
