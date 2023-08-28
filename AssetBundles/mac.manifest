@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 383717726
+CRC: 294153292
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0dfcd28f11edd5623b52f85d3fdd4ae0
+    Hash: e978228005b0c7d9c91deb2bb0f3e8eb
   TypeTreeHash:
     serializedVersion: 2
     Hash: 7e9ee104d6bb707fb2602b751e6f78b1
@@ -12,5 +12,6 @@ ClassTypes:
 - Class: 48
   Script: {instanceID: 0}
 Assets:
+- Assets/BasicShapeMetal.shader
 - Assets/BasicShape.shader
 Dependencies: []
