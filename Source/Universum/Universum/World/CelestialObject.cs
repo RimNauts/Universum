@@ -21,6 +21,7 @@ namespace Universum.World {
         public Vector3 realPosition;
         private Vector3 _currentPosition;
         private Vector3 _size;
+        private float _extraSize;
         private float _orbitSpeed;
         private int _period;
         private int _timeOffset;
@@ -56,6 +57,11 @@ namespace Universum.World {
                 gameObject.GetComponent<TMPro.TextMeshPro>().enabled = false;
                 _trailComponent = gameObject.AddComponent<TrailRenderer>();
             }
+        }
+
+        ~CelestialObject() {
+            if (_textComponent != null) UnityEngine.Object.Destroy(_textComponent.gameObject);
+            if (_trailComponent != null) UnityEngine.Object.Destroy(_trailComponent.gameObject);
         }
 
         public virtual void Randomize() {
@@ -156,7 +162,7 @@ namespace Universum.World {
             Vector3 towards_camera = Vector3.Cross(center, Vector3.up);
             _billboardingRotation = Quaternion.LookRotation(towards_camera, center);
 
-            _axialRotation = Quaternion.Euler(0, _axialRotationSpeed * tick * _orbitDirection * -1, 0);
+            _axialRotation = Quaternion.Euler(0.5f * _axialRotationSpeed * tick * _orbitDirection * -1, _axialRotationSpeed * tick * _orbitDirection * -1, 0);
 
             _rotation = _axialRotation;
         }
@@ -175,7 +181,7 @@ namespace Universum.World {
             var position = Vector3.MoveTowards(realPosition, cameraPosition, 50.0f);
             _textComponent.transform.localPosition = new Vector3(
                 position.x,
-                position.y - (_size.x + 1.0f),
+                position.y - (_size.y + 1.0f + _extraSize),
                 position.z
             );
             _textComponent.transform.localRotation = _billboardingRotation * Quaternion.Euler(90.0f, -90f, 0f);
@@ -276,7 +282,7 @@ namespace Universum.World {
         }
 
         private void _GenerateShape() {
-            _shape = new Shape(_seed, celestialObjectDef.shape.icoSphereRecursionLevel);
+            _shape = new Shape(_seed);
 
             foreach (Defs.Mesh mesh in celestialObjectDef.shape.meshes) {
                 List<bool> isMask = new List<bool>();
@@ -299,7 +305,11 @@ namespace Universum.World {
                 }
                 _shape.Add(
                     Assets.materials[mesh.materialDefName],
+                    mesh.type,
+                    mesh.subdivisionIterations,
+                    mesh.detail,
                     mesh.radius,
+                    mesh.dimensions,
                     mesh.minElevationColor,
                     mesh.maxElevationColor,
                     isMask,
@@ -312,6 +322,8 @@ namespace Universum.World {
                     noiseMinValue
                 );
             }
+
+            _extraSize = _shape.highestElevation;
         }
     }
 }

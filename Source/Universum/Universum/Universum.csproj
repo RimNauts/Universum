@@ -90,8 +90,12 @@
     <Compile Include="Defs\Shape.cs" />
     <Compile Include="Defs\DefOf.cs" />
     <Compile Include="Defs\ObjectsDef.cs" />
+    <Compile Include="Defs\ShapeType.cs" />
     <Compile Include="Defs\Trail.cs" />
+    <Compile Include="Functionality\GridMesh.cs" />
     <Compile Include="Functionality\IcoSphere.cs" />
+    <Compile Include="Functionality\LaplacianSmoothing.cs" />
+    <Compile Include="Functionality\MeshSubdivision.cs" />
     <Compile Include="Functionality\PerlinNoise.cs" />
     <Compile Include="Functionality\Random.cs" />
     <Compile Include="Globals.cs" />
