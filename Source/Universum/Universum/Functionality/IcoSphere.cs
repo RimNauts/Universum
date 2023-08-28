@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Universum.Functionality {
     public static class IcoSphere {
-        public static void Create(Mesh mesh, int recursionLevel, float radius) {
-            mesh.Clear();
+        public static Mesh Create(float radius, int recursionLevel) {
+            Mesh mesh = new Mesh();
             Vector3[] vertices = mesh.vertices;
             List<Vector3> vertList = new List<Vector3>();
             Dictionary<long, int> middlePointIndexCache = new Dictionary<long, int>();
@@ -80,6 +80,8 @@ namespace Universum.Functionality {
             mesh.triangles = triList.ToArray();
             mesh.uv = new Vector2[vertices.Length];
             mesh.normals = new Vector3[vertList.Count];
+
+            return mesh;
         }
 
         /*
