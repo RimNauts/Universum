@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
-using Universum.Functionality;
 
 namespace Universum.World {
     public class Shape {
-        public List<Mesh> meshes = new List<Mesh>();
+        public List<Functionality.Mesh> meshes = new List<Functionality.Mesh>();
         public List<Material> materials = new List<Material>();
         public float highestElevation;
         readonly int _seed;
         int _totalMeshes = 0;
-        Mesh[] _meshes = new Mesh[0];
+        UnityEngine.Mesh[] _meshes = new UnityEngine.Mesh[0];
         Material[] _materials = new Material[0];
 
         public Shape(int seed) {
@@ -36,69 +34,43 @@ namespace Universum.World {
             List<float> noiseBaseRoughness,
             List<float> noiseMinValue
         ) {
-            bool isPrev = false;
-            Mesh mesh;
+            Functionality.Mesh mesh = new Functionality.Mesh();
             switch (type) {
                 case Defs.ShapeType.SPHERE:
-                    mesh = _CloneMesh(IcoSphere.Create(radius, detail));
+                    mesh.GenerateIcoSphere(radius, detail);
+                    meshes.Add(mesh);
+                    materials.Add(material);
                     break;
                 case Defs.ShapeType.BOX:
-                    mesh = _CloneMesh(GridMesh.Create(dimensions, detail));
+                    mesh.GenerateBox(dimensions, detail);
+                    meshes.Add(mesh);
+                    materials.Add(material);
                     break;
                 case Defs.ShapeType.PREV:
                     mesh = meshes[meshes.Count - 1];
-                    for (int i = 0; i < subdivisionIterations; i++) MeshSubdivision.Subdivide(mesh);
+                    mesh.Subdivide(subdivisionIterations);
+                    materials[materials.Count - 1] = material;
                     break;
                 default:
-                    mesh = _CloneMesh(IcoSphere.Create(radius, detail));
-                    isPrev = true;
+                    mesh.GenerateIcoSphere(radius, detail);
+                    meshes.Add(mesh);
+                    materials.Add(material);
                     break;
             }
 
-            List<Vector3> vertices = mesh.vertices.ToList();
-            Color[] colors = new Color[mesh.vertices.Length];
+            mesh.ApplyNoise(
+                _seed,
+                isMask,
+                useMask,
+                noiseStrength,
+                noiseRoughness,
+                noiseIterations,
+                noisePersistence,
+                noiseBaseRoughness,
+                noiseMinValue
+            );
 
-            float minElevation = float.MaxValue;
-            float MaxElevation = float.MinValue;
-
-            for (int i = 0; i < vertices.Count; i++) {
-                vertices[i] = SimplexPerlinNoise.ApplyNoiseLayers(
-                    vertices[i],
-                    isMask,
-                    useMask,
-                    noiseStrength,
-                    noiseRoughness,
-                    noiseIterations,
-                    noisePersistence,
-                    noiseBaseRoughness,
-                    noiseMinValue,
-                    _seed
-                );
-
-                float dist = Vector3.Distance(vertices[i], Vector3.zero);
-                if (dist < minElevation) minElevation = dist;
-                if (dist > MaxElevation) MaxElevation = dist;
-            }
-
-            if (highestElevation < MaxElevation) highestElevation = MaxElevation;
-
-            for (int i = 0; i < vertices.Count; i++) {
-                float dist = Vector3.Distance(vertices[i], Vector3.zero);
-                float distNorm = (dist - minElevation) / (MaxElevation - minElevation);
-
-                colors[i] = Color.Lerp(minElevationColor, maxElevationColor, distNorm * 0.9f);
-            }
-
-            mesh.vertices = vertices.ToArray();
-            mesh.colors = colors;
-
-            if (!isPrev) {
-                meshes.Add(mesh);
-                materials.Add(material);
-            } else {
-                meshes[meshes.Count - 1] = mesh;
-                materials[materials.Count - 1] = material;
-            }
+            mesh.GenerateColors(minElevationColor, maxElevationColor);
 
             Recache();
         }
@@ -129,25 +101,9 @@ namespace Universum.World {
             _materials = new Material[_totalMeshes];
 
             for (int i = 0; i < _totalMeshes; i++) {
-                meshes[i].RecalculateBounds();
-                meshes[i].RecalculateTangents();
-                meshes[i].RecalculateNormals();
-
-                _meshes[i] = meshes[i];
+                _meshes[i] = meshes[i].GetUnityMesh();
                 _materials[i] = materials[i];
             }
-        }
-
-        private Mesh _CloneMesh(Mesh mesh) {
-            Mesh newMesh = new Mesh();
-            newMesh.Clear();
-
-            newMesh.vertices = (Vector3[]) mesh.vertices.Clone();
-            newMesh.triangles = (int[]) mesh.triangles.Clone();
-            newMesh.uv = (Vector2[]) mesh.uv.Clone();
-            newMesh.colors = new Color[mesh.vertices.Length];
-
-            return newMesh;
         }
     }
 }
