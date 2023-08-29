@@ -133,19 +133,19 @@ namespace Universum.World {
 
         }
 
-        public virtual void Update(int tick, Vector3 cameraPosition, Vector3 center) {
-            CheckHideTextComponent(cameraPosition, center);
-            UpdateRotation(tick, center);
+        public virtual void Update() {
+            CheckHideTextComponent(Game.MainLoop.camera.transform.position, Game.MainLoop.cameraDriver.CurrentlyLookingAtPointOnSphere);
+            UpdateRotation(Game.MainLoop.tickManager.TicksGame, Game.MainLoop.cameraDriver.CurrentlyLookingAtPointOnSphere);
             UpdateTransformationMatrix();
         }
 
-        public virtual void UpdateSingleThread(Vector3 cameraPosition, float altitudePercent, TimeSpeed speed) {
-            UpdateTextComponentTransformationMatrix(cameraPosition, altitudePercent);
-            UpdateTrailComponentTransformationMatrix(speed);
+        public virtual void UpdateSingleThread() {
+            UpdateTextComponentTransformationMatrix(Game.MainLoop.camera.transform.position, Game.MainLoop.cameraDriver.AltitudePercent);
+            UpdateTrailComponentTransformationMatrix(Game.MainLoop.tickManager.curTimeSpeed);
         }
 
-        public virtual void UpdateWhenUnpaused(int tick) {
-            UpdatePosition(tick);
+        public virtual void UpdateWhenUnpaused() {
+            UpdatePosition(Game.MainLoop.tickManager.TicksGame);
         }
 
         public virtual void UpdateWhenCameraMoved() { }

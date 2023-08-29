@@ -98,6 +98,7 @@
     <Compile Include="Functionality\MeshSubdivision.cs" />
     <Compile Include="Functionality\PerlinNoise.cs" />
     <Compile Include="Functionality\Random.cs" />
+    <Compile Include="Game\MainLoop.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logger.cs" />

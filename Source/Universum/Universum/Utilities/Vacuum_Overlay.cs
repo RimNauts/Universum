@@ -127,7 +127,7 @@ namespace Universum.Utilities {
     /**
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L126
      */
-    [HarmonyPatch(typeof(Game), "LoadGame")]
+    [HarmonyPatch(typeof(Verse.Game), "LoadGame")]
     public class Game_LoadGame {
         public static void Postfix() {
             Globals.rendered = false;
@@ -138,7 +138,7 @@ namespace Universum.Utilities {
     /**
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L153
      */
-    [HarmonyPatch(typeof(Game), "UpdatePlay")]
+    [HarmonyPatch(typeof(Verse.Game), "UpdatePlay")]
     public class Game_UpdatePlay {
         public static CameraDriver Driver;
         public static Camera GameCamera;
@@ -190,7 +190,7 @@ namespace Universum.Utilities {
     /**
      * Source: https://github.com/SonicTHI/SaveOurShip2Experimental/blob/ecaf9bba7975524b61bb1d7f1a37655f5be35e20/Source/1.4/HideLightingLayersInSpace.cs#L138
      */
-    [HarmonyPatch(typeof(Game), "FinalizeInit")]
+    [HarmonyPatch(typeof(Verse.Game), "FinalizeInit")]
     public class Game_FinalizeInit {
         public static void Postfix() {
             Game_UpdatePlay.Driver = Find.CameraDriver;
@@ -281,7 +281,7 @@ namespace Universum.Utilities {
         public static void Prefix() => Globals.rendered = false;
     }
 
-    [HarmonyPatch(typeof(Game), "InitNewGame")]
+    [HarmonyPatch(typeof(Verse.Game), "InitNewGame")]
     public class Game_GameInitData {
         public static void Prefix() => Globals.rendered = false;
     }
