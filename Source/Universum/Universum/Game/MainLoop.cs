@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 
@@ -19,14 +20,14 @@ namespace Universum.Game {
         public bool dirtyCache = false;
 
         private bool _wait = false;
-        private bool _forceUpdate = true;
+        public bool forceUpdate = true;
         private bool _prevWorldSceneRendered = false;
-        private bool _worldSceneActivated = false;
-        private bool _worldSceneDeactivated = false;
-        private bool _unpaused = false;
+        public bool worldSceneActivated = false;
+        public bool worldSceneDeactivated = false;
+        public bool unpaused = false;
         private int _prevTick;
+        public bool cameraMoved = false;
         private Vector3 _prevCameraPosition;
-        private bool _cameraMoved = false;
         private bool _frameChanged = false;
 
         private List<string> _exposeCelestialObjectDefNames = new List<string>();
@@ -69,8 +70,8 @@ namespace Universum.Game {
         public override void GameComponentUpdate() {
             _GetFrameData();
             if (dirtyCache) _Recache();
-            if (_wait && !_forceUpdate) return;
-            if (_frameChanged || _forceUpdate) _Update();
+            if (_wait && !forceUpdate) return;
+            if (_frameChanged || forceUpdate) _Update();
             _Render();
         }
 
@@ -89,46 +90,40 @@ namespace Universum.Game {
                 _wait = true;
                 return;
             }
-            _wait = !RimWorld.Planet.WorldRendererUtility.WorldRenderedNow && !_forceUpdate;
-            if (!_wait) _forceUpdate = false;
+            _wait = !RimWorld.Planet.WorldRendererUtility.WorldRenderedNow && !forceUpdate;
+            if (!_wait) forceUpdate = false;
 
             bool sceneIsWorld = RimWorld.Planet.WorldRendererUtility.WorldRenderedNow;
             bool sceneSwitched = _prevWorldSceneRendered != sceneIsWorld;
             _prevWorldSceneRendered = RimWorld.Planet.WorldRendererUtility.WorldRenderedNow;
 
-            if (sceneSwitched) _forceUpdate = true;
+            if (sceneSwitched) forceUpdate = true;
 
-            _worldSceneActivated = sceneSwitched && sceneIsWorld;
-            _worldSceneDeactivated = sceneSwitched && !sceneIsWorld;
+            worldSceneActivated = sceneSwitched && sceneIsWorld;
+            worldSceneDeactivated = sceneSwitched && !sceneIsWorld;
 
-            _unpaused = tickManager.TicksGame != _prevTick;
+            unpaused = tickManager.TicksGame != _prevTick;
             _prevTick = tickManager.TicksGame;
 
-            _cameraMoved = camera.transform.position != _prevCameraPosition;
+            cameraMoved = camera.transform.position != _prevCameraPosition;
             _prevCameraPosition = camera.transform.position;
 
-            _frameChanged = _unpaused || _cameraMoved;
+            _frameChanged = unpaused || cameraMoved;
         }
 
         private void _Update() {
-            for (int i = 0; i < _totalCelestialObjectsCached; i++) {
-                _celestialObjectsCache[i].Update();
-                if (_worldSceneActivated) _celestialObjectsCache[i].OnWorldSceneActivated();
-                if (_worldSceneDeactivated) _celestialObjectsCache[i].OnWorldSceneDeactivated();
-                if (_unpaused || _forceUpdate) _celestialObjectsCache[i].OnUnpaused();
-                if (_cameraMoved || _forceUpdate) _celestialObjectsCache[i].OnCameraMoved();
-            }
+            for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Update();
+
+            //Parallel.For(0, _totalCelestialObjectsCached, new ParallelOptions { MaxDegreeOfParallelism = 4 }, i => { _celestialObjectsCache[i].Update(); });
         }
 
         private void _Render() {
-            for (int i = 0; i < _totalCelestialObjectsCached; i++) {
-                _celestialObjectsCache[i].Render();
-            }
+            for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Render();
         }
 
         private void _Recache() {
             dirtyCache = false;
-            _forceUpdate = true;
+            forceUpdate = true;
 
             tickManager = Find.TickManager;
             camera = Find.WorldCamera.GetComponent<Camera>();
@@ -141,6 +136,7 @@ namespace Universum.Game {
                 _celestialObjectsCache[i] = _celestialObjects[i];
                 _celestialObjectsCache[i].Recache();
             }
+
             if (tickManager != null || camera != null || cameraDriver != null) _Update();
         }
     }

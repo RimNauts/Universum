@@ -1,15 +1,30 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Universum.World {
     public class Shape {
         public float highestElevation;
-        readonly List<Functionality.Mesh> _meshes = new List<Functionality.Mesh>();
-        readonly List<Material> _materials = new List<Material>();
+        List<Functionality.Mesh> _meshes = new List<Functionality.Mesh>();
+        List<Material> _materials = new List<Material>();
         readonly int _seed;
 
         public Shape(int seed) {
             _seed = seed;
+        }
+
+        public void CompressData() {
+            if (_meshes.Count <= 1) return;
+
+            Dictionary<Material, Functionality.Mesh> meshMaterialMap = new Dictionary<Material, Functionality.Mesh>();
+            for (int i = 0; i < _meshes.Count; i++) {
+                if (meshMaterialMap.TryGetValue(_materials[i], out var mesh)) {
+                    mesh.Merge(_meshes[i]);
+                } else meshMaterialMap[_materials[i]] = _meshes[i];
+            }
+
+            _materials = meshMaterialMap.Keys.ToList();
+            _meshes = meshMaterialMap.Values.ToList();
         }
 
         public Mesh[] GetMeshes() {

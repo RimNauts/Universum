@@ -25,7 +25,7 @@ namespace Universum.Functionality {
         }
 
         public void Merge(Mesh secondMesh) {
-            int incrementValue = _triangles.Count;
+            int incrementValue = _vertices.Count;
             secondMesh._triangles = secondMesh._triangles.Select(x => x + incrementValue).ToList();
 
             _vertices.AddRange(secondMesh._vertices);
@@ -40,7 +40,7 @@ namespace Universum.Functionality {
             for (int i = 0; i < iterations; i++) {
                 List<Vector3> newVertices = new List<Vector3>(_vertices);
                 List<int> newTriangles = new List<int>();
-                // Dictionary to store midpoints
+                
                 Dictionary<string, int> edgeMidpoints = new Dictionary<string, int>();
 
                 for (int j = 0; j < _triangles.Count; j += 3) {
@@ -48,12 +48,10 @@ namespace Universum.Functionality {
                     int i2 = _triangles[j + 1];
                     int i3 = _triangles[j + 2];
 
-                    // Calculate midpoints
                     int m1 = _GetMidpointIndex(i1, i2, newVertices, edgeMidpoints);
                     int m2 = _GetMidpointIndex(i2, i3, newVertices, edgeMidpoints);
                     int m3 = _GetMidpointIndex(i3, i1, newVertices, edgeMidpoints);
 
-                    // Create new triangles
                     newTriangles.Add(i1); newTriangles.Add(m1); newTriangles.Add(m3);
                     newTriangles.Add(m1); newTriangles.Add(i2); newTriangles.Add(m2);
                     newTriangles.Add(m3); newTriangles.Add(m2); newTriangles.Add(i3);
@@ -86,7 +84,6 @@ namespace Universum.Functionality {
                         newVertices[i] = _vertices[i];
                     }
                 }
-
                 _vertices = newVertices.ToList();
             }
         }

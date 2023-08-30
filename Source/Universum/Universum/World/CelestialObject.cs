@@ -10,34 +10,34 @@ namespace Universum.World {
 
         public string name;
 
-        private int _totalMeshes = 0;
-        private Mesh[] _meshes = new Mesh[0];
-        private Material[] _materials = new Material[0];
-        private bool _generatingShape = false;
+        protected int _totalMeshes = 0;
+        protected Mesh[] _meshes = new Mesh[0];
+        protected Material[] _materials = new Material[0];
+        protected bool _generatingShape = false;
 
         public int seed;
-        private Functionality.Random _rand;
-        private Shape _shape;
-        private Matrix4x4 _transformationMatrix = Matrix4x4.identity;
-        private Quaternion _rotation = Quaternion.identity;
+        protected Functionality.Random _rand;
+        protected Shape _shape;
+        protected Matrix4x4 _transformationMatrix = Matrix4x4.identity;
+        protected Quaternion _rotation = Quaternion.identity;
         public Quaternion billboardRotation = Quaternion.identity;
-        private Quaternion _axialRotation = Quaternion.identity;
-        private CelestialObject _orbitTarget;
+        protected Quaternion _axialRotation = Quaternion.identity;
+        protected CelestialObject _orbitTarget;
 
         public Vector3 realPosition;
         public Vector3 currentPosition;
         public Vector3 size;
         public float extraSize;
-        private float _orbitSpeed;
-        private int _period;
-        private int _timeOffset;
-        private Vector3 _orbitPath;
-        private Vector3 _orbitSpread;
-        private int _orbitDirection;
-        private float _axialRotationSpeed;
-        private Vector3 _orbitPosition;
+        protected float _orbitSpeed;
+        protected int _period;
+        protected int _timeOffset;
+        protected Vector3 _orbitPath;
+        protected Vector3 _orbitSpread;
+        protected int _orbitDirection;
+        protected float _axialRotationSpeed;
+        protected Vector3 _orbitPosition;
 
-        private readonly List<ObjectComponent> _components = new List<ObjectComponent>();
+        protected ObjectComponent[] _components = new ObjectComponent[0];
 
         public CelestialObject(string celestialObjectDefName) {
             def = Defs.Loader.celestialObjects[celestialObjectDefName];
@@ -85,25 +85,17 @@ namespace Universum.World {
             this.currentPosition = currentPosition ?? _orbitPath;
         }
 
-        public virtual void OnWorldSceneActivated() {
-            foreach (var component in _components) component.OnWorldSceneActivated();
-        }
-
-        public virtual void OnWorldSceneDeactivated() {
-            foreach (var component in _components) component.OnWorldSceneDeactivated();
-        }
-
         public virtual void Update() {
+            if (Game.MainLoop.instance.unpaused || Game.MainLoop.instance.forceUpdate) UpdatePosition(Game.MainLoop.tickManager.TicksGame);
             UpdateRotation(Game.MainLoop.tickManager.TicksGame, Game.MainLoop.cameraDriver.CurrentlyLookingAtPointOnSphere);
             UpdateTransformationMatrix();
-            foreach(var component in _components) component.Update();
-        }
 
-        public virtual void OnUnpaused() {
-            UpdatePosition(Game.MainLoop.tickManager.TicksGame);
+            for (int i = 0; i < _components.Length; i++) {
+                _components[i].Update();
+                if (Game.MainLoop.instance.worldSceneActivated) _components[i].OnWorldSceneActivated();
+                if (Game.MainLoop.instance.worldSceneDeactivated) _components[i].OnWorldSceneDeactivated();
+            }
         }
-
-        public virtual void OnCameraMoved() { }
 
         public virtual void UpdatePosition(int tick) {
             float time = _orbitSpeed * _orbitDirection * tick + _timeOffset;
@@ -158,13 +150,16 @@ namespace Universum.World {
             extraSize = _shape.highestElevation;
             _shape = null;
 
+            List<ObjectComponent> objectComponents = new List<ObjectComponent>();
             foreach (var componentDef in def.components) {
                 ObjectComponent component = (ObjectComponent) Activator.CreateInstance(
                     componentDef.componentClass,
                     new object[] { this, componentDef }
                 );
-                _components.Add(component);
+                objectComponents.Add(component);
             }
+
+            _components = objectComponents.ToArray();
         }
 
         public virtual Vector3 GetOrbitAroundPosition() {
@@ -191,7 +186,7 @@ namespace Universum.World {
             }
         }
 
-        private void _GenerateShape() {
+        protected void _GenerateShape() {
             _generatingShape = true;
 
             _shape = new Shape(seed);
@@ -236,6 +231,8 @@ namespace Universum.World {
                     noiseMinValue
                 );
             }
+
+            _shape.CompressData();
 
             _generatingShape = false;
         }
