@@ -78,7 +78,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Debug_Tools\Actions.cs" />
     <Compile Include="Defs\CelestialObject.cs" />
-    <Compile Include="Defs\FloatingLabel.cs" />
+    <Compile Include="Defs\Component.cs" />
     <Compile Include="Defs\Icon.cs" />
     <Compile Include="Defs\Loader.cs" />
     <Compile Include="Defs\Material.cs" />
@@ -91,7 +91,6 @@
     <Compile Include="Defs\DefOf.cs" />
     <Compile Include="Defs\ObjectsDef.cs" />
     <Compile Include="Defs\ShapeType.cs" />
-    <Compile Include="Defs\Trail.cs" />
     <Compile Include="Functionality\Mesh.cs" />
     <Compile Include="Functionality\PerlinNoise.cs" />
     <Compile Include="Functionality\Random.cs" />
@@ -117,9 +116,13 @@
     <Compile Include="Utilities\Vacuum_Overlay.cs" />
     <Compile Include="Utilities\Vacuum_Damage.cs" />
     <Compile Include="World\CelestialObject.cs" />
+    <Compile Include="World\Component\Trail.cs" />
     <Compile Include="World\Generator.cs" />
+    <Compile Include="World\ObjectComponent.cs" />
+    <Compile Include="World\ObjectHolder.cs" />
     <Compile Include="World\Objects\Moon.cs" />
     <Compile Include="World\Shape.cs" />
+    <Compile Include="World\Component\FloatingLabel.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Krafs.Publicizer" Version="2.*">

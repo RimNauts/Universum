@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -15,8 +16,7 @@ namespace Universum.Defs {
         public OrbitDirection orbitDirection = OrbitDirection.LEFT;
         public Vector2 axialRotationSpeedBetween = Vector2.one;
 
-        public FloatingLabel floatingLabel;
-        public Trail trail;
+        public List<Component> components = new List<Component>();
 
         public Shape shape;
         public Icon icon;

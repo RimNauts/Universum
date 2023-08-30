@@ -4,17 +4,17 @@ using UnityEngine;
 
 namespace Universum.Functionality {
     public class Mesh {
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
-        List<Color> colors = new List<Color>();
-        float minElevation;
-        float maxElevation;
+        public float minElevation;
+        public float maxElevation;
+        List<Vector3> _vertices = new List<Vector3>();
+        List<int> _triangles = new List<int>();
+        List<Color> _colors = new List<Color>();
 
         public UnityEngine.Mesh GetUnityMesh() {
             UnityEngine.Mesh unityMesh = new UnityEngine.Mesh {
-                vertices = vertices.ToArray(),
-                triangles = triangles.ToArray(),
-                colors = colors.ToArray()
+                vertices = _vertices.ToArray(),
+                triangles = _triangles.ToArray(),
+                colors = _colors.ToArray()
             };
 
             unityMesh.RecalculateBounds();
@@ -25,25 +25,28 @@ namespace Universum.Functionality {
         }
 
         public void Merge(Mesh secondMesh) {
-            int incrementValue = triangles.Count;
-            secondMesh.triangles = secondMesh.triangles.Select(x => x + incrementValue).ToList();
+            int incrementValue = _triangles.Count;
+            secondMesh._triangles = secondMesh._triangles.Select(x => x + incrementValue).ToList();
 
-            vertices.AddRange(secondMesh.vertices);
-            triangles.AddRange(secondMesh.triangles);
-            colors.AddRange(secondMesh.colors);
+            _vertices.AddRange(secondMesh._vertices);
+            _triangles.AddRange(secondMesh._triangles);
+            _colors.AddRange(secondMesh._colors);
+
+            if (minElevation > secondMesh.minElevation) minElevation = secondMesh.minElevation;
+            if (maxElevation < secondMesh.maxElevation) maxElevation = secondMesh.maxElevation;
         }
 
         public void Subdivide(int iterations = 1) {
             for (int i = 0; i < iterations; i++) {
-                List<Vector3> newVertices = new List<Vector3>(vertices);
+                List<Vector3> newVertices = new List<Vector3>(_vertices);
                 List<int> newTriangles = new List<int>();
                 // Dictionary to store midpoints
                 Dictionary<string, int> edgeMidpoints = new Dictionary<string, int>();
 
-                for (int j = 0; j < triangles.Count; j += 3) {
-                    int i1 = triangles[j];
-                    int i2 = triangles[j + 1];
-                    int i3 = triangles[j + 2];
+                for (int j = 0; j < _triangles.Count; j += 3) {
+                    int i1 = _triangles[j];
+                    int i2 = _triangles[j + 1];
+                    int i3 = _triangles[j + 2];
 
                     // Calculate midpoints
                     int m1 = _GetMidpointIndex(i1, i2, newVertices, edgeMidpoints);
@@ -57,34 +60,34 @@ namespace Universum.Functionality {
                     newTriangles.Add(m1); newTriangles.Add(m2); newTriangles.Add(m3);
                 }
 
-                vertices = newVertices;
-                triangles = newTriangles;
+                _vertices = newVertices;
+                _triangles = newTriangles;
             }
         }
 
         public void LaplacianSmoothing(float lambda, int iterations) {
-            Vector3[] newVertices = new Vector3[vertices.Count];
+            Vector3[] newVertices = new Vector3[_vertices.Count];
 
             for (int iter = 0; iter < iterations; iter++) {
-                for (int i = 0; i < vertices.Count; i++) {
+                for (int i = 0; i < _vertices.Count; i++) {
                     Vector3 sum = Vector3.zero;
                     int count = 0;
 
-                    for (int j = 0; j < triangles.Count; j += 3) {
-                        if (triangles[j] == i || triangles[j + 1] == i || triangles[j + 2] == i) {
-                            sum += vertices[triangles[j]] + vertices[triangles[j + 1]] + vertices[triangles[j + 2]];
+                    for (int j = 0; j < _triangles.Count; j += 3) {
+                        if (_triangles[j] == i || _triangles[j + 1] == i || _triangles[j + 2] == i) {
+                            sum += _vertices[_triangles[j]] + _vertices[_triangles[j + 1]] + _vertices[_triangles[j + 2]];
                             count += 3;
                         }
                     }
 
                     if (count > 0) {
-                        newVertices[i] = vertices[i] + lambda * (sum / count - vertices[i]);
+                        newVertices[i] = _vertices[i] + lambda * (sum / count - _vertices[i]);
                     } else {
-                        newVertices[i] = vertices[i];
+                        newVertices[i] = _vertices[i];
                     }
                 }
 
-                vertices = newVertices.ToList();
+                _vertices = newVertices.ToList();
             }
         }
 
@@ -102,9 +105,9 @@ namespace Universum.Functionality {
             minElevation = float.MaxValue;
             maxElevation = float.MinValue;
 
-            for (int i = 0; i < vertices.Count; i++) {
-                vertices[i] = SimplexPerlinNoise.ApplyNoiseLayers(
-                    vertices[i],
+            for (int i = 0; i < _vertices.Count; i++) {
+                _vertices[i] = SimplexPerlinNoise.ApplyNoiseLayers(
+                    _vertices[i],
                     isMask,
                     useMask,
                     noiseStrength,
@@ -116,22 +119,22 @@ namespace Universum.Functionality {
                     seed
                 );
 
-                float dist = Vector3.Distance(vertices[i], Vector3.zero);
+                float dist = Vector3.Distance(_vertices[i], Vector3.zero);
                 if (dist < minElevation) minElevation = dist;
                 if (dist > maxElevation) maxElevation = dist;
             }
         }
 
         public void GenerateColors(Color minElevationColor, Color maxElevationColor) {
-            Color[] newColors = new Color[vertices.Count];
-            for (int i = 0; i < vertices.Count; i++) {
-                float dist = Vector3.Distance(vertices[i], Vector3.zero);
+            Color[] newColors = new Color[_vertices.Count];
+            for (int i = 0; i < _vertices.Count; i++) {
+                float dist = Vector3.Distance(_vertices[i], Vector3.zero);
                 float distNorm = (dist - minElevation) / (maxElevation - minElevation);
 
                 newColors[i] = Color.Lerp(minElevationColor, maxElevationColor, distNorm * 0.9f);
             }
 
-            colors = newColors.ToList();
+            _colors = newColors.ToList();
         }
 
         public void GenerateIcoSphere(float radius, int recursionLevel) {
@@ -205,8 +208,8 @@ namespace Universum.Functionality {
                 newTriangles.Add(faces[i].z);
             }
 
-            vertices = newVertices;
-            triangles = newTriangles;
+            _vertices = newVertices;
+            _triangles = newTriangles;
         }
 
         public void GenerateBox(Vector3 dimensions, int detail) {
@@ -250,7 +253,7 @@ namespace Universum.Functionality {
                     for (int j = 0; j <= detail; j++) {
                         float x = j * size.x / detail - size.x / 2;
                         float y = i * size.y / detail - size.y / 2;
-                        vertices[v] = normal * size.z / 2 + right * x + up * y;
+                        _vertices[v] = normal * size.z / 2 + right * x + up * y;
                         v++;
 
                         if (i < detail && j < detail) {
@@ -270,8 +273,8 @@ namespace Universum.Functionality {
                 }
             }
 
-            vertices = newVertices.ToList();
-            triangles = newTriangles.ToList();
+            _vertices = newVertices.ToList();
+            _triangles = newTriangles.ToList();
         }
 
         private int _GetMidpointIndex(int i1, int i2, List<Vector3> vertices, Dictionary<string, int> edgeMidpoints) {
