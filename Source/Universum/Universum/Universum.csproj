@@ -85,6 +85,8 @@
     <Compile Include="Defs\Mesh.cs" />
     <Compile Include="Defs\NamePack.cs" />
     <Compile Include="Defs\Noise.cs" />
+    <Compile Include="Defs\ObjectGeneration.cs" />
+    <Compile Include="Defs\ObjectGenerationChance.cs" />
     <Compile Include="Defs\ObjectHolder.cs" />
     <Compile Include="Defs\OrbitDirection.cs" />
     <Compile Include="Defs\Shape.cs" />

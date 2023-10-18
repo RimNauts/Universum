@@ -5,7 +5,19 @@ using UnityEngine;
 using Verse;
 
 namespace Universum.World {
-    public static class Generator {
+    public class Generator : WorldGenStep {
+        public override int SeedPart => 0;
+
+        public override void GenerateFresh(string seed) {
+            List<string> celestialObjectDefNames = new List<string>();
+            foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationSteps.Values) {
+                for (int i = 0; i < objectGenerationStep.total; i++) {
+                    celestialObjectDefNames.Add(objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName);
+                }
+            }
+            Create(celestialObjectDefNames);
+        }
+
         public static List<CelestialObject> Create(List<string> celestialObjectDefNames, List<int?> seeds = null, List<Vector3?> positions = null) {
             List<CelestialObject> celestialObjects = new List<CelestialObject>();
 
@@ -54,9 +66,8 @@ namespace Universum.World {
             List<CelestialObject> newCelestialObjects = (List<CelestialObject>) celestialObjects;
 
             foreach (var celestialObject in newCelestialObjects) {
-                if (Scribe.mode == LoadSaveMode.LoadingVars) return;
+                if (Scribe.mode == LoadSaveMode.LoadingVars || Game.MainLoop.instance == null) return;
                 celestialObject.GenerateVisuals();
-                Game.MainLoop.instance.dirtyCache = true;
             }
         }
     }
