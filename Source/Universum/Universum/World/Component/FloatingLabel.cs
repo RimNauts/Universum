@@ -9,7 +9,6 @@ namespace Universum.World.Component {
 
             _textComponent.text = def.overwriteText ?? celestialObject.name;
             _textComponent.color = def.color;
-            _textComponent.font = TMPro.TMP_FontAsset.CreateFontAsset((Font) Resources.Load(def.fontPath));
             _textComponent.fontSize = def.fontSize;
             _textComponent.outlineColor = def.outlineColor;
             _textComponent.outlineWidth = def.outlineWidth;
