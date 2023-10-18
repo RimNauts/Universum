@@ -80,6 +80,7 @@
     <Compile Include="Defs\CelestialObject.cs" />
     <Compile Include="Defs\Component.cs" />
     <Compile Include="Defs\Icon.cs" />
+    <Compile Include="Defs\InitializationType.cs" />
     <Compile Include="Defs\Loader.cs" />
     <Compile Include="Defs\Material.cs" />
     <Compile Include="Defs\Mesh.cs" />

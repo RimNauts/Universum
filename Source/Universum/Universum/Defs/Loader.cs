@@ -5,7 +5,8 @@ namespace Universum.Defs {
     [StaticConstructorOnStartup]
     public static class Loader {
         public static Dictionary<string, CelestialObject> celestialObjects = new Dictionary<string, CelestialObject>();
-        public static Dictionary<string, ObjectGeneration> celestialObjectGenerationSteps = new Dictionary<string, ObjectGeneration>();
+        public static Dictionary<string, ObjectGeneration> celestialObjectGenerationStartUpSteps = new Dictionary<string, ObjectGeneration>();
+        public static Dictionary<string, ObjectGeneration> celestialObjectGenerationRandomSteps = new Dictionary<string, ObjectGeneration>();
         public static Dictionary<string, Material> materials = new Dictionary<string, Material>();
         public static Dictionary<string, NamePack> namePacks = new Dictionary<string, NamePack>();
         private static int _totalDefs;
@@ -16,7 +17,11 @@ namespace Universum.Defs {
                 _totalDefs++;
             }
             foreach (ObjectGeneration celestialObjectGenerationStep in DefDatabase<ObjectGeneration>.AllDefs) {
-                celestialObjectGenerationSteps[celestialObjectGenerationStep.defName] = celestialObjectGenerationStep;
+                if (celestialObjectGenerationStep.initializationType == InitializationType.START_UP) {
+                    celestialObjectGenerationStartUpSteps[celestialObjectGenerationStep.defName] = celestialObjectGenerationStep;
+                } else if (celestialObjectGenerationStep.initializationType == InitializationType.RANDOM) {
+                    celestialObjectGenerationRandomSteps[celestialObjectGenerationStep.defName] = celestialObjectGenerationStep;
+                }
                 _totalDefs++;
             }
             foreach (Material material in DefDatabase<Material>.AllDefs) {

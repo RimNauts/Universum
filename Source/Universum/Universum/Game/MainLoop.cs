@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Verse;
@@ -12,6 +13,8 @@ namespace Universum.Game {
         public static RimWorld.Planet.WorldCameraDriver cameraDriver;
 
         private readonly List<World.CelestialObject> _celestialObjects = new List<World.CelestialObject>();
+        private readonly Dictionary<string, int> _objectGenerationSpawnTick = new Dictionary<string, int>();
+        private int _spawnTickMin = 0;
 
         private int _totalCelestialObjectsCached = 0;
         private World.CelestialObject[] _celestialObjectsCache = new World.CelestialObject[0];
@@ -33,14 +36,39 @@ namespace Universum.Game {
         private List<Vector3?> _exposeCelestialObjectPositions = new List<Vector3?>();
 
         public MainLoop(Verse.Game game) : base() {
+            if (instance != null) {
+                instance = null;
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
             instance = this;
         }
 
         ~MainLoop() {
-            instance = null;
             tickManager = null;
             camera = null;
             cameraDriver = null;
+        }
+
+        public override void GameComponentTick() {
+            if (tickManager == null || tickManager.TicksGame < _spawnTickMin) return;
+
+            foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationRandomSteps.Values) {
+                int spawnTick = _objectGenerationSpawnTick[objectGenerationStep.defName];
+                if (tickManager.TicksGame > spawnTick) {
+                    World.Generator.Generate(
+                        objectGenerationStep,
+                        amount: Rand.Range((int) objectGenerationStep.spawnAmountBetween[0], (int) objectGenerationStep.spawnAmountBetween[1])
+                    );
+
+                    int newSpawnTick = _GetSpawnTick(objectGenerationStep.spawnBetweenDays[0], objectGenerationStep.spawnBetweenDays[1]);
+                    _spawnTickMin = newSpawnTick;
+
+                    _objectGenerationSpawnTick[objectGenerationStep.defName] = newSpawnTick;
+                }
+            }
+            
+            foreach (var spawnTick in _objectGenerationSpawnTick.Values) if (spawnTick < _spawnTickMin) _spawnTickMin = spawnTick;
         }
 
         public override void GameComponentUpdate() {
@@ -113,7 +141,21 @@ namespace Universum.Game {
             for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i] = _celestialObjects[i];
 
             if (tickManager != null || camera != null || cameraDriver != null) _Update();
+
+            if (_objectGenerationSpawnTick.Count == 0) {
+                foreach (var step in Defs.Loader.celestialObjectGenerationRandomSteps.Values) {
+                    int spawnTick = _GetSpawnTick(step.spawnBetweenDays[0], step.spawnBetweenDays[1]);
+                    if (spawnTick < _spawnTickMin) _spawnTickMin = spawnTick;
+
+                    _objectGenerationSpawnTick.Add(
+                        step.defName,
+                        spawnTick
+                    );
+                }
+            }
         }
+
+        private int _GetSpawnTick(float betweenDaysMin, float betweenDaysMax) => (int) Rand.Range(betweenDaysMin * 60000, betweenDaysMax * 60000) + tickManager.TicksGame;
 
         public override void ExposeData() {
             if (Scribe.mode == LoadSaveMode.Saving) _SaveData();
@@ -140,6 +182,10 @@ namespace Universum.Game {
         }
 
         private void _LoadData() {
+            _exposeCelestialObjectDefNames.Clear();
+            _exposeCelestialObjectSeeds.Clear();
+            _exposeCelestialObjectPositions.Clear();
+
             Scribe_Collections.Look(ref _exposeCelestialObjectDefNames, "_exposeCelestialObjectDefNames", LookMode.Value);
             Scribe_Collections.Look(ref _exposeCelestialObjectSeeds, "_exposeCelestialObjectSeeds", LookMode.Value);
             Scribe_Collections.Look(ref _exposeCelestialObjectPositions, "_exposeCelestialObjectPositions", LookMode.Value);

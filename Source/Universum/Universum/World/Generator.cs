@@ -10,7 +10,7 @@ namespace Universum.World {
 
         public override void GenerateFresh(string seed) {
             List<string> celestialObjectDefNames = new List<string>();
-            foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationSteps.Values) {
+            foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationStartUpSteps.Values) {
                 for (int i = 0; i < objectGenerationStep.total; i++) {
                     celestialObjectDefNames.Add(objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName);
                 }
@@ -18,27 +18,34 @@ namespace Universum.World {
             Create(celestialObjectDefNames);
         }
 
+        public static List<CelestialObject> Generate(Defs.ObjectGeneration objectGenerationStep, int? amount = null) {
+            int total = amount ?? objectGenerationStep.total;
+            List<string> celestialObjectDefNames = new List<string>();
+            for (int i = 0; i < total; i++) {
+                celestialObjectDefNames.Add(objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName);
+            }
+            return Create(celestialObjectDefNames);
+        }
+
         public static List<CelestialObject> Create(List<string> celestialObjectDefNames, List<int?> seeds = null, List<Vector3?> positions = null) {
             List<CelestialObject> celestialObjects = new List<CelestialObject>();
-
             for (int i = 0; i < celestialObjectDefNames.Count; i++) {
                 string celestialObjectDefName = celestialObjectDefNames[i];
-
+                
                 int? seed = null;
                 if (!seeds.NullOrEmpty()) seed = seeds[i];
-
+                
                 Vector3? position = null;
                 if (!seeds.NullOrEmpty()) position = positions[i];
-
+                
                 CelestialObject celestialObject = (CelestialObject) Activator.CreateInstance(
                     Defs.Loader.celestialObjects[celestialObjectDefName].celestialObjectClass,
                     new object[] { celestialObjectDefName }
                 );
-
+                
                 celestialObject.Init(seed, position);
                 celestialObjects.Add(celestialObject);
             }
-
             Game.MainLoop.instance.AddObject(celestialObjects);
 
             Thread thread = new Thread(new ParameterizedThreadStart(CreateVisuals));
@@ -66,7 +73,7 @@ namespace Universum.World {
             List<CelestialObject> newCelestialObjects = (List<CelestialObject>) celestialObjects;
 
             foreach (var celestialObject in newCelestialObjects) {
-                if (Scribe.mode == LoadSaveMode.LoadingVars || Game.MainLoop.instance == null) return;
+                if (Game.MainLoop.instance == null) return;
                 celestialObject.GenerateVisuals();
             }
         }
