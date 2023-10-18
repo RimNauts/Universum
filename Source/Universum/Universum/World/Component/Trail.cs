@@ -16,7 +16,7 @@ namespace Universum.World.Component {
 
             _prevGameSpeed = TimeSpeed.Paused;
             _trailLength = def.trailLength;
-            _trailComponent.startWidth = _celestialObject.size.x * def.trailWidth;
+            _trailComponent.startWidth = _celestialObject.scale.x * def.trailWidth;
             _trailComponent.endWidth = 0.0f;
             _trailComponent.time = 0.0f;
             _trailComponent.material = Assets.materials[def.materialDefName];

@@ -18,7 +18,6 @@ namespace Universum.World {
             _celestialObject = celestialObject;
 
             _gameObject = Object.Instantiate(Assets.gameObjectWorldText);
-            Object.DontDestroyOnLoad(_gameObject);
 
             _offset = def.offSet;
             _hideAtMinAltitude = def.hideAtMinAltitude;
@@ -43,7 +42,7 @@ namespace Universum.World {
         }
 
         public virtual void UpdatePosition() {
-            _position = _celestialObject.realPosition + _offset;
+            _position = _celestialObject.transformedPosition + _offset;
         }
 
         public virtual void UpdateRotation() {

@@ -26,9 +26,9 @@ namespace Universum.World.Component {
         }
 
         public override void UpdatePosition() {
-            _position = Vector3.MoveTowards(_celestialObject.realPosition, Game.MainLoop.camera.transform.position, 50.0f);
+            _position = Vector3.MoveTowards(_celestialObject.transformedPosition, Game.MainLoop.camera.transform.position, 50.0f);
             _position += _offset;
-            _position.y -= _celestialObject.size.y + _celestialObject.extraSize + 1.0f;
+            _position.y -= _celestialObject.scale.y + _celestialObject.extraScale + 1.0f;
         }
 
         public override void UpdateRotation() {

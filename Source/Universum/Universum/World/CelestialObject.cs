@@ -1,71 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Verse;
 
 namespace Universum.World {
     public abstract class CelestialObject {
+        public int seed;
+        public string name;
         public Defs.CelestialObject def;
 
-        public string name;
-
-        protected int _totalMeshes = 0;
-        protected Mesh[] _meshes = new Mesh[0];
-        protected Material[] _materials = new Material[0];
-        protected bool _generatingShape = false;
-
-        public int seed;
         protected Functionality.Random _rand;
+
+        protected bool _generatingShape = false;
+        protected bool _dirty = false;
+        protected bool _positionChanged = true;
+        protected bool _rotationChanged = true;
+        protected bool _scaleChanged = true;
+
         protected Shape _shape;
         protected Matrix4x4 _transformationMatrix = Matrix4x4.identity;
         protected Quaternion _rotation = Quaternion.identity;
         public Quaternion billboardRotation = Quaternion.identity;
         protected Quaternion _axialRotation = Quaternion.identity;
-        protected CelestialObject _orbitTarget;
+        protected CelestialObject _target;
 
-        public Vector3 realPosition;
-        public Vector3 currentPosition;
-        public Vector3 size;
-        public float extraSize;
-        protected float _orbitSpeed;
+        protected Transform[] _transforms = new Transform[0];
+        protected ObjectComponent[] _components = new ObjectComponent[0];
+
+        public Vector3 transformedPosition;
+        public Vector3 position;
+        public Vector3 scale;
+        protected float _scalePercentage;
+        public float extraScale;
+        public float speed;
+        protected float _speedPercentage;
         protected int _period;
         protected int _timeOffset;
-        protected Vector3 _orbitPath;
+        protected float _orbitPathOffsetPercentage;
         protected Vector3 _orbitSpread;
         protected int _orbitDirection;
         protected float _axialRotationSpeed;
         protected Vector3 _orbitPosition;
 
-        protected ObjectComponent[] _components = new ObjectComponent[0];
-
         public CelestialObject(string celestialObjectDefName) {
             def = Defs.Loader.celestialObjects[celestialObjectDefName];
+        }
+
+        ~CelestialObject() {
+            for (int i = 0; i < _transforms.Length; i++) UnityEngine.Object.Destroy(_transforms[i].gameObject);
+        }
+
+        public virtual void GetExposeData(List<string> defNames, List<int?> seeds, List<Vector3?> positions) {
+            defNames.Add(def.defName);
+            seeds.Add(seed);
+            positions.Add(position);
         }
 
         public virtual void Randomize() {
             Init();
         }
 
-        public virtual void Init(int? seed = null, Vector3? currentPosition = null) {
+        public virtual void Init(int? seed = null, Vector3? position = null) {
             this.seed = seed ?? Rand.Int;
             _rand = new Functionality.Random(this.seed);
 
             Defs.NamePack namePack = Defs.Loader.namePacks[def.namePackDefName];
             name = $"{_rand.GetElement(namePack.prefix)}{_rand.GetElement(namePack.postfix)}";
 
-            float size = _rand.GetValueBetween(def.sizeBetween);
-            this.size = new Vector3(size, size, size);
-            _orbitSpeed = _rand.GetValueBetween(def.orbitSpeedBetween);
+            _scalePercentage = _rand.GetValueBetween(def.scalePercentageBetween);
+            UpdateScale();
+            _speedPercentage = _rand.GetValueBetween(def.speedPercentageBetween);
+            UpdateSpeed();
             _period = (int) (36000.0f + (6000.0f * (_rand.GetFloat() - 0.5f)));
             _timeOffset = _rand.GetValueBetween(new Vector2Int(0, _period));
-            _orbitPath = def.orbitPath;
+            _orbitPathOffsetPercentage = def.orbitPathOffsetPercentage;
             _orbitSpread = def.orbitSpread;
-            _orbitPosition = new Vector3 {
-                x = _orbitPath.x + (float) ((Rand.Value - 0.5f) * (_orbitPath.x * _orbitSpread.x)),
-                y = _rand.GetValueBetween(new Vector2(Math.Abs(_orbitPath.y) * -1, Math.Abs(_orbitPath.y))),
-                z = _orbitPath.z + (float) ((Rand.Value - 0.5f) * (_orbitPath.z * _orbitSpread.z))
-            };
+            UpdateOrbitPath();
             switch (def.orbitDirection) {
                 case Defs.OrbitDirection.LEFT:
                     _orbitDirection = -1;
@@ -82,7 +92,7 @@ namespace Universum.World {
             }
             _axialRotationSpeed = _rand.GetValueBetween(def.axialRotationSpeedBetween);
 
-            this.currentPosition = currentPosition ?? _orbitPath;
+            this.position = position ?? _orbitPosition;
         }
 
         public virtual void Update() {
@@ -98,14 +108,17 @@ namespace Universum.World {
         }
 
         public virtual void UpdatePosition(int tick) {
-            float time = _orbitSpeed * _orbitDirection * tick + _timeOffset;
+            _positionChanged = true;
+
+            float time = speed * _orbitDirection * tick + _timeOffset;
             float angularFrequencyTime = 6.28f / _period * time;
-            float yOffset = _orbitPosition.y / 2;
-            currentPosition.x = (_orbitPosition.x - yOffset) * (float) Math.Cos(angularFrequencyTime);
-            currentPosition.z = (_orbitPosition.z - yOffset) * (float) Math.Sin(angularFrequencyTime);
+            position.x = _orbitPosition.x * (float) Math.Cos(angularFrequencyTime);
+            position.z = _orbitPosition.z * (float) Math.Sin(angularFrequencyTime);
         }
 
         public virtual void UpdateRotation(int tick, Vector3 center) {
+            _rotationChanged = true;
+
             Vector3 towards_camera = Vector3.Cross(center, Vector3.up);
             billboardRotation = Quaternion.LookRotation(towards_camera, center);
 
@@ -115,40 +128,52 @@ namespace Universum.World {
         }
 
         public virtual void UpdateTransformationMatrix() {
-            _transformationMatrix.SetTRS(currentPosition, _rotation, size);
+            _transformationMatrix.SetTRS(position + GetTargetPosition(), _rotation, scale);
             // update real position
-            realPosition.x = _transformationMatrix.m03;
-            realPosition.y = _transformationMatrix.m13;
-            realPosition.z = _transformationMatrix.m23;
+            transformedPosition.x = _transformationMatrix.m03;
+            transformedPosition.y = _transformationMatrix.m13;
+            transformedPosition.z = _transformationMatrix.m23;
         }
 
         public virtual void Render() {
-            for (int i = 0; i < _totalMeshes; i++) {
-                Graphics.Internal_DrawMesh(
-                    _meshes[i],
-                    submeshIndex: 0,
-                    _transformationMatrix,
-                    _materials[i],
-                    RimWorld.Planet.WorldCameraManager.WorldLayer,
-                    camera: null,
-                    properties: null,
-                    ShadowCastingMode.On,
-                    receiveShadows: true,
-                    probeAnchor: null,
-                    lightProbeUsage: LightProbeUsage.BlendProbes,
-                    lightProbeProxyVolume: null
-                );
+            if (_dirty) _Recache();
+
+            foreach (ObjectComponent component in _components) component.Render();
+
+            for (int i = 0; i < _transforms.Length; i++) {
+                if (_positionChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localPosition = position + GetTargetPosition();
+                if (_rotationChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localRotation = _rotation;
+                if (_scaleChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localScale = scale;
             }
-            foreach (var component in _components) component.Render();
+
+            _positionChanged = false;
+            _rotationChanged = false;
+            _scaleChanged = false;
         }
 
-        public virtual void Recache() {
+        protected virtual void _Recache() {
+            _dirty = false;
             if (_generatingShape || _shape == null) return;
-            _meshes = (Mesh[]) _shape.GetMeshes().Clone();
-            _materials = (Material[]) _shape.GetMaterials().Clone();
-            _totalMeshes = _meshes.Length;
-            extraSize = _shape.highestElevation;
+
+            Mesh[] meshes = (Mesh[]) _shape.GetMeshes().Clone();
+            Material[] materials = (Material[]) _shape.GetMaterials().Clone();
+            extraScale = _shape.highestElevation;
             _shape = null;
+
+            _transforms = new Transform[meshes.Length];
+            for (int i = 0; i < meshes.Length; i++) {
+                GameObject newGameObject = new GameObject {
+                    layer = RimWorld.Planet.WorldCameraManager.WorldLayer
+                };
+
+                MeshFilter meshFilter = newGameObject.AddComponent<MeshFilter>();
+                MeshRenderer meshRenderer = newGameObject.AddComponent<MeshRenderer>();
+
+                meshFilter.mesh = meshes[i];
+                meshRenderer.material = materials[i];
+
+                _transforms[i] = newGameObject.transform;
+            }
 
             List<ObjectComponent> objectComponents = new List<ObjectComponent>();
             foreach (var componentDef in def.components) {
@@ -160,18 +185,56 @@ namespace Universum.World {
             }
 
             _components = objectComponents.ToArray();
+
+            Game.MainLoop.instance.forceUpdate = true;
         }
 
-        public virtual Vector3 GetOrbitAroundPosition() {
-            return _orbitTarget?.realPosition ?? Vector3.zero;
+        public virtual void SetTarget(CelestialObject target) {
+            _target = target;
+
+            speed *= (float) target?.speed;
+
+            UpdateScale();
+            UpdateOrbitPath();
+            UpdateSpeed();
         }
 
-        public virtual void SetOrbitTarget(CelestialObject target) {
-            _orbitTarget = target;
+        public virtual void UpdateOrbitPath() {
+            Vector3 scaledOrbitOffset = GetTargetScale() * _orbitPathOffsetPercentage;
+
+            _orbitPosition = new Vector3 {
+                x = scaledOrbitOffset.x + (float) ((_rand.GetFloat() - 0.5f) * (scaledOrbitOffset.x * _orbitSpread.x)),
+                y = 0.0f,
+                z = scaledOrbitOffset.z + (float) ((_rand.GetFloat() - 0.5f) * (scaledOrbitOffset.z * _orbitSpread.z))
+            };
+        }
+
+        public virtual void UpdateScale() {
+            _scaleChanged = true;
+
+            Vector3 orbitAroundScale = GetTargetScale();
+            scale.x = orbitAroundScale.x * _scalePercentage;
+            scale.y = orbitAroundScale.y * _scalePercentage;
+            scale.z = orbitAroundScale.z * _scalePercentage;
+        }
+
+        public virtual void UpdateSpeed() {
+            speed = GetTargetSpeed() * _speedPercentage;
+        }
+
+        public virtual Vector3 GetTargetPosition() {
+            return _target?.transformedPosition ?? Vector3.zero;
+        }
+
+        public virtual float GetTargetSpeed() {
+            return _target?.speed ?? 0.7f;
+        }
+
+        public virtual Vector3 GetTargetScale() {
+            return _target?.scale ?? new Vector3(100.0f, 100.0f, 100.0f);
         }
 
         public virtual void GenerateVisuals() {
-            if (_totalMeshes != 0) return;
             if (def.shape != null) {
                 _GenerateShape();
             } else if (def.icon != null) {
@@ -186,7 +249,7 @@ namespace Universum.World {
             }
         }
 
-        protected void _GenerateShape() {
+        protected virtual void _GenerateShape() {
             _generatingShape = true;
 
             _shape = new Shape(seed);
@@ -235,6 +298,7 @@ namespace Universum.World {
             _shape.CompressData();
 
             _generatingShape = false;
+            _dirty = true;
         }
     }
 }

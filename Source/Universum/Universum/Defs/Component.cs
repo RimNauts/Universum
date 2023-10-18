@@ -13,7 +13,6 @@ namespace Universum.Defs {
         public float hideAtMaxAltitude = float.MinValue;
 
         public string overwriteText;
-        public string fontPath;
         public float fontSize;
         public Color outlineColor = Color.black;
         public float outlineWidth;

@@ -9,9 +9,9 @@ namespace Universum.Defs {
 
         public string namePackDefName;
 
-        public Vector2 sizeBetween = Vector2.one;
-        public Vector2 orbitSpeedBetween = Vector2.one;
-        public Vector3 orbitPath = Vector3.one;
+        public Vector2 scalePercentageBetween = Vector2.one;
+        public Vector2 speedPercentageBetween = Vector2.one;
+        public float orbitPathOffsetPercentage = 1.0f;
         public Vector3 orbitSpread = Vector3.one;
         public OrbitDirection orbitDirection = OrbitDirection.LEFT;
         public Vector2 axialRotationSpeedBetween = Vector2.one;
