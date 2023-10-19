@@ -74,7 +74,7 @@ namespace Universum.World {
             this.deathTick = deathTick;
 
             Defs.NamePack namePack = Defs.Loader.namePacks[def.namePackDefName];
-            name = $"{_rand.GetElement(namePack.prefix)}{_rand.GetElement(namePack.postfix)}";
+            name = $"{_rand.GetElement(namePack.prefix)}-{_rand.GetElement(namePack.postfix)}";
 
             _scalePercentage = _rand.GetValueBetween(def.scalePercentageBetween);
             UpdateScale();
