@@ -39,10 +39,11 @@ namespace Universum.World {
         protected int _period;
         protected int _timeOffset;
         protected float _orbitPathOffsetPercentage;
-        protected Vector3 _orbitSpread;
+        protected float _orbitEccentricity;
+        protected float _orbitSpread;
         protected int _orbitDirection;
         protected float _axialRotationSpeed;
-        protected Vector3 _orbitPosition;
+        protected float _orbitRadius;
 
         public CelestialObject(string celestialObjectDefName) {
             def = Defs.Loader.celestialObjects[celestialObjectDefName];
@@ -82,8 +83,9 @@ namespace Universum.World {
             _period = (int) (36000.0f + (6000.0f * (_rand.GetFloat() - 0.5f)));
             _timeOffset = _rand.GetValueBetween(new Vector2Int(0, _period));
             _orbitPathOffsetPercentage = def.orbitPathOffsetPercentage;
-            _orbitSpread = def.orbitSpread;
-            UpdateOrbitPath();
+            _orbitEccentricity = _rand.GetValueBetween(def.orbitEccentricityBetween);
+            _orbitSpread = _rand.GetValueBetween(def.orbitSpreadBetween);
+            UpdateOrbitRadius();
             switch (def.orbitDirection) {
                 case Defs.OrbitDirection.LEFT:
                     _orbitDirection = -1;
@@ -100,7 +102,10 @@ namespace Universum.World {
             }
             _axialRotationSpeed = _rand.GetValueBetween(def.axialRotationSpeedBetween);
 
-            this.position = position ?? _orbitPosition;
+            if (position != null) {
+                this.position = (Vector3) position;
+            } else UpdatePosition(tick: 0);
+
         }
 
         public virtual void Tick() {
@@ -125,8 +130,8 @@ namespace Universum.World {
             float time = speed * _orbitDirection * tick + _timeOffset;
             float angularFrequencyTime = 6.28f / _period * time;
 
-            position.x = _orbitPosition.x * (float) Math.Cos(angularFrequencyTime);
-            position.z = _orbitPosition.z * (float) Math.Sin(angularFrequencyTime);
+            position.x = _orbitRadius * (float) Math.Cos(angularFrequencyTime);
+            position.z = _orbitRadius * Mathf.Sqrt(1 - _orbitEccentricity * _orbitEccentricity) * (float) Math.Sin(angularFrequencyTime);
         }
 
         public virtual void UpdateRotation(int tick, Vector3 center) {
@@ -208,18 +213,13 @@ namespace Universum.World {
             speed *= (float) target?.speed;
 
             UpdateScale();
-            UpdateOrbitPath();
+            UpdateOrbitRadius();
             UpdateSpeed();
         }
 
-        public virtual void UpdateOrbitPath() {
+        public virtual void UpdateOrbitRadius() {
             Vector3 scaledOrbitOffset = GetTargetScale() * _orbitPathOffsetPercentage;
-
-            _orbitPosition = new Vector3 {
-                x = scaledOrbitOffset.x + (float) ((_rand.GetFloat() - 0.5f) * (scaledOrbitOffset.x * _orbitSpread.x)),
-                y = 0.0f,
-                z = scaledOrbitOffset.z + (float) ((_rand.GetFloat() - 0.5f) * (scaledOrbitOffset.z * _orbitSpread.z))
-            };
+            _orbitRadius = scaledOrbitOffset.x + (float) ((_rand.GetFloat() - 0.5f) * (scaledOrbitOffset.x * _orbitSpread));
         }
 
         public virtual void UpdateScale() {
