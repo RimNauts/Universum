@@ -13,6 +13,7 @@ namespace Universum.Defs {
         public Vector2 speedPercentageBetween = Vector2.one;
         public float orbitPathOffsetPercentage = 1.0f;
         public Vector2 orbitSpreadBetween = Vector2.one;
+        public Vector2 yOffsetBetween = Vector2.zero;
         public Vector2 orbitEccentricityBetween = Vector2.zero;
         public OrbitDirection orbitDirection = OrbitDirection.LEFT;
         public Vector2 axialRotationSpeedBetween = Vector2.one;

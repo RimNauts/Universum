@@ -44,6 +44,7 @@ namespace Universum.World {
         protected int _orbitDirection;
         protected float _axialRotationSpeed;
         protected float _orbitRadius;
+        protected float _yOffset;
 
         public CelestialObject(string celestialObjectDefName) {
             def = Defs.Loader.celestialObjects[celestialObjectDefName];
@@ -104,8 +105,10 @@ namespace Universum.World {
 
             if (position != null) {
                 this.position = (Vector3) position;
-            } else UpdatePosition(tick: 0);
-
+            } else {
+                UpdatePosition(tick: 0);
+                this.position.y = _rand.GetValueBetween(def.yOffsetBetween);
+            }
         }
 
         public virtual void Tick() {
