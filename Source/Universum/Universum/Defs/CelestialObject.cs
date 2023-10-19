@@ -16,7 +16,8 @@ namespace Universum.Defs {
         public Vector2 yOffsetBetween = Vector2.zero;
         public Vector2 orbitEccentricityBetween = Vector2.zero;
         public OrbitDirection orbitDirection = OrbitDirection.LEFT;
-        public Vector2 axialRotationSpeedBetween = Vector2.one;
+        public Vector2 axialAngleBetween = Vector2.zero;
+        public Vector2 spinRotationSpeedBetween = Vector2.zero;
         public Vector2 inclinationAngleBetween = Vector2.zero;
 
         public List<Component> components = new List<Component>();

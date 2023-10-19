@@ -24,6 +24,7 @@ namespace Universum.World {
         protected Quaternion _rotation = Quaternion.identity;
         public Quaternion billboardRotation = Quaternion.identity;
         protected Quaternion _axialRotation = Quaternion.identity;
+        protected Quaternion _spinRotation = Quaternion.identity;
         protected Quaternion _inclinatioRotation = Quaternion.identity;
         protected CelestialObject _target;
 
@@ -43,7 +44,7 @@ namespace Universum.World {
         protected float _orbitEccentricity;
         protected float _orbitSpread;
         protected int _orbitDirection;
-        protected float _axialRotationSpeed;
+        protected float _spinRotationSpeed;
         protected float _orbitRadius;
         protected float _yOffset;
 
@@ -105,8 +106,8 @@ namespace Universum.World {
                     _orbitDirection = 1;
                     break;
             }
-
-            _axialRotationSpeed = _rand.GetValueBetween(def.axialRotationSpeedBetween);
+            _axialRotation = Quaternion.Euler(_rand.GetValueBetween(def.axialAngleBetween), 0, 0);
+            _spinRotationSpeed = _rand.GetValueBetween(def.spinRotationSpeedBetween);
             _inclinatioRotation = Quaternion.Euler(_rand.GetValueBetween(def.inclinationAngleBetween), 0, 0);
 
             if (position != null) {
@@ -149,13 +150,13 @@ namespace Universum.World {
             Vector3 towards_camera = Vector3.Cross(center, Vector3.up);
             billboardRotation = Quaternion.LookRotation(towards_camera, center);
 
-            _axialRotation = Quaternion.Euler(0.5f * _axialRotationSpeed * tick * _orbitDirection * -1, _axialRotationSpeed * tick * _orbitDirection * -1, 0);
+            _spinRotation = Quaternion.Euler(0.5f * _spinRotationSpeed * tick * _orbitDirection * -1, _spinRotationSpeed * tick * _orbitDirection * -1, 0);
 
-            _rotation = _axialRotation;
+            _rotation = _spinRotation;
         }
 
         public virtual void UpdateTransformationMatrix() {
-            _transformationMatrix.SetTRS(_inclinatioRotation * (position + GetTargetPosition()), _rotation, scale);
+            _transformationMatrix.SetTRS(_inclinatioRotation * _axialRotation * (position + GetTargetPosition()), _rotation, scale);
             // update real position
             transformedPosition.x = _transformationMatrix.m03;
             transformedPosition.y = _transformationMatrix.m13;
@@ -168,7 +169,7 @@ namespace Universum.World {
             foreach (ObjectComponent component in _components) component.Render();
 
             for (int i = 0; i < _transforms.Length; i++) {
-                if (_positionChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localPosition = _inclinatioRotation * (position + GetTargetPosition());
+                if (_positionChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localPosition = _inclinatioRotation * _axialRotation * (position + GetTargetPosition());
                 if (_rotationChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localRotation = _rotation;
                 if (_scaleChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localScale = scale;
             }
