@@ -24,9 +24,9 @@ namespace Universum.World {
             _hideAtMaxAltitude = def.hideAtMaxAltitude;
         }
 
-        ~ObjectComponent() {
-            Object.Destroy(_gameObject);
-        }
+        ~ObjectComponent() => Destroy();
+
+        public virtual void Destroy() => Object.Destroy(_gameObject);
 
         public virtual void OnWorldSceneActivated() {
             

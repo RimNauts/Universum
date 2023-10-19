@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Verse;
 
@@ -12,7 +13,7 @@ namespace Universum.Game {
         public static Camera camera;
         public static RimWorld.Planet.WorldCameraDriver cameraDriver;
 
-        private readonly List<World.CelestialObject> _celestialObjects = new List<World.CelestialObject>();
+        private List<World.CelestialObject> _celestialObjects = new List<World.CelestialObject>();
         private readonly Dictionary<string, int> _objectGenerationSpawnTick = new Dictionary<string, int>();
         private int _spawnTickMin = 0;
 
@@ -34,6 +35,9 @@ namespace Universum.Game {
         private List<string> _exposeCelestialObjectDefNames = new List<string>();
         private List<int?> _exposeCelestialObjectSeeds = new List<int?>();
         private List<Vector3?> _exposeCelestialObjectPositions = new List<Vector3?>();
+        private List<int?> _exposeCelestialObjectDeathTicks = new List<int?>();
+
+        public int seed = Rand.Int;
 
         public MainLoop(Verse.Game game) : base() {
             if (instance != null) {
@@ -44,20 +48,25 @@ namespace Universum.Game {
             instance = this;
         }
 
-        ~MainLoop() {
-            tickManager = null;
-            camera = null;
-            cameraDriver = null;
+        ~MainLoop() => Destroy();
+
+        public void Destroy() {
+            for (int i = 0; i < _celestialObjects.Count; i++) _celestialObjects[i].Destroy();
         }
 
         public override void GameComponentTick() {
-            if (tickManager == null || tickManager.TicksGame < _spawnTickMin) return;
+            if (tickManager == null || tickManager.TicksGame % 10 != 0) return;
+
+            for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Tick();
+
+            if (tickManager.TicksGame < _spawnTickMin) return;
 
             foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationRandomSteps.Values) {
                 int spawnTick = _objectGenerationSpawnTick[objectGenerationStep.defName];
                 if (tickManager.TicksGame > spawnTick) {
                     World.Generator.Generate(
                         objectGenerationStep,
+                        despawnBetweenDays: objectGenerationStep.despawnBetweenDays,
                         amount: Rand.Range((int) objectGenerationStep.spawnAmountBetween[0], (int) objectGenerationStep.spawnAmountBetween[1])
                     );
 
@@ -135,6 +144,14 @@ namespace Universum.Game {
             camera = Find.WorldCamera.GetComponent<Camera>();
             cameraDriver = Find.WorldCameraDriver;
 
+            for (int i = 0; i < _celestialObjects.Count; i++) {
+                if (_celestialObjects[i].ShouldDespawn()) {
+                    _celestialObjects[i].Destroy();
+                    _celestialObjects[i] = null;
+                }
+            }
+            _celestialObjects = _celestialObjects.Where(item => item != null).ToList();
+
             _totalCelestialObjectsCached = _celestialObjects.Count;
             _celestialObjectsCache = new World.CelestialObject[_totalCelestialObjectsCached];
 
@@ -167,36 +184,47 @@ namespace Universum.Game {
             _exposeCelestialObjectDefNames.Clear();
             _exposeCelestialObjectSeeds.Clear();
             _exposeCelestialObjectPositions.Clear();
+            _exposeCelestialObjectDeathTicks.Clear();
 
             for (int i = 0; i < _totalCelestialObjectsCached; i++) {
-                _celestialObjectsCache[i].GetExposeData(_exposeCelestialObjectDefNames, _exposeCelestialObjectSeeds, _exposeCelestialObjectPositions);
+                _celestialObjectsCache[i].GetExposeData(
+                    _exposeCelestialObjectDefNames,
+                    _exposeCelestialObjectSeeds,
+                    _exposeCelestialObjectPositions,
+                    _exposeCelestialObjectDeathTicks
+                );
             }
 
             Scribe_Collections.Look(ref _exposeCelestialObjectDefNames, "_exposeCelestialObjectDefNames", LookMode.Value);
             Scribe_Collections.Look(ref _exposeCelestialObjectSeeds, "_exposeCelestialObjectSeeds", LookMode.Value);
             Scribe_Collections.Look(ref _exposeCelestialObjectPositions, "_exposeCelestialObjectPositions", LookMode.Value);
+            Scribe_Collections.Look(ref _exposeCelestialObjectDeathTicks, "_exposeCelestialObjectDeathTicks", LookMode.Value);
 
             _exposeCelestialObjectDefNames.Clear();
             _exposeCelestialObjectSeeds.Clear();
             _exposeCelestialObjectPositions.Clear();
+            _exposeCelestialObjectDeathTicks.Clear();
         }
 
         private void _LoadData() {
-            _exposeCelestialObjectDefNames.Clear();
-            _exposeCelestialObjectSeeds.Clear();
-            _exposeCelestialObjectPositions.Clear();
-
             Scribe_Collections.Look(ref _exposeCelestialObjectDefNames, "_exposeCelestialObjectDefNames", LookMode.Value);
             Scribe_Collections.Look(ref _exposeCelestialObjectSeeds, "_exposeCelestialObjectSeeds", LookMode.Value);
             Scribe_Collections.Look(ref _exposeCelestialObjectPositions, "_exposeCelestialObjectPositions", LookMode.Value);
+            Scribe_Collections.Look(ref _exposeCelestialObjectDeathTicks, "_exposeCelestialObjectDeathTicks", LookMode.Value);
         }
 
         private void _PostLoadData() {
-            World.Generator.Create(_exposeCelestialObjectDefNames, _exposeCelestialObjectSeeds, _exposeCelestialObjectPositions);
+            World.Generator.Create(
+                _exposeCelestialObjectDefNames,
+                _exposeCelestialObjectSeeds,
+                _exposeCelestialObjectPositions,
+                _exposeCelestialObjectDeathTicks
+            );
 
             _exposeCelestialObjectDefNames.Clear();
             _exposeCelestialObjectSeeds.Clear();
             _exposeCelestialObjectPositions.Clear();
+            _exposeCelestialObjectDeathTicks.Clear();
         }
     }
 

@@ -17,6 +17,8 @@ namespace Universum.World {
         protected bool _rotationChanged = true;
         protected bool _scaleChanged = true;
 
+        public int? deathTick = null;
+
         protected Shape _shape;
         protected Matrix4x4 _transformationMatrix = Matrix4x4.identity;
         protected Quaternion _rotation = Quaternion.identity;
@@ -46,23 +48,29 @@ namespace Universum.World {
             def = Defs.Loader.celestialObjects[celestialObjectDefName];
         }
 
-        ~CelestialObject() {
+        ~CelestialObject() => Destroy();
+
+        public virtual void Destroy() {
+            for (int i = 0; i < _components.Length; i++) _components[i].Destroy();
             for (int i = 0; i < _transforms.Length; i++) UnityEngine.Object.Destroy(_transforms[i].gameObject);
         }
 
-        public virtual void GetExposeData(List<string> defNames, List<int?> seeds, List<Vector3?> positions) {
+        public virtual void GetExposeData(List<string> defNames, List<int?> seeds, List<Vector3?> positions, List<int?> deathTicks) {
             defNames.Add(def.defName);
             seeds.Add(seed);
             positions.Add(position);
+            deathTicks.Add(deathTick);
         }
 
         public virtual void Randomize() {
-            Init();
+            Init(deathTick: deathTick);
         }
 
-        public virtual void Init(int? seed = null, Vector3? position = null) {
+        public virtual void Init(int? seed = null, Vector3? position = null, int? deathTick = null) {
             this.seed = seed ?? Rand.Int;
             _rand = new Functionality.Random(this.seed);
+
+            this.deathTick = deathTick;
 
             Defs.NamePack namePack = Defs.Loader.namePacks[def.namePackDefName];
             name = $"{_rand.GetElement(namePack.prefix)}{_rand.GetElement(namePack.postfix)}";
@@ -95,6 +103,10 @@ namespace Universum.World {
             this.position = position ?? _orbitPosition;
         }
 
+        public virtual void Tick() {
+            if (ShouldDespawn()) Game.MainLoop.instance.dirtyCache = true;
+        }
+
         public virtual void Update() {
             if (Game.MainLoop.instance.unpaused || Game.MainLoop.instance.forceUpdate) UpdatePosition(Game.MainLoop.tickManager.TicksGame);
             UpdateRotation(Game.MainLoop.tickManager.TicksGame, Game.MainLoop.cameraDriver.CurrentlyLookingAtPointOnSphere);
@@ -112,6 +124,7 @@ namespace Universum.World {
 
             float time = speed * _orbitDirection * tick + _timeOffset;
             float angularFrequencyTime = 6.28f / _period * time;
+
             position.x = _orbitPosition.x * (float) Math.Cos(angularFrequencyTime);
             position.z = _orbitPosition.z * (float) Math.Sin(angularFrequencyTime);
         }
@@ -233,6 +246,8 @@ namespace Universum.World {
         public virtual Vector3 GetTargetScale() {
             return _target?.scale ?? new Vector3(100.0f, 100.0f, 100.0f);
         }
+
+        public virtual bool ShouldDespawn() => deathTick != null && Game.MainLoop.tickManager.TicksGame > deathTick;
 
         public virtual void GenerateVisuals() {
             if (def.shape != null) {
