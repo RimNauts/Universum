@@ -127,11 +127,11 @@ namespace Universum.World {
         public virtual void UpdatePosition(int tick) {
             _positionChanged = true;
 
-            float time = speed * _orbitDirection * tick + _timeOffset;
+            float time = speed * tick + _timeOffset;
             float angularFrequencyTime = 6.28f / _period * time;
 
-            position.x = _orbitRadius * (float) Math.Cos(angularFrequencyTime);
-            position.z = _orbitRadius * Mathf.Sqrt(1 - _orbitEccentricity * _orbitEccentricity) * (float) Math.Sin(angularFrequencyTime);
+            position.x = _orbitDirection * _orbitRadius * (float) Math.Cos(angularFrequencyTime);
+            position.z = _orbitDirection * _orbitRadius * Mathf.Sqrt(1 - _orbitEccentricity * _orbitEccentricity) * (float) Math.Sin(angularFrequencyTime);
         }
 
         public virtual void UpdateRotation(int tick, Vector3 center) {
