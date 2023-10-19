@@ -210,8 +210,6 @@ namespace Universum.World {
         public virtual void SetTarget(CelestialObject target) {
             _target = target;
 
-            speed *= (float) target?.speed;
-
             UpdateScale();
             UpdateOrbitRadius();
             UpdateSpeed();
@@ -240,7 +238,7 @@ namespace Universum.World {
         }
 
         public virtual float GetTargetSpeed() {
-            return _target?.speed ?? 0.7f;
+            return _target?.speed ?? 0.8f;
         }
 
         public virtual Vector3 GetTargetScale() {
