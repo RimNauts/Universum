@@ -89,23 +89,25 @@ namespace Universum.World {
             int? celestialObjectDeathTick = null,
             CelestialObject celestialObject = null
         ) {
+            int tile = GetFreeTile();
+            if (tile == -1) return null;
+            UpdateTile(tile, Defs.Loader.celestialObjects[celestialObjectDefName].objectHolder.biomeDef);
+
             ObjectHolder objectHolder = (ObjectHolder) Activator.CreateInstance(Assets.objectHolderDef.worldObjectClass);
             objectHolder.def = Assets.objectHolderDef;
             objectHolder.ID = Find.UniqueIDsManager.GetNextWorldObjectID();
             objectHolder.creationGameTicks = Find.TickManager.TicksGame;
-            objectHolder.Tile = GetFreeTile();
-            if (objectHolder.Tile == -1) {
-                objectHolder.Destroy();
-                return null;
-            }
+            objectHolder.Tile = tile;
+
             objectHolder.Init(celestialObjectDefName, celestialObjectSeed, celestialObjectPosition, celestialObjectDeathTick, celestialObject);
             objectHolder.PostMake();
             Find.WorldObjects.Add(objectHolder);
+
             return objectHolder;
         }
 
-        public static void TileClear(int tile) {
-            Find.World.grid.tiles.ElementAt(tile).biome = Assets.oceanBiomeDef;
+        public static void UpdateTile(int tile, RimWorld.BiomeDef biome) {
+            Find.World.grid.tiles.ElementAt(tile).biome = biome;
             Find.WorldPathGrid.RecalculatePerceivedMovementDifficultyAt(tile);
         }
 

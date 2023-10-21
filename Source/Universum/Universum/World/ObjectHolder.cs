@@ -45,13 +45,13 @@ namespace Universum.World {
                     if (memories != null) {
                         memories.RemoveMemoriesOfDef(RimWorld.ThoughtDefOf.NewColonyOptimism);
                         memories.RemoveMemoriesOfDef(RimWorld.ThoughtDefOf.NewColonyHope);
-                        if (podsAliveColonist.IsFreeNonSlaveColonist)
-                            memories.TryGainMemory(RimWorld.ThoughtDefOf.NewColonyOptimism);
+                        if (podsAliveColonist.IsFreeNonSlaveColonist) memories.TryGainMemory(RimWorld.ThoughtDefOf.NewColonyOptimism);
                     }
                 }
             }
             // generate map
             Map map = CreateMap(caravan.Faction);
+            if (map == null) return null;
             // spawn colonist
             LongEventHandler.QueueLongEvent(() => {
                 Pawn pawn = caravan.PawnsListForReading[0];
@@ -82,7 +82,7 @@ namespace Universum.World {
                 ObjectHolder newObjectHolder = Generator.CreateObjectHolder(_celestialObjectDef.defName, celestialObject: _celestialObject);
                 newObjectHolder.Tile = Tile;
             } else {
-                Generator.TileClear(Tile);
+                Generator.UpdateTile(Tile, Assets.oceanBiomeDef);
             }
         }
 
