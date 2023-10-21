@@ -44,7 +44,7 @@ namespace Universum.World {
 
         public bool SafeDespawn() {
             if (HasMap) return false;
-            if (_AnyTravelingTransportPodsHere()) return false;
+            if (_AnyTravelingTransportPodsHere() || _AnyCaravansHere()) return false;
 
             return true;
         }
@@ -191,7 +191,7 @@ namespace Universum.World {
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
             alsoRemoveWorldObject = false;
 
-            if (_AnyTravelingTransportPodsHere()) return false;
+            if (_AnyTravelingTransportPodsHere() || _AnyCaravansHere()) return false;
 
             return base.ShouldRemoveMapNow(out alsoRemoveWorldObject);
         }
@@ -201,6 +201,11 @@ namespace Universum.World {
             bool IsMatchingPod(TravelingTransportPods pods) => pods.initialTile == Tile || pods.destinationTile == Tile;
             // check if there are any matching traveling pods in the world
             return Find.World.worldObjects.AllWorldObjects.OfType<RimWorld.Planet.TravelingTransportPods>().Any(IsMatchingPod);
+        }
+
+        private bool _AnyCaravansHere() {
+            bool isMatchingPawn(RimWorld.Planet.Caravan caravan) => caravan.Tile == Tile;
+            return Find.World.worldObjects.AllWorldObjects.OfType<RimWorld.Planet.Caravan>().Any(isMatchingPawn);
         }
 
         public override void ExposeData() {
