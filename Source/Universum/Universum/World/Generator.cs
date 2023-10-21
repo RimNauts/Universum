@@ -30,7 +30,7 @@ namespace Universum.World {
             for (int i = 0; i < total; i++) {
                 celestialObjectDefNames.Add(objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName);
                 if (despawnBetweenDays != Vector2.zero) {
-                    int deathTick = (int) Rand.Range(despawnBetweenDays[0] * 60000, despawnBetweenDays[1] * 60000) + Game.MainLoop.tickManager.TicksGame;
+                    int deathTick = (int) Rand.Range(despawnBetweenDays[0] * 60000, despawnBetweenDays[1] * 60000) + Game.MainLoop.instance.tick;
                     celestialObjectDeathTicks.Add(deathTick);
                 } else celestialObjectDeathTicks.Add(null);
             }

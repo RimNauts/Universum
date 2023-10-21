@@ -5,7 +5,7 @@ namespace Universum.World {
     public class ObjectHolderCache : GameComponent {
         public static ObjectHolderCache instance;
 
-        private Dictionary<int, ObjectHolder> objectHolders = new Dictionary<int, ObjectHolder>();
+        private readonly Dictionary<int, ObjectHolder> objectHolders = new Dictionary<int, ObjectHolder>();
 
         public ObjectHolderCache(Verse.Game game) : base() => instance = this;
 

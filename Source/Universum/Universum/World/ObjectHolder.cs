@@ -168,13 +168,13 @@ namespace Universum.World {
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
             alsoRemoveWorldObject = true;
             // predicate function to find matching traveling pods
-            Func<RimWorld.Planet.TravelingTransportPods, bool> IsMatchingPod = (pods) => {
+            bool IsMatchingPod(TravelingTransportPods pods) {
                 int initialTile = (int) typeof(RimWorld.Planet.TravelingTransportPods)
                                   .GetField("initialTile", BindingFlags.Instance | BindingFlags.NonPublic)
                                   .GetValue(pods);
 
                 return initialTile == Tile || pods.destinationTile == Tile;
-            };
+            }
             // check if there are any matching traveling pods in the world
             if (Find.World.worldObjects.AllWorldObjects.OfType<RimWorld.Planet.TravelingTransportPods>().Any(IsMatchingPod)) return false;
 

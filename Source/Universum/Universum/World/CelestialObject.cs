@@ -129,8 +129,8 @@ namespace Universum.World {
         }
 
         public virtual void Update() {
-            if (Game.MainLoop.instance.unpaused || Game.MainLoop.instance.forceUpdate) UpdatePosition(Game.MainLoop.tickManager.TicksGame);
-            UpdateRotation(Game.MainLoop.tickManager.TicksGame, Game.MainLoop.cameraDriver.CurrentlyLookingAtPointOnSphere);
+            if (Game.MainLoop.instance.unpaused || Game.MainLoop.instance.forceUpdate) UpdatePosition(Game.MainLoop.instance.tick);
+            UpdateRotation(Game.MainLoop.instance.tick, Game.MainLoop.instance.currentSphereFocusPoint);
             UpdateTransformationMatrix();
 
             for (int i = 0; i < _components.Length; i++) {
@@ -261,7 +261,7 @@ namespace Universum.World {
             return _target?.scale ?? new Vector3(100.0f, 100.0f, 100.0f);
         }
 
-        public virtual bool ShouldDespawn() => deathTick != null && Game.MainLoop.tickManager.TicksGame > deathTick;
+        public virtual bool ShouldDespawn() => deathTick != null && Game.MainLoop.instance.tick > deathTick;
 
         public virtual void GenerateVisuals() {
             if (def.shape != null) {

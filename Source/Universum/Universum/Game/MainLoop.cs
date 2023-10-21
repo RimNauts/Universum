@@ -9,9 +9,16 @@ using Verse;
 namespace Universum.Game {
     public class MainLoop : GameComponent {
         public static MainLoop instance;
-        public static TickManager tickManager;
-        public static Camera camera;
-        public static RimWorld.Planet.WorldCameraDriver cameraDriver;
+
+        private TickManager _tickManager;
+        public int tick = 0;
+        public TimeSpeed timeSpeed = TimeSpeed.Paused;
+
+        private Camera _camera;
+        public Vector3 cameraPosition;
+
+        private RimWorld.Planet.WorldCameraDriver _cameraDriver;
+        public Vector3 currentSphereFocusPoint;
 
         private List<World.CelestialObject> _celestialObjects = new List<World.CelestialObject>();
         private readonly Dictionary<string, int> _objectGenerationSpawnTick = new Dictionary<string, int>();
@@ -58,16 +65,16 @@ namespace Universum.Game {
         }
 
         public override void GameComponentTick() {
-            if (tickManager == null || tickManager.TicksGame % 10 != 0) return;
+            if (_tickManager == null || _tickManager.TicksGame % 10 != 0) return;
 
             for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Tick();
 
-            if (tickManager.TicksGame < _spawnTickMin) return;
+            if (_tickManager.TicksGame < _spawnTickMin) return;
 
             foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationRandomSteps.Values) {
                 if (!_objectGenerationSpawnTick.ContainsKey(objectGenerationStep.defName)) continue;
                 int spawnTick = _objectGenerationSpawnTick[objectGenerationStep.defName];
-                if (tickManager.TicksGame > spawnTick) {
+                if (_tickManager.TicksGame > spawnTick) {
                     World.Generator.Generate(
                         objectGenerationStep,
                         despawnBetweenDays: objectGenerationStep.despawnBetweenDays,
@@ -119,7 +126,16 @@ namespace Universum.Game {
         }
 
         private void _GetFrameData() {
-            if (_celestialObjects.NullOrEmpty() || tickManager == null) {
+            if (_tickManager != null) {
+                tick = _tickManager.TicksGame;
+                timeSpeed = _tickManager.curTimeSpeed;
+            }
+
+            if (_camera != null) cameraPosition = _camera.transform.position;
+
+            if (_cameraDriver != null) currentSphereFocusPoint = _cameraDriver.CurrentlyLookingAtPointOnSphere;
+
+            if (_celestialObjects.NullOrEmpty() || _tickManager == null) {
                 _wait = true;
                 return;
             }
@@ -134,11 +150,11 @@ namespace Universum.Game {
             worldSceneActivated = sceneSwitched && sceneIsWorld;
             worldSceneDeactivated = sceneSwitched && !sceneIsWorld;
 
-            unpaused = tickManager.TicksGame != _prevTick;
-            _prevTick = tickManager.TicksGame;
+            unpaused = _tickManager.TicksGame != _prevTick;
+            _prevTick = _tickManager.TicksGame;
 
-            cameraMoved = camera.transform.position != _prevCameraPosition;
-            _prevCameraPosition = camera.transform.position;
+            cameraMoved = _camera.transform.position != _prevCameraPosition;
+            _prevCameraPosition = _camera.transform.position;
 
             _frameChanged = unpaused || cameraMoved;
         }
@@ -157,9 +173,9 @@ namespace Universum.Game {
             dirtyCache = false;
             forceUpdate = true;
 
-            tickManager = Find.TickManager;
-            camera = Find.WorldCamera.GetComponent<Camera>();
-            cameraDriver = Find.WorldCameraDriver;
+            _tickManager = Find.TickManager;
+            _camera = Find.WorldCamera.GetComponent<Camera>();
+            _cameraDriver = Find.WorldCameraDriver;
 
             for (int i = 0; i < _celestialObjects.Count; i++) {
                 if (_celestialObjects[i].ShouldDespawn()) {
@@ -174,7 +190,7 @@ namespace Universum.Game {
 
             for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i] = _celestialObjects[i];
 
-            if (tickManager != null || camera != null || cameraDriver != null) _Update();
+            if (_tickManager != null || _camera != null || _cameraDriver != null) _Update();
 
             if (_objectGenerationSpawnTick.Count == 0) {
                 foreach (var step in Defs.Loader.celestialObjectGenerationRandomSteps.Values) {
@@ -197,7 +213,7 @@ namespace Universum.Game {
             }
         }
 
-        private int _GetSpawnTick(float betweenDaysMin, float betweenDaysMax) => (int) Rand.Range(betweenDaysMin * 60000, betweenDaysMax * 60000) + tickManager.TicksGame;
+        private int _GetSpawnTick(float betweenDaysMin, float betweenDaysMax) => (int) Rand.Range(betweenDaysMin * 60000, betweenDaysMax * 60000) + _tickManager.TicksGame;
 
         public override void ExposeData() {
             if (Scribe.mode == LoadSaveMode.Saving) _SaveData();

@@ -42,7 +42,7 @@ namespace Universum.World.Component {
 
         public override void Update() {
             base.Update();
-            TimeSpeed currentSpeed = Game.MainLoop.tickManager.curTimeSpeed;
+            TimeSpeed currentSpeed = Game.MainLoop.instance.timeSpeed;
             if (currentSpeed != _prevGameSpeed) {
                 _prevGameSpeed = currentSpeed;
                 _speed = (float) Math.Pow(3.0, (double) currentSpeed - 1.0);

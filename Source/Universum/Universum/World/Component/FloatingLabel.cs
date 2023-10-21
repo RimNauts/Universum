@@ -26,7 +26,7 @@ namespace Universum.World.Component {
         }
 
         public override void UpdatePosition() {
-            _position = Vector3.MoveTowards(_celestialObject.transformedPosition, Game.MainLoop.camera.transform.position, 50.0f);
+            _position = Vector3.MoveTowards(_celestialObject.transformedPosition, Game.MainLoop.instance.cameraPosition, 50.0f);
             _position += _offset;
             _position.y -= _celestialObject.scale.y + _celestialObject.extraScale + 1.0f;
         }
@@ -41,8 +41,8 @@ namespace Universum.World.Component {
         }
 
         private void hide() {
-            bool tooClose = (Vector3.Distance(_position, Game.MainLoop.cameraDriver.CurrentlyLookingAtPointOnSphere) + (220.0f * _hideAtMinAltitude)) > Vector3.Distance(Game.MainLoop.cameraDriver.CurrentlyLookingAtPointOnSphere, Game.MainLoop.camera.transform.position);
-            bool tooFar = (Vector3.Distance(_position, Game.MainLoop.cameraDriver.CurrentlyLookingAtPointOnSphere) + (220.0f * _hideAtMaxAltitude)) < Vector3.Distance(Game.MainLoop.cameraDriver.CurrentlyLookingAtPointOnSphere, Game.MainLoop.camera.transform.position);
+            bool tooClose = (Vector3.Distance(_position, Game.MainLoop.instance.currentSphereFocusPoint) + (220.0f * _hideAtMinAltitude)) > Vector3.Distance(Game.MainLoop.instance.currentSphereFocusPoint, Game.MainLoop.instance.cameraPosition);
+            bool tooFar = (Vector3.Distance(_position, Game.MainLoop.instance.currentSphereFocusPoint) + (220.0f * _hideAtMaxAltitude)) < Vector3.Distance(Game.MainLoop.instance.currentSphereFocusPoint, Game.MainLoop.instance.cameraPosition);
             if (tooClose || tooFar) {
                 SetBlock(true);
             } SetBlock(false);
