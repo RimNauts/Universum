@@ -9,6 +9,8 @@ namespace Universum.World {
         public string name;
         public Defs.CelestialObject def;
 
+        public ObjectHolder objectHolder = null;
+
         protected Functionality.Random _rand;
 
         protected bool _generatingShape = false;
@@ -18,6 +20,8 @@ namespace Universum.World {
         protected bool _scaleChanged = true;
 
         public int? deathTick = null;
+        public bool deathForced = false;
+        public bool deathLocked = false;
 
         protected Shape _shape;
         protected Matrix4x4 _transformationMatrix = Matrix4x4.identity;
@@ -55,11 +59,13 @@ namespace Universum.World {
         ~CelestialObject() => Destroy();
 
         public virtual void Destroy() {
+            objectHolder?.Destroy();
             for (int i = 0; i < _components.Length; i++) _components[i].Destroy();
             for (int i = 0; i < _transforms.Length; i++) UnityEngine.Object.Destroy(_transforms[i].gameObject);
         }
 
         public virtual void GetExposeData(List<string> defNames, List<int?> seeds, List<Vector3?> positions, List<int?> deathTicks) {
+            if (objectHolder != null) return;
             defNames.Add(def.defName);
             seeds.Add(seed);
             positions.Add(position);

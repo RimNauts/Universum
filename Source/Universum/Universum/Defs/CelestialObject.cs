@@ -20,6 +20,8 @@ namespace Universum.Defs {
         public Vector2 spinRotationSpeedBetween = Vector2.zero;
         public Vector2 inclinationAngleBetween = Vector2.zero;
 
+        public ObjectHolder objectHolder = null;
+
         public List<Component> components = new List<Component>();
 
         public Shape shape;

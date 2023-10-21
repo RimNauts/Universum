@@ -9,6 +9,8 @@ namespace Universum {
         public static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
         public static Dictionary<string, Material> materials = new Dictionary<string, Material>();
         public static GameObject gameObjectWorldText;
+        public static RimWorld.WorldObjectDef objectHolderDef;
+        public static RimWorld.BiomeDef oceanBiomeDef;
         private static AssetBundle assets;
 
         public static void Init() {
@@ -16,6 +18,8 @@ namespace Universum {
 
             shaders["Sprites/Default"] = Shader.Find("Sprites/Default");
             gameObjectWorldText = Resources.Load<GameObject>("Prefabs/WorldText");
+            objectHolderDef = DefDatabase<RimWorld.WorldObjectDef>.GetNamed("Universum_ObjectHolder");
+            oceanBiomeDef = DefDatabase<RimWorld.BiomeDef>.GetNamed("Ocean");
 
             foreach (var (_, material) in Defs.Loader.materials) {
                 MaterialRequest req = new MaterialRequest(GetShader(material.shaderName)) {
@@ -27,6 +31,12 @@ namespace Universum {
                     req.needsMainTex = true;
                 }
                 materials[material.defName] = MaterialPool.MatFrom(req);
+            }
+
+            foreach (var (_, celestialObjectDef) in Defs.Loader.celestialObjects) {
+                if (celestialObjectDef.objectHolder == null) continue;
+                if (celestialObjectDef.objectHolder.overlayIconPath == null) continue;
+                GetTexture(celestialObjectDef.objectHolder.overlayIconPath);
             }
         }
 

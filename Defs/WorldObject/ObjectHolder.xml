@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<WorldObjectDef>
+		<defName>Universum_ObjectHolder</defName>
+		<worldObjectClass>Universum.World.ObjectHolder</worldObjectClass>
+		<canBePlayerHome>true</canBePlayerHome>
+		<useDynamicDrawer>false</useDynamicDrawer>
+		<expandingIcon>true</expandingIcon>
+		<expandingIconTexture>Universum_Transparent</expandingIconTexture>
+		<expandingIconPriority>1003</expandingIconPriority>
+		<texture>Universum_Transparent</texture>
+		<IncidentTargetTags>
+			<li>Map_PlayerHome</li>
+		</IncidentTargetTags>
+		<comps>
+			<li Class="WorldObjectCompProperties_Abandon"/>
+      		<li Class="WorldObjectCompProperties_FormCaravan"/>
+		</comps>
+  	</WorldObjectDef>
+</Defs>
