@@ -37,6 +37,7 @@ namespace Universum.World {
 
         public Vector3 transformedPosition;
         public Vector3 position;
+        private Vector3 _localPosition;
         public Vector3 scale;
         protected float _scalePercentage;
         public float extraScale;
@@ -166,7 +167,9 @@ namespace Universum.World {
         }
 
         public virtual void UpdateTransformationMatrix() {
-            _transformationMatrix.SetTRS(_inclinatioRotation * _axialRotation * (position + GetTargetPosition()), _rotation, scale);
+            _localPosition = _inclinatioRotation * _axialRotation * (position + GetTargetPosition());
+
+            _transformationMatrix.SetTRS(_localPosition, _rotation, scale);
             // update real position
             transformedPosition.x = _transformationMatrix.m03;
             transformedPosition.y = _transformationMatrix.m13;
@@ -176,23 +179,24 @@ namespace Universum.World {
         public virtual void Render() {
             if (_dirty) _Recache();
 
-            foreach (ObjectComponent component in _components) component.Render();
-
-            if (!_transforms.NullOrEmpty()) {
-                bool updatePosition = _positionChanged || Game.MainLoop.instance.forceUpdate;
-                bool updateRotation = _rotationChanged || Game.MainLoop.instance.forceUpdate;
-                bool updateScale = _scaleChanged || Game.MainLoop.instance.forceUpdate;
-
-                for (int i = 0; i < _transforms.Length; i++) {
-                    if (updatePosition) _transforms[i].localPosition = _inclinatioRotation * _axialRotation * (position + GetTargetPosition());
-                    if (updateRotation) _transforms[i].localRotation = _rotation;
-                    if (updateScale) _transforms[i].localScale = scale;
-                }
-            }
+            bool updatePosition = _positionChanged || Game.MainLoop.instance.forceUpdate;
+            bool updateRotation = _rotationChanged || Game.MainLoop.instance.forceUpdate;
+            bool updateScale = _scaleChanged || Game.MainLoop.instance.forceUpdate;
 
             _positionChanged = false;
             _rotationChanged = false;
             _scaleChanged = false;
+
+            foreach (ObjectComponent component in _components) component.Render();
+
+            int totalTransforms = _transforms.Length;
+            if (totalTransforms <= 0) return;
+
+            for (int i = 0; i < totalTransforms; i++) {
+                if (updatePosition) _transforms[i].localPosition = _localPosition;
+                if (updateRotation) _transforms[i].localRotation = _rotation;
+                if (updateScale) _transforms[i].localScale = scale;
+            }
         }
 
         protected virtual void _Recache() {
