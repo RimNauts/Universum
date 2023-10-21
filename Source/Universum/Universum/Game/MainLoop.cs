@@ -19,6 +19,7 @@ namespace Universum.Game {
 
         private RimWorld.Planet.WorldCameraDriver _cameraDriver;
         public Vector3 currentSphereFocusPoint;
+        public float altitudePercent;
 
         private List<World.CelestialObject> _celestialObjects = new List<World.CelestialObject>();
         private readonly Dictionary<string, int> _objectGenerationSpawnTick = new Dictionary<string, int>();
@@ -133,7 +134,10 @@ namespace Universum.Game {
 
             if (_camera != null) cameraPosition = _camera.transform.position;
 
-            if (_cameraDriver != null) currentSphereFocusPoint = _cameraDriver.CurrentlyLookingAtPointOnSphere;
+            if (_cameraDriver != null) {
+                currentSphereFocusPoint = _cameraDriver.CurrentlyLookingAtPointOnSphere;
+                altitudePercent = _cameraDriver.AltitudePercent;
+            }
 
             if (_celestialObjects.NullOrEmpty() || _tickManager == null) {
                 _wait = true;

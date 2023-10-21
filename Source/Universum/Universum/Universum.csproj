@@ -130,7 +130,9 @@
     <Compile Include="World\Patch\TileFinder.cs" />
     <Compile Include="World\Patch\TravelingTransportPods.cs" />
     <Compile Include="World\Patch\WorldGrid.cs" />
+    <Compile Include="World\Patch\WorldObjectSelectionUtility.cs" />
     <Compile Include="World\Patch\WorldObjectsHolder.cs" />
+    <Compile Include="World\Patch\WorldRendererUtility.cs" />
     <Compile Include="World\Shape.cs" />
     <Compile Include="World\Component\FloatingLabel.cs" />
   </ItemGroup>

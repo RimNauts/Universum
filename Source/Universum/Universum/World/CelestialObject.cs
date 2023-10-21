@@ -141,6 +141,8 @@ namespace Universum.World {
                 if (Game.MainLoop.instance.worldSceneActivated) _components[i].OnWorldSceneActivated();
                 if (Game.MainLoop.instance.worldSceneDeactivated) _components[i].OnWorldSceneDeactivated();
             }
+
+            objectHolder?.CheckHideIcon();
         }
 
         public virtual void UpdatePosition(int tick) {

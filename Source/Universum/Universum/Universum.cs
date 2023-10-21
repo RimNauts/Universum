@@ -19,7 +19,9 @@ namespace Universum {
             World.Patch.TileFinder.Init(harmony);
             World.Patch.TravelingTransportPods.Init(harmony);
             World.Patch.WorldGrid.Init(harmony);
+            World.Patch.WorldObjectSelectionUtility.Init(harmony);
             World.Patch.WorldObjectsHolder.Init(harmony);
+            World.Patch.WorldRendererUtility.Init(harmony);
             // print mod info
             Logger.print(
                 Logger.Importance.Info,

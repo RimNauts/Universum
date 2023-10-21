@@ -16,6 +16,7 @@ namespace Universum.World {
 
         private Texture2D _overlayIcon;
         public bool keepAfterAbandon;
+        public bool hideIcon;
 
         private string _exposeCelestialObjectDefName;
         private int? _exposeCelestialObjectSeed;
@@ -101,6 +102,10 @@ namespace Universum.World {
             SetFaction(faction);
             Find.World.WorldUpdate();
             return map;
+        }
+
+        public void CheckHideIcon() {
+            hideIcon = Patch.WorldRendererUtility.ShouldHideObjectHolder(DrawPos);
         }
 
         public bool SafeDespawn() {

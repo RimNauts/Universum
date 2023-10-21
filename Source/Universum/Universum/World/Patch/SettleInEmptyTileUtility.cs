@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Universum.World.Patch {
     public class SettleInEmptyTileUtility {
         public static void Init(Harmony harmony) {
-            _ = new PatchClassProcessor(harmony, typeof(SettleInEmptyTileUtility)).Patch();
+            _ = new PatchClassProcessor(harmony, typeof(SettleInEmptyTileUtility_Settle)).Patch();
         }
     }
 
