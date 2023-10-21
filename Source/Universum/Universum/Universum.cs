@@ -13,6 +13,13 @@ namespace Universum {
                 postfix: new HarmonyLib.HarmonyMethod(typeof(Utilities.SectionLayer_Terrain_Regenerate).GetMethod("Postfix"))
             );
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+            World.Patch.CaravanTweenerUtility.Init(harmony);
+            World.Patch.SettleInEmptyTileUtility.Init(harmony);
+            World.Patch.TileFinder.Init(harmony);
+            World.Patch.TravelingTransportPods.Init(harmony);
+            World.Patch.WorldGrid.Init(harmony);
+            World.Patch.WorldObjectsHolder.Init(harmony);
             // print mod info
             Logger.print(
                 Logger.Importance.Info,

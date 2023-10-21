@@ -118,12 +118,19 @@
     <Compile Include="Utilities\Terrain\Properties.cs" />
     <Compile Include="Utilities\Vacuum_Overlay.cs" />
     <Compile Include="Utilities\Vacuum_Damage.cs" />
+    <Compile Include="World\ObjectHolderCache.cs" />
     <Compile Include="World\CelestialObject.cs" />
     <Compile Include="World\Component\Trail.cs" />
     <Compile Include="World\Generator.cs" />
     <Compile Include="World\ObjectComponent.cs" />
     <Compile Include="World\ObjectHolder.cs" />
     <Compile Include="World\Objects\Moon.cs" />
+    <Compile Include="World\Patch\CaravanTweenerUtility.cs" />
+    <Compile Include="World\Patch\SettleInEmptyTileUtility.cs" />
+    <Compile Include="World\Patch\TileFinder.cs" />
+    <Compile Include="World\Patch\TravelingTransportPods.cs" />
+    <Compile Include="World\Patch\WorldGrid.cs" />
+    <Compile Include="World\Patch\WorldObjectsHolder.cs" />
     <Compile Include="World\Shape.cs" />
     <Compile Include="World\Component\FloatingLabel.cs" />
   </ItemGroup>
