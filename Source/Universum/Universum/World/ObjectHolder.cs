@@ -36,6 +36,46 @@ namespace Universum.World {
             _celestialObject.objectHolder = this;
         }
 
+        public Map Settle(RimWorld.Planet.Caravan caravan) {
+            if (caravan.Faction != RimWorld.Faction.OfPlayer) return null;
+            // handle colonist memories
+            if (Find.AnyPlayerHomeMap == null) {
+                foreach (Pawn podsAliveColonist in RimWorld.PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_Colonists) {
+                    RimWorld.MemoryThoughtHandler memories = podsAliveColonist.needs?.mood?.thoughts?.memories;
+                    if (memories != null) {
+                        memories.RemoveMemoriesOfDef(RimWorld.ThoughtDefOf.NewColonyOptimism);
+                        memories.RemoveMemoriesOfDef(RimWorld.ThoughtDefOf.NewColonyHope);
+                        if (podsAliveColonist.IsFreeNonSlaveColonist)
+                            memories.TryGainMemory(RimWorld.ThoughtDefOf.NewColonyOptimism);
+                    }
+                }
+            }
+            // generate map
+            Map map = CreateMap(caravan.Faction);
+            // spawn colonist
+            LongEventHandler.QueueLongEvent(() => {
+                Pawn pawn = caravan.PawnsListForReading[0];
+                RimWorld.Planet.CaravanEnterMapUtility.Enter(
+                    caravan,
+                    map,
+                    RimWorld.Planet.CaravanEnterMode.Center,
+                    RimWorld.Planet.CaravanDropInventoryMode.DropInstantly,
+                    extraCellValidator: x => x.GetRoom(map).CellCount >= 600
+                );
+                CameraJumper.TryJump(pawn);
+            }, "SpawningColonists", true, new Action<Exception>(GameAndMapInitExceptionHandlers.ErrorWhileGeneratingMap));
+
+            return map;
+        }
+
+        public Map CreateMap(RimWorld.Faction faction) {
+            if (faction != RimWorld.Faction.OfPlayer) return null;
+            Map map = MapGenerator.GenerateMap(Find.World.info.initialMapSize, this, MapGeneratorDef, ExtraGenStepDefs, extraInitBeforeContentGen: null);
+            SetFaction(faction);
+            Find.World.WorldUpdate();
+            return map;
+        }
+
         public override void PostRemove() {
             base.PostRemove();
             if (_celestialObjectDef.objectHolder.keepAfterAbandon) {
@@ -127,7 +167,7 @@ namespace Universum.World {
 
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
             alsoRemoveWorldObject = true;
-            // predicate function to find matching traveling pods.
+            // predicate function to find matching traveling pods
             Func<RimWorld.Planet.TravelingTransportPods, bool> IsMatchingPod = (pods) => {
                 int initialTile = (int) typeof(RimWorld.Planet.TravelingTransportPods)
                                   .GetField("initialTile", BindingFlags.Instance | BindingFlags.NonPublic)
@@ -135,7 +175,7 @@ namespace Universum.World {
 
                 return initialTile == Tile || pods.destinationTile == Tile;
             };
-            // check if there are any matching traveling pods in the world.
+            // check if there are any matching traveling pods in the world
             if (Find.World.worldObjects.AllWorldObjects.OfType<RimWorld.Planet.TravelingTransportPods>().Any(IsMatchingPod)) return false;
 
             return base.ShouldRemoveMapNow(out alsoRemoveWorldObject);
