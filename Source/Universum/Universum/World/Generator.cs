@@ -9,32 +9,28 @@ namespace Universum.World {
         public override int SeedPart => 0;
 
         public override void GenerateFresh(string seed) {
-            List<string> celestialObjectDefNames = new List<string>();
-            List<string> objectHolderDefNames = new List<string>();
             foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationStartUpSteps.Values) {
                 for (int i = 0; i < objectGenerationStep.total; i++) {
                     string celestialDefName = objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName;
                     if (Defs.Loader.celestialObjects[celestialDefName].objectHolder != null) {
-                        objectHolderDefNames.Add(celestialDefName);
-                    } else celestialObjectDefNames.Add(celestialDefName);
+                        CreateObjectHolder(celestialDefName);
+                    } else Create(celestialDefName);
                 }
             }
-            foreach (var objectHolderDefName in objectHolderDefNames) CreateObjectHolder(objectHolderDefName);
-            Create(celestialObjectDefNames);
         }
 
         public static void Generate(Defs.ObjectGeneration objectGenerationStep, Vector2 despawnBetweenDays, int? amount = null) {
             int total = amount ?? objectGenerationStep.total;
-            List<string> celestialObjectDefNames = new List<string>();
-            List<int?> celestialObjectDeathTicks = new List<int?>();
             for (int i = 0; i < total; i++) {
-                celestialObjectDefNames.Add(objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName);
-                if (despawnBetweenDays != Vector2.zero) {
-                    int deathTick = (int) Rand.Range(despawnBetweenDays[0] * 60000, despawnBetweenDays[1] * 60000) + Game.MainLoop.instance.tick;
-                    celestialObjectDeathTicks.Add(deathTick);
-                } else celestialObjectDeathTicks.Add(null);
+                string celestialDefName = objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName;
+
+                int? deathTick = null;
+                if (despawnBetweenDays != Vector2.zero) deathTick = (int) Rand.Range(despawnBetweenDays[0] * 60000, despawnBetweenDays[1] * 60000) + Game.MainLoop.instance.tick;
+
+                if (Defs.Loader.celestialObjects[celestialDefName].objectHolder != null) {
+                    CreateObjectHolder(celestialDefName, celestialObjectDeathTick: deathTick);
+                } else Create(celestialDefName, deathTick: deathTick);
             }
-            Create(celestialObjectDefNames, deathTicks: celestialObjectDeathTicks);
         }
 
         public static List<CelestialObject> Create(
@@ -117,6 +113,7 @@ namespace Universum.World {
                     List<int> neighbors = new List<int>();
                     Find.World.grid.GetTileNeighbors(i, neighbors);
                     if (neighbors.Count != 6) continue;
+
                     var flag = false;
                     foreach (var neighbour in neighbors) {
                         var neighbourTile = Find.World.grid.tiles.ElementAtOrDefault(neighbour);
@@ -127,7 +124,9 @@ namespace Universum.World {
                             }
                         }
                     }
+
                     if (flag) continue;
+
                     return i;
                 }
             }

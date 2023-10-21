@@ -15,6 +15,7 @@ namespace Universum.World {
         private Defs.CelestialObject _celestialObjectDef;
 
         private Texture2D _overlayIcon;
+        public bool keepAfterAbandon;
 
         private string _exposeCelestialObjectDefName;
         private int? _exposeCelestialObjectSeed;
@@ -32,8 +33,13 @@ namespace Universum.World {
             _celestialObjectDef = Defs.Loader.celestialObjects[celestialObjectDefName];
 
             _overlayIcon = Assets.GetTexture(_celestialObjectDef.objectHolder.overlayIconPath);
+            keepAfterAbandon = _celestialObjectDef.objectHolder.keepAfterAbandon;
 
             _celestialObject.objectHolder = this;
+        }
+
+        public override void Destroy() {
+            if (!Destroyed) base.Destroy();
         }
 
         public Map Settle(RimWorld.Planet.Caravan caravan) {
@@ -78,7 +84,7 @@ namespace Universum.World {
 
         public override void PostRemove() {
             base.PostRemove();
-            if (_celestialObjectDef.objectHolder.keepAfterAbandon) {
+            if (keepAfterAbandon) {
                 ObjectHolder newObjectHolder = Generator.CreateObjectHolder(_celestialObjectDef.defName, celestialObject: _celestialObject);
                 newObjectHolder.Tile = Tile;
             } else {
@@ -122,6 +128,7 @@ namespace Universum.World {
             StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.Append(_celestialObjectDef.objectHolder.description);
+            stringBuilder.Append(GetDeathTimerLabel());
 
             if (Faction != null && AppendFactionToInspectString) {
                 stringBuilder.Append("Faction".Translate() + ": " + Faction.Name);
@@ -163,6 +170,15 @@ namespace Universum.World {
             }
 
             return restText;
+        }
+
+        public string GetDeathTimerLabel() {
+            if (_celestialObject.deathTick == null) return "";
+
+            float timeLeft = (float) _celestialObject.deathTick - Game.MainLoop.instance.tick;
+            if (timeLeft < 60000.0f) {
+                return "RimNauts.hours_left".Translate(Math.Ceiling(timeLeft / 2500.0f).ToString());
+            } else return "RimNauts.days_left".Translate((timeLeft / 60000.0f).ToString("0.00"));
         }
 
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {

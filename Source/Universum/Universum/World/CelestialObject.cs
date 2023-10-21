@@ -59,7 +59,11 @@ namespace Universum.World {
         ~CelestialObject() => Destroy();
 
         public virtual void Destroy() {
-            objectHolder?.Destroy();
+            if (objectHolder != null) {
+                objectHolder.keepAfterAbandon = false;
+                objectHolder.Destroy();
+            }
+
             for (int i = 0; i < _components.Length; i++) _components[i].Destroy();
             for (int i = 0; i < _transforms.Length; i++) UnityEngine.Object.Destroy(_transforms[i].gameObject);
         }
@@ -174,10 +178,16 @@ namespace Universum.World {
 
             foreach (ObjectComponent component in _components) component.Render();
 
-            for (int i = 0; i < _transforms.Length; i++) {
-                if (_positionChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localPosition = _inclinatioRotation * _axialRotation * (position + GetTargetPosition());
-                if (_rotationChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localRotation = _rotation;
-                if (_scaleChanged || Game.MainLoop.instance.forceUpdate) _transforms[i].localScale = scale;
+            if (!_transforms.NullOrEmpty()) {
+                bool updatePosition = _positionChanged || Game.MainLoop.instance.forceUpdate;
+                bool updateRotation = _rotationChanged || Game.MainLoop.instance.forceUpdate;
+                bool updateScale = _scaleChanged || Game.MainLoop.instance.forceUpdate;
+
+                for (int i = 0; i < _transforms.Length; i++) {
+                    if (updatePosition) _transforms[i].localPosition = _inclinatioRotation * _axialRotation * (position + GetTargetPosition());
+                    if (updateRotation) _transforms[i].localRotation = _rotation;
+                    if (updateScale) _transforms[i].localScale = scale;
+                }
             }
 
             _positionChanged = false;
