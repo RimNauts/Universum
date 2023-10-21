@@ -42,6 +42,13 @@ namespace Universum.World {
             if (!Destroyed) base.Destroy();
         }
 
+        public bool SafeDespawn() {
+            if (HasMap) return false;
+            if (_AnyTravelingTransportPodsHere()) return false;
+
+            return true;
+        }
+
         public Map Settle(RimWorld.Planet.Caravan caravan) {
             if (caravan.Faction != RimWorld.Faction.OfPlayer) return null;
             // handle colonist memories
@@ -173,7 +180,7 @@ namespace Universum.World {
         }
 
         public string GetDeathTimerLabel() {
-            if (_celestialObject.deathTick == null) return "";
+            if (_celestialObject.deathTick == null || !SafeDespawn()) return "";
 
             float timeLeft = (float) _celestialObject.deathTick - Game.MainLoop.instance.tick;
             if (timeLeft < 60000.0f) {
@@ -182,19 +189,18 @@ namespace Universum.World {
         }
 
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
-            alsoRemoveWorldObject = true;
-            // predicate function to find matching traveling pods
-            bool IsMatchingPod(TravelingTransportPods pods) {
-                int initialTile = (int) typeof(RimWorld.Planet.TravelingTransportPods)
-                                  .GetField("initialTile", BindingFlags.Instance | BindingFlags.NonPublic)
-                                  .GetValue(pods);
+            alsoRemoveWorldObject = false;
 
-                return initialTile == Tile || pods.destinationTile == Tile;
-            }
-            // check if there are any matching traveling pods in the world
-            if (Find.World.worldObjects.AllWorldObjects.OfType<RimWorld.Planet.TravelingTransportPods>().Any(IsMatchingPod)) return false;
+            if (_AnyTravelingTransportPodsHere()) return false;
 
             return base.ShouldRemoveMapNow(out alsoRemoveWorldObject);
+        }
+
+        private bool _AnyTravelingTransportPodsHere() {
+            // predicate function to find matching traveling pods
+            bool IsMatchingPod(TravelingTransportPods pods) => pods.initialTile == Tile || pods.destinationTile == Tile;
+            // check if there are any matching traveling pods in the world
+            return Find.World.worldObjects.AllWorldObjects.OfType<RimWorld.Planet.TravelingTransportPods>().Any(IsMatchingPod);
         }
 
         public override void ExposeData() {
