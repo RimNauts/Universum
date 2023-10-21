@@ -22,6 +22,11 @@ namespace Universum.World {
         private Vector3? _exposeCelestialObjectPosition;
         private int? _exposeCelestialObjectDeathTick;
 
+        public override string Label => _celestialObject.name;
+        public override Vector3 DrawPos => _celestialObject.transformedPosition;
+        public override Texture2D ExpandingIcon => HasMap ? _overlayIcon : base.ExpandingIcon;
+        public override MapGeneratorDef MapGeneratorDef => _celestialObjectDef.objectHolder.mapGeneratorDef;
+
         public void Init(
             string celestialObjectDefName,
             int? celestialObjectSeed = null,
@@ -42,12 +47,21 @@ namespace Universum.World {
             if (!Destroyed) base.Destroy();
         }
 
-        public bool SafeDespawn() {
-            if (HasMap) return false;
-            if (_AnyTravelingTransportPodsHere() || _AnyCaravansHere()) return false;
-
-            return true;
+        public override void PostRemove() {
+            base.PostRemove();
+            if (keepAfterAbandon) {
+                ObjectHolder newObjectHolder = Generator.CreateObjectHolder(_celestialObjectDef.defName, celestialObject: _celestialObject);
+                newObjectHolder.Tile = Tile;
+            } else {
+                Generator.UpdateTile(Tile, Assets.oceanBiomeDef);
+            }
         }
+
+        public override void Tick() { }
+
+        public override void Draw() { }
+
+        public override void Print(LayerSubMesh subMesh) { }
 
         public Map Settle(RimWorld.Planet.Caravan caravan) {
             if (caravan.Faction != RimWorld.Faction.OfPlayer) return null;
@@ -89,103 +103,11 @@ namespace Universum.World {
             return map;
         }
 
-        public override void PostRemove() {
-            base.PostRemove();
-            if (keepAfterAbandon) {
-                ObjectHolder newObjectHolder = Generator.CreateObjectHolder(_celestialObjectDef.defName, celestialObject: _celestialObject);
-                newObjectHolder.Tile = Tile;
-            } else {
-                Generator.UpdateTile(Tile, Assets.oceanBiomeDef);
-            }
-        }
+        public bool SafeDespawn() {
+            if (HasMap) return false;
+            if (_AnyTravelingTransportPodsHere() || _AnyCaravansHere()) return false;
 
-        public override void Tick() { }
-
-        public override void Draw() { }
-
-        public override void Print(LayerSubMesh subMesh) { }
-
-        public override Vector3 DrawPos => _celestialObject.transformedPosition;
-
-        public override Texture2D ExpandingIcon => HasMap ? _overlayIcon : base.ExpandingIcon;
-
-        public override MapGeneratorDef MapGeneratorDef => _celestialObjectDef.objectHolder.mapGeneratorDef;
-
-        public override string Label => _celestialObject.name;
-
-        public override string GetDescription() {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(_celestialObjectDef.objectHolder.description);
-
-            for (int i = 0; i < comps.Count; i++) {
-                string descriptionPart = comps[i].GetDescriptionPart();
-                if (!descriptionPart.NullOrEmpty()) {
-                    if (stringBuilder.Length > 0) {
-                        stringBuilder.AppendLine();
-                        stringBuilder.AppendLine();
-                    }
-                    stringBuilder.Append(descriptionPart);
-                }
-            }
-
-            return stringBuilder.ToString();
-        }
-
-        public override string GetInspectString() {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            stringBuilder.Append(_celestialObjectDef.objectHolder.description);
-            stringBuilder.Append(GetDeathTimerLabel());
-
-            if (Faction != null && AppendFactionToInspectString) {
-                stringBuilder.Append("Faction".Translate() + ": " + Faction.Name);
-            }
-
-            for (int i = 0; i < comps.Count; i++) {
-                string text = comps[i].CompInspectStringExtra();
-                if (!text.NullOrEmpty()) {
-                    if (Prefs.DevMode && char.IsWhiteSpace(text[text.Length - 1])) {
-                        Log.ErrorOnce(string.Concat(comps[i].GetType(), " CompInspectStringExtra ended with whitespace: ", text), 25612);
-                        text = text.TrimEndNewlines();
-                    }
-
-                    if (stringBuilder.Length != 0) {
-                        stringBuilder.AppendLine();
-                    }
-
-                    stringBuilder.Append(text);
-                }
-            }
-
-            RimWorld.QuestUtility.AppendInspectStringsFromQuestParts(stringBuilder, this);
-
-            string restText = stringBuilder.ToString();
-
-            if (this.EnterCooldownBlocksEntering()) {
-                if (!restText.NullOrEmpty()) {
-                    restText += "\n";
-                }
-
-                restText += "EnterCooldown".Translate(this.EnterCooldownTicksLeft().ToStringTicksToPeriod());
-            }
-
-            if (!HandlesConditionCausers && HasMap) {
-                List<Thing> list = Map.listerThings.ThingsInGroup(ThingRequestGroup.ConditionCauser);
-                for (int i = 0; i < list.Count; i++) {
-                    restText += "\n" + list[i].LabelShortCap + " (" + "ConditionCauserRadius".Translate(list[i].TryGetComp<RimWorld.CompCauseGameCondition>().Props.worldRange) + ")";
-                }
-            }
-
-            return restText;
-        }
-
-        public string GetDeathTimerLabel() {
-            if (_celestialObject.deathTick == null || !SafeDespawn()) return "";
-
-            float timeLeft = (float) _celestialObject.deathTick - Game.MainLoop.instance.tick;
-            if (timeLeft < 60000.0f) {
-                return "RimNauts.hours_left".Translate(Math.Ceiling(timeLeft / 2500.0f).ToString());
-            } else return "RimNauts.days_left".Translate((timeLeft / 60000.0f).ToString("0.00"));
+            return true;
         }
 
         public override bool ShouldRemoveMapNow(out bool alsoRemoveWorldObject) {
@@ -197,15 +119,102 @@ namespace Universum.World {
         }
 
         private bool _AnyTravelingTransportPodsHere() {
-            // predicate function to find matching traveling pods
             bool IsMatchingPod(TravelingTransportPods pods) => pods.initialTile == Tile || pods.destinationTile == Tile;
-            // check if there are any matching traveling pods in the world
             return Find.World.worldObjects.AllWorldObjects.OfType<RimWorld.Planet.TravelingTransportPods>().Any(IsMatchingPod);
         }
 
         private bool _AnyCaravansHere() {
             bool isMatchingPawn(RimWorld.Planet.Caravan caravan) => caravan.Tile == Tile;
             return Find.World.worldObjects.AllWorldObjects.OfType<RimWorld.Planet.Caravan>().Any(isMatchingPawn);
+        }
+
+        private string _GetDeathTimerLabel() {
+            if (_celestialObject.deathTick == null || !SafeDespawn()) return "";
+
+            float timeLeft = (float) _celestialObject.deathTick - Game.MainLoop.instance.tick;
+            if (timeLeft < 60000.0f) {
+                return "RimNauts.hours_left".Translate(Math.Ceiling(timeLeft / 2500.0f).ToString());
+            } else return "RimNauts.days_left".Translate((timeLeft / 60000.0f).ToString("0.00"));
+        }
+
+        public override string GetDescription() {
+            StringBuilder stringBuilder = new StringBuilder();
+            _AppendCelestialDescription(stringBuilder);
+            _AppendComponentDescriptionParts(stringBuilder);
+
+            return stringBuilder.ToString();
+        }
+
+        public override string GetInspectString() {
+            StringBuilder stringBuilder = new StringBuilder();
+            _AppendCelestialDescription(stringBuilder);
+            _AppendFactionIfApplicable(stringBuilder);
+            _AppendComponentStrings(stringBuilder);
+            RimWorld.QuestUtility.AppendInspectStringsFromQuestParts(stringBuilder, this);
+            _AppendCooldownInformation(stringBuilder);
+            _AppendConditionCausersIfPresent(stringBuilder);
+
+            return stringBuilder.ToString();
+        }
+
+        private void _AppendCelestialDescription(StringBuilder sb) {
+            sb.Append(_celestialObjectDef.objectHolder.description);
+            sb.Append(_GetDeathTimerLabel());
+        }
+
+        private void _AppendFactionIfApplicable(StringBuilder sb) {
+            if (Faction != null && AppendFactionToInspectString) {
+                sb.AppendLine("Faction".Translate() + ": " + Faction.Name);
+            }
+        }
+
+        private void _AppendComponentDescriptionParts(StringBuilder sb) {
+            for (int i = 0; i < comps.Count; i++) {
+                string descriptionPart = comps[i].GetDescriptionPart();
+                if (!descriptionPart.NullOrEmpty()) {
+                    if (sb.Length > 0) {
+                        sb.AppendLine();
+                        sb.AppendLine();
+                    }
+                    sb.Append(descriptionPart);
+                }
+            }
+        }
+
+        private void _AppendComponentStrings(StringBuilder sb) {
+            for (int i = 0; i < comps.Count; i++) {
+                string text = comps[i].CompInspectStringExtra();
+                if (!text.NullOrEmpty()) {
+                    if (Prefs.DevMode && char.IsWhiteSpace(text[text.Length - 1])) {
+                        Log.ErrorOnce(string.Concat(comps[i].GetType(), " CompInspectStringExtra ended with whitespace: ", text), 25612);
+                        text = text.TrimEndNewlines();
+                    }
+
+                    if (sb.Length != 0) {
+                        sb.AppendLine();
+                    }
+
+                    sb.Append(text);
+                }
+            }
+        }
+
+        private void _AppendCooldownInformation(StringBuilder sb) {
+            if (this.EnterCooldownBlocksEntering()) {
+                if (sb.Length > 0) {
+                    sb.AppendLine();
+                }
+                sb.AppendLine("EnterCooldown".Translate(this.EnterCooldownTicksLeft().ToStringTicksToPeriod()));
+            }
+        }
+
+        private void _AppendConditionCausersIfPresent(StringBuilder sb) {
+            if (!HandlesConditionCausers && HasMap) {
+                List<Thing> list = Map.listerThings.ThingsInGroup(ThingRequestGroup.ConditionCauser);
+                for (int i = 0; i < list.Count; i++) {
+                    sb.AppendLine(list[i].LabelShortCap + " (" + "ConditionCauserRadius".Translate(list[i].TryGetComp<RimWorld.CompCauseGameCondition>().Props.worldRange) + ")");
+                }
+            }
         }
 
         public override void ExposeData() {
