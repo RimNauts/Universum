@@ -20,6 +20,11 @@ namespace Universum.World.Component {
             SetActive(false);
         }
 
+        public override void UpdateInfo() {
+            base.UpdateInfo();
+            _textComponent.text = _def.overwriteText ?? _celestialObject.name;
+        }
+
         public override void Update() {
             base.Update();
             hide();

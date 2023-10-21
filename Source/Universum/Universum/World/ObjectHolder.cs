@@ -63,6 +63,8 @@ namespace Universum.World {
             }
         }
 
+        public void Randomize() => _celestialObject.Randomize();
+
         public override void Tick() { }
 
         public override void Draw() { }

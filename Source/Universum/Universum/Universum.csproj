@@ -119,6 +119,8 @@
     <Compile Include="Utilities\Vacuum_Overlay.cs" />
     <Compile Include="Utilities\Vacuum_Damage.cs" />
     <Compile Include="World\Comps\DestroyObjectHolder.cs" />
+    <Compile Include="World\Comps\GenerateObjectHolderMap.cs" />
+    <Compile Include="World\Comps\RandomizeObjectHolder.cs" />
     <Compile Include="World\ObjectHolderCache.cs" />
     <Compile Include="World\CelestialObject.cs" />
     <Compile Include="World\Component\Trail.cs" />

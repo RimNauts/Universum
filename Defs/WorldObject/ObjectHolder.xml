@@ -18,6 +18,14 @@
 				<label>Destroy</label>
 				<desc>Blast the object out of orbit, never to be seen again.</desc>
 			</li>
+			<li Class="Universum.World.Comps.GenerateObjectHolderMap_Properties">
+				<label>Generate map</label>
+				<desc>Generate map for the object instantly.</desc>
+			</li>
+			<li Class="Universum.World.Comps.RandomizeObjectHolder_Properties">
+				<label>Randomize</label>
+				<desc>Randomize properties.</desc>
+			</li>
 		</comps>
   	</WorldObjectDef>
 </Defs>

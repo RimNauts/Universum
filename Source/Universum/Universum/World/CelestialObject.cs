@@ -78,6 +78,7 @@ namespace Universum.World {
 
         public virtual void Randomize() {
             Init(deathTick: deathTick);
+            for (int i = 0; i < _components.Length; i++) _components[i].UpdateInfo();
         }
 
         public virtual void Init(int? seed = null, Vector3? position = null, int? deathTick = null) {
@@ -126,6 +127,8 @@ namespace Universum.World {
                 UpdatePosition(tick: 0);
                 this.position.y = _rand.GetValueBetween(def.yOffsetBetween);
             }
+
+            Game.MainLoop.instance.forceUpdate = true;
         }
 
         public virtual void Tick() {

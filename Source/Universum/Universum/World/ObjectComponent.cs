@@ -3,6 +3,7 @@
 namespace Universum.World {
     public abstract class ObjectComponent {
         protected CelestialObject _celestialObject;
+        protected Defs.Component _def;
         protected GameObject _gameObject;
         protected bool _active = true;
         protected bool _block = false;
@@ -16,6 +17,7 @@ namespace Universum.World {
 
         public ObjectComponent(CelestialObject celestialObject, Defs.Component def) {
             _celestialObject = celestialObject;
+            _def = def;
 
             _gameObject = Object.Instantiate(Assets.gameObjectWorldText);
 
@@ -27,6 +29,10 @@ namespace Universum.World {
         ~ObjectComponent() => Destroy();
 
         public virtual void Destroy() => Object.Destroy(_gameObject);
+
+        public virtual void UpdateInfo() {
+
+        }
 
         public virtual void OnWorldSceneActivated() {
             
