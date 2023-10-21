@@ -41,11 +41,14 @@ namespace Universum.World.Component {
         }
 
         private void hide() {
-            bool tooClose = (Vector3.Distance(_position, Game.MainLoop.instance.currentSphereFocusPoint) + (220.0f * _hideAtMinAltitude)) > Vector3.Distance(Game.MainLoop.instance.currentSphereFocusPoint, Game.MainLoop.instance.cameraPosition);
-            bool tooFar = (Vector3.Distance(_position, Game.MainLoop.instance.currentSphereFocusPoint) + (220.0f * _hideAtMaxAltitude)) < Vector3.Distance(Game.MainLoop.instance.currentSphereFocusPoint, Game.MainLoop.instance.cameraPosition);
+            float distanceFromCamera = Vector3.Distance(_position, Game.MainLoop.instance.cameraPosition);
+
+            bool tooClose = distanceFromCamera < _hideAtMinAltitude;
+            bool tooFar = distanceFromCamera > _hideAtMaxAltitude;
+
             if (tooClose || tooFar) {
                 SetBlock(true);
-            } SetBlock(false);
+            } else SetBlock(false);
         }
     }
 }

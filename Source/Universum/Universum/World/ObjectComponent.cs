@@ -59,10 +59,7 @@ namespace Universum.World {
             
         }
 
-        public virtual void SetBlock(bool block) {
-            if (_block == block) return;
-            _block = block;
-        }
+        public virtual void SetBlock(bool block) => _block = block;
 
         public virtual void SetActive(bool active) {
             if (_active == active) return;
