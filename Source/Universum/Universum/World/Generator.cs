@@ -1,7 +1,6 @@
-﻿using RimWorld;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
 using UnityEngine;
 using Verse;
 
@@ -11,15 +10,20 @@ namespace Universum.World {
 
         public override void GenerateFresh(string seed) {
             List<string> celestialObjectDefNames = new List<string>();
+            List<string> objectHolderDefNames = new List<string>();
             foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationStartUpSteps.Values) {
                 for (int i = 0; i < objectGenerationStep.total; i++) {
-                    celestialObjectDefNames.Add(objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName);
+                    string celestialDefName = objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName;
+                    if (Defs.Loader.celestialObjects[celestialDefName].objectHolder != null) {
+                        objectHolderDefNames.Add(celestialDefName);
+                    } else celestialObjectDefNames.Add(celestialDefName);
                 }
             }
+            foreach (var objectHolderDefName in objectHolderDefNames) CreateObjectHolder(objectHolderDefName);
             Create(celestialObjectDefNames);
         }
 
-        public static List<CelestialObject> Generate(Defs.ObjectGeneration objectGenerationStep, Vector2 despawnBetweenDays, int? amount = null) {
+        public static void Generate(Defs.ObjectGeneration objectGenerationStep, Vector2 despawnBetweenDays, int? amount = null) {
             int total = amount ?? objectGenerationStep.total;
             List<string> celestialObjectDefNames = new List<string>();
             List<int?> celestialObjectDeathTicks = new List<int?>();
@@ -30,7 +34,7 @@ namespace Universum.World {
                     celestialObjectDeathTicks.Add(deathTick);
                 } else celestialObjectDeathTicks.Add(null);
             }
-            return Create(celestialObjectDefNames, deathTicks: celestialObjectDeathTicks);
+            Create(celestialObjectDefNames, deathTicks: celestialObjectDeathTicks);
         }
 
         public static List<CelestialObject> Create(
@@ -62,35 +66,70 @@ namespace Universum.World {
             }
             Game.MainLoop.instance.AddObject(celestialObjects);
 
-            Thread thread = new Thread(new ParameterizedThreadStart(CreateVisuals));
-            thread.Start(celestialObjects);
-
             return celestialObjects;
         }
 
-        public static CelestialObject Create(string celestialObjectDefName, int? seed = null, Vector3? position = null) {
+        public static CelestialObject Create(string celestialObjectDefName, int? seed = null, Vector3? position = null, int? deathTick = null) {
             CelestialObject celestialObject = (CelestialObject) Activator.CreateInstance(
                 Defs.Loader.celestialObjects[celestialObjectDefName].celestialObjectClass,
                 new object[] { celestialObjectDefName }
             );
 
-            celestialObject.Init(seed, position);
+            celestialObject.Init(seed, position, deathTick);
 
             Game.MainLoop.instance.AddObject(celestialObject);
-
-            celestialObject.GenerateVisuals();
 
             return celestialObject;
         }
 
-        private static void CreateVisuals(object celestialObjects) {
-            int seed = Game.MainLoop.instance.seed;
-            List<CelestialObject> newCelestialObjects = (List<CelestialObject>) celestialObjects;
-
-            foreach (var celestialObject in newCelestialObjects) {
-                if (Game.MainLoop.instance.seed != seed) return;
-                celestialObject.GenerateVisuals();
+        public static ObjectHolder CreateObjectHolder(
+            string celestialObjectDefName,
+            int? celestialObjectSeed = null,
+            Vector3? celestialObjectPosition = null,
+            int? celestialObjectDeathTick = null,
+            CelestialObject celestialObject = null
+        ) {
+            ObjectHolder objectHolder = (ObjectHolder) Activator.CreateInstance(Assets.objectHolderDef.worldObjectClass);
+            objectHolder.def = Assets.objectHolderDef;
+            objectHolder.ID = Find.UniqueIDsManager.GetNextWorldObjectID();
+            objectHolder.creationGameTicks = Find.TickManager.TicksGame;
+            objectHolder.Tile = GetFreeTile();
+            if (objectHolder.Tile == -1) {
+                objectHolder.Destroy();
+                return null;
             }
+            objectHolder.Init(celestialObjectDefName, celestialObjectSeed, celestialObjectPosition, celestialObjectDeathTick, celestialObject);
+            objectHolder.PostMake();
+            Find.WorldObjects.Add(objectHolder);
+            return objectHolder;
+        }
+
+        public static void TileClear(int tile) {
+            Find.World.grid.tiles.ElementAt(tile).biome = Assets.oceanBiomeDef;
+            Find.WorldPathGrid.RecalculatePerceivedMovementDifficultyAt(tile);
+        }
+
+        public static int GetFreeTile(int startIndex = 1) {
+            for (int i = startIndex; i < Find.World.grid.TilesCount; i++) {
+                if (Find.World.grid.tiles.ElementAt(i).biome == Assets.oceanBiomeDef && !Find.World.worldObjects.AnyWorldObjectAt(i)) {
+                    List<int> neighbors = new List<int>();
+                    Find.World.grid.GetTileNeighbors(i, neighbors);
+                    if (neighbors.Count != 6) continue;
+                    var flag = false;
+                    foreach (var neighbour in neighbors) {
+                        var neighbourTile = Find.World.grid.tiles.ElementAtOrDefault(neighbour);
+                        if (neighbourTile != default(RimWorld.Planet.Tile)) {
+                            if (neighbourTile.biome != Assets.oceanBiomeDef) {
+                                flag = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (flag) continue;
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 }

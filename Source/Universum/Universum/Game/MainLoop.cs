@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using Verse;
 
 namespace Universum.Game {
-    [StaticConstructorOnStartup]
     public class MainLoop : GameComponent {
         public static MainLoop instance;
         public static TickManager tickManager;
@@ -39,6 +39,9 @@ namespace Universum.Game {
 
         public int seed = Rand.Int;
 
+        private readonly Queue<World.CelestialObject> _visualGenerationQueue = new Queue<World.CelestialObject>();
+        private Thread _visualGenerationWorker;
+
         public MainLoop(Verse.Game game) : base() {
             if (instance != null) {
                 instance = null;
@@ -62,6 +65,7 @@ namespace Universum.Game {
             if (tickManager.TicksGame < _spawnTickMin) return;
 
             foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationRandomSteps.Values) {
+                if (!_objectGenerationSpawnTick.ContainsKey(objectGenerationStep.defName)) continue;
                 int spawnTick = _objectGenerationSpawnTick[objectGenerationStep.defName];
                 if (tickManager.TicksGame > spawnTick) {
                     World.Generator.Generate(
@@ -76,7 +80,7 @@ namespace Universum.Game {
                     _objectGenerationSpawnTick[objectGenerationStep.defName] = newSpawnTick;
                 }
             }
-            
+
             foreach (var spawnTick in _objectGenerationSpawnTick.Values) if (spawnTick < _spawnTickMin) _spawnTickMin = spawnTick;
         }
 
@@ -93,12 +97,25 @@ namespace Universum.Game {
 
         public void AddObject(List<World.CelestialObject> celestialObjects) {
             _celestialObjects.AddRange(celestialObjects);
+            foreach (var celestialObject in celestialObjects) _visualGenerationQueue.Enqueue(celestialObject);
             dirtyCache = true;
         }
 
         public void AddObject(World.CelestialObject celestialObject) {
             _celestialObjects.Add(celestialObject);
+            _visualGenerationQueue.Enqueue(celestialObject);
             dirtyCache = true;
+        }
+
+        private static void _ProcessVisualGenerationQueue(Queue<World.CelestialObject> queue) {
+            int currentSeed = instance.seed;
+
+            while (queue.Count > 0) {
+                if (instance == null || currentSeed != instance.seed) return;
+                World.CelestialObject celestialObject = queue.Dequeue();
+                if (celestialObject == null) continue;
+                celestialObject.GenerateVisuals();
+            }
         }
 
         private void _GetFrameData() {
@@ -169,6 +186,14 @@ namespace Universum.Game {
                         spawnTick
                     );
                 }
+            }
+
+            if (_visualGenerationQueue.Count > 0 && (_visualGenerationWorker == null || !_visualGenerationWorker.IsAlive)) {
+                Queue<World.CelestialObject> copiedQueue = new Queue<World.CelestialObject>(_visualGenerationQueue);
+                _visualGenerationQueue.Clear();
+
+                _visualGenerationWorker = new Thread(() => _ProcessVisualGenerationQueue(copiedQueue));
+                _visualGenerationWorker.Start();
             }
         }
 
