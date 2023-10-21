@@ -20,6 +20,7 @@ namespace Universum.World {
         protected bool _scaleChanged = true;
 
         public int? deathTick = null;
+        public bool forceDeath = false;
 
         protected Shape _shape;
         protected Matrix4x4 _transformationMatrix = Matrix4x4.identity;
@@ -276,6 +277,7 @@ namespace Universum.World {
         }
 
         public virtual bool ShouldDespawn() {
+            if (forceDeath) return true;
             if (objectHolder != null && !objectHolder.SafeDespawn()) return false;
             return deathTick != null && Game.MainLoop.instance.tick > deathTick;
         }

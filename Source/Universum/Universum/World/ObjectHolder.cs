@@ -48,6 +48,11 @@ namespace Universum.World {
             if (!Destroyed) base.Destroy();
         }
 
+        public void SignalDestruction() {
+            _celestialObject.forceDeath = true;
+            Game.MainLoop.instance.dirtyCache = true;
+        }
+
         public override void PostRemove() {
             base.PostRemove();
             if (keepAfterAbandon) {
