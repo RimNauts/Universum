@@ -45,10 +45,9 @@ namespace Universum.World.Component {
 
             bool tooClose = distanceFromCamera < _hideAtMinAltitude;
             bool tooFar = distanceFromCamera > _hideAtMaxAltitude;
+            bool outsideRange = tooClose || tooFar;
 
-            if (tooClose || tooFar) {
-                SetBlock(true);
-            } else SetBlock(false);
+            SetBlock(outsideRange);
         }
     }
 }
