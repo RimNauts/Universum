@@ -30,6 +30,11 @@ namespace Universum.World.Component {
             SetActive(false);
         }
 
+        public override void Clear() {
+            base.Clear();
+            _trailComponent.Clear();
+        }
+
         public override void OnWorldSceneActivated() {
             base.OnWorldSceneActivated();
             _trailComponent.Clear();

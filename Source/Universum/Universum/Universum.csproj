@@ -127,6 +127,7 @@
     <Compile Include="World\Generator.cs" />
     <Compile Include="World\ObjectComponent.cs" />
     <Compile Include="World\ObjectHolder.cs" />
+    <Compile Include="World\Objects\CrashingAsteroid.cs" />
     <Compile Include="World\Objects\Moon.cs" />
     <Compile Include="World\Patch\CaravanTweenerUtility.cs" />
     <Compile Include="World\Patch\SettleInEmptyTileUtility.cs" />

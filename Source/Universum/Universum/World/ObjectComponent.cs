@@ -34,6 +34,10 @@ namespace Universum.World {
 
         }
 
+        public virtual void Clear() {
+
+        }
+
         public virtual void OnWorldSceneActivated() {
             
         }
