@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Verse;
 
 namespace Universum.Defs {
-    public class Mesh {
+    public class Mesh : Def {
         public string materialDefName;
         public ShapeType type;
         public int subdivisionIterations;
