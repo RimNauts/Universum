@@ -31,13 +31,16 @@ namespace Universum.World.Component {
         }
 
         public override void UpdatePosition() {
-            _position = Vector3.MoveTowards(_celestialObject.transformedPosition, Game.MainLoop.instance.cameraPosition, 50.0f);
-            _position += _offset;
-            _position.y -= _celestialObject.scale.y + _celestialObject.extraScale + 1.0f;
+            Vector3 directionFromObjectToCamera = Game.MainLoop.instance.cameraPosition - _celestialObject.transformedPosition;
+            directionFromObjectToCamera.Normalize();
+
+            _position = _celestialObject.transformedPosition + directionFromObjectToCamera * (_celestialObject.scale.y + _celestialObject.extraScale) * 1.2f;
+            _position -= Game.MainLoop.instance.cameraUp * (_celestialObject.scale.y + _celestialObject.extraScale) * 1.2f;
         }
 
         public override void UpdateRotation() {
-            _rotation = _celestialObject.billboardRotation * Quaternion.Euler(90.0f, -90f, 0f);
+            Vector3 directionFromLabelToCamera = Game.MainLoop.instance.cameraPosition - _position;
+            _rotation = Quaternion.LookRotation(-directionFromLabelToCamera);
         }
 
         public override void UpdateTransformationMatrix() {
