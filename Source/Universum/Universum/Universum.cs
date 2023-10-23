@@ -14,6 +14,7 @@ namespace Universum {
             );
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
+            Patch.MemoryUtility.Init(harmony);
             World.Patch.CaravanTweenerUtility.Init(harmony);
             World.Patch.SettleInEmptyTileUtility.Init(harmony);
             World.Patch.TileFinder.Init(harmony);
