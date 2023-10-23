@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 
@@ -16,6 +16,7 @@ namespace Universum.Game {
 
         private Camera _camera;
         public Vector3 cameraPosition;
+        public Vector3 cameraUp;
 
         private RimWorld.Planet.WorldCameraDriver _cameraDriver;
         public Vector3 currentSphereFocusPoint;
@@ -132,7 +133,10 @@ namespace Universum.Game {
                 timeSpeed = _tickManager.curTimeSpeed;
             }
 
-            if (_camera != null) cameraPosition = _camera.transform.position;
+            if (_camera != null) {
+                cameraPosition = _camera.transform.position;
+                cameraUp = _camera.transform.up;
+            }
 
             if (_cameraDriver != null) {
                 currentSphereFocusPoint = _cameraDriver.CurrentlyLookingAtPointOnSphere;
@@ -270,13 +274,6 @@ namespace Universum.Game {
             _exposeCelestialObjectSeeds.Clear();
             _exposeCelestialObjectPositions.Clear();
             _exposeCelestialObjectDeathTicks.Clear();
-        }
-    }
-
-    [HarmonyPatch(typeof(Verse.Profile.MemoryUtility), "ClearAllMapsAndWorld")]
-    public class MemoryUtility_ClearAllMapsAndWorld {
-        public static void Prefix() {
-            MainLoop.instance = null;
         }
     }
 }
