@@ -10,8 +10,8 @@ namespace Universum.Defs {
         public int detail = 5;
         public float radius = 1.0f;
         public Vector3 dimensions = Vector3.one;
-        public Color maxElevationColor;
-        public Color minElevationColor;
+        public Color? maxElevationColor;
+        public Color? minElevationColor;
         public List<Noise> noiseLayers = new List<Noise>();
     }
 }

@@ -4,11 +4,17 @@ using UnityEngine;
 
 namespace Universum.Functionality {
     public class Mesh {
+        private Random _rand;
         public float minElevation;
         public float maxElevation;
         List<Vector3> _vertices = new List<Vector3>();
         List<int> _triangles = new List<int>();
         List<Color> _colors = new List<Color>();
+        private Bounds _bounds = new Bounds();
+
+        public Mesh(int seed) {
+            _rand = new Random(seed);
+        }
 
         public UnityEngine.Mesh GetUnityMesh() {
             UnityEngine.Mesh unityMesh = new UnityEngine.Mesh {
@@ -34,6 +40,30 @@ namespace Universum.Functionality {
 
             if (minElevation > secondMesh.minElevation) minElevation = secondMesh.minElevation;
             if (maxElevation < secondMesh.maxElevation) maxElevation = secondMesh.maxElevation;
+        }
+
+        private void _CalculateBounds() {
+            if (_vertices.Count == 0) {
+                _bounds = new Bounds();
+                return;
+            }
+
+            Vector3 min = _vertices[0];
+            Vector3 max = _vertices[0];
+
+            foreach (Vector3 vertex in _vertices) {
+                if (vertex.x < min.x) min.x = vertex.x;
+                if (vertex.y < min.y) min.y = vertex.y;
+                if (vertex.z < min.z) min.z = vertex.z;
+
+                if (vertex.x > max.x) max.x = vertex.x;
+                if (vertex.y > max.y) max.y = vertex.y;
+                if (vertex.z > max.z) max.z = vertex.z;
+            }
+
+            Vector3 center = (min + max) / 2f;
+            Vector3 size = max - min;
+            _bounds = new Bounds(center, size);
         }
 
         public void Subdivide(int iterations = 1) {
@@ -375,6 +405,58 @@ namespace Universum.Functionality {
             cache.Add(key, i);
 
             return i;
+        }
+
+        public void ApplyVoronoiPattern(int siteCount, float craterDepth, float craterRimHeight, Color craterBottomColor, Color craterRimColor) {
+            _CalculateBounds();
+
+            Vector3 asteroidCenter = _bounds.center;
+
+            // 1. Generate random seed points.
+            List<Vector3> seeds = new List<Vector3>();
+            for (int i = 0; i < siteCount; i++) {
+                Vector3 seed = new Vector3(
+                    _bounds.min.x + _rand.GetFloat() * _bounds.size.x,
+                    _bounds.min.y + _rand.GetFloat() * _bounds.size.y,
+                    _bounds.min.z + _rand.GetFloat() * _bounds.size.z
+                );
+                seeds.Add(seed);
+            }
+
+            Color[] newColors = new Color[_vertices.Count];
+            float maxDistanceFromSeed = _bounds.size.magnitude / 2;
+
+            // 2 & 3. Displace vertices and color them.
+            for (int i = 0; i < _vertices.Count; i++) {
+                Vector3 vertex = _vertices[i];
+
+                // Find the nearest seed.
+                float minDistance = float.MaxValue;
+                for (int j = 0; j < seeds.Count; j++) {
+                    float distance = Vector3.Distance(vertex, seeds[j]);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                    }
+                }
+
+                // Direction from the center of the asteroid to the vertex.
+                Vector3 directionFromCenter = (vertex - asteroidCenter).normalized;
+
+                // Calculate displacement to create the crater effect.
+                float normalizedDistance = minDistance / _bounds.size.magnitude;
+                float displacement = -craterDepth + (craterDepth + craterRimHeight) * normalizedDistance;
+
+                // Apply the displacement.
+                vertex += directionFromCenter * displacement;
+
+                // Color interpolation based on distance from the nearest seed.
+                float colorFactor = Mathf.Clamp01(minDistance / maxDistanceFromSeed);
+                newColors[i] = Color.Lerp(craterBottomColor, craterRimColor, colorFactor);
+
+                _vertices[i] = vertex;
+            }
+
+            _colors = newColors.ToList();
         }
     }
 }

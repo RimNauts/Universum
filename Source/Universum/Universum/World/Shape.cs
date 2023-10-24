@@ -44,8 +44,8 @@ namespace Universum.World {
             int detail,
             float radius,
             Vector3 dimensions,
-            Color minElevationColor,
-            Color maxElevationColor,
+            Color? minElevationColor,
+            Color? maxElevationColor,
             List<bool> isMask,
             List<bool> useMask,
             List<float> noiseStrength,
@@ -55,7 +55,7 @@ namespace Universum.World {
             List<float> noiseBaseRoughness,
             List<float> noiseMinValue
         ) {
-            Functionality.Mesh mesh = new Functionality.Mesh();
+            Functionality.Mesh mesh = new Functionality.Mesh(_seed);
             switch (type) {
                 case Defs.ShapeType.PREV:
                     mesh = _meshes[_meshes.Count - 1];
@@ -77,6 +77,11 @@ namespace Universum.World {
                     _meshes.Add(mesh);
                     _materials.Add(material);
                     break;
+                case Defs.ShapeType.VORONOI:
+                    mesh = _meshes[_meshes.Count - 1];
+                    mesh.ApplyVoronoiPattern(siteCount: detail, craterDepth: 0.6f, craterRimHeight: 1.4f, (Color) minElevationColor, (Color) maxElevationColor);
+                    _materials[_materials.Count - 1] = material;
+                    break;
                 default:
                     mesh.GenerateIcoSphere(radius, detail);
                     _meshes.Add(mesh);
@@ -96,7 +101,9 @@ namespace Universum.World {
                 noiseMinValue
             );
 
-            mesh.GenerateColors(minElevationColor, maxElevationColor);
+            if (minElevationColor != null && maxElevationColor != null && type != Defs.ShapeType.VORONOI) {
+                mesh.GenerateColors((Color) minElevationColor, (Color) maxElevationColor);
+            }
 
             if (highestElevation < mesh.maxElevation) highestElevation = mesh.maxElevation;
         }

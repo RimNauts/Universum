@@ -3,6 +3,7 @@
         PREV = 0,
         SPHERE = 1,
         QUADSPHERE = 2,
-        BOX = 3
+        BOX = 3,
+        VORONOI = 4
     }
 }
