@@ -7,7 +7,7 @@ namespace Universum.Defs {
         public string materialDefName;
         public ShapeType type;
         public int subdivisionIterations;
-        public int detail = 5;
+        public Vector2 detailBetween = new Vector2(5, 5);
         public float radius = 1.0f;
         public Vector3 dimensions = Vector3.one;
         public Color? maxElevationColor;

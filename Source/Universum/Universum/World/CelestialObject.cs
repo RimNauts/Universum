@@ -326,11 +326,13 @@ namespace Universum.World {
                     noiseMinValue.Add(_rand.GetValueBetween(noiseLayer.minNoiseValueBetween));
                 }
 
+                int detail = _rand.GetValueBetween(new Vector2Int((int) Math.Abs(mesh.detailBetween.x), (int) Math.Abs(mesh.detailBetween.y)));
+
                 _shape.Add(
                     Assets.materials[mesh.materialDefName],
                     mesh.type,
                     mesh.subdivisionIterations,
-                    mesh.detail,
+                    detail,
                     mesh.radius,
                     mesh.dimensions,
                     mesh.minElevationColor,
