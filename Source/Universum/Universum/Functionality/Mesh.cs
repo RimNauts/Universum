@@ -209,6 +209,65 @@ namespace Universum.Functionality {
             _triangles = newTriangles;
         }
 
+        public void GenerateQuadSphere(float radius, int detail) {
+            int verticesPerFace = (detail + 1) * (detail + 1);
+            int totalVertices = 6 * verticesPerFace;
+
+            int trianglesPerFace = detail * detail * 6;
+            int totalTriangles = 6 * trianglesPerFace;
+
+            Vector3[] newVertices = new Vector3[totalVertices];
+            int[] newTriangles = new int[totalTriangles];
+
+            Vector3[] faceNormals = { Vector3.forward, Vector3.back, Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+
+            int v = 0, t = 0;
+
+            for (int f = 0; f < 6; f++) {
+                Vector3 normal = faceNormals[f];
+                Vector3 right, up;
+
+                if (normal == Vector3.up) {
+                    right = Vector3.right;
+                    up = Vector3.forward;
+                } else if (normal == Vector3.down) {
+                    right = Vector3.right;
+                    up = Vector3.back;
+                } else {
+                    right = Vector3.Cross(normal, Vector3.up);
+                    up = Vector3.Cross(right, normal);
+                }
+
+                for (int i = 0; i <= detail; i++) {
+                    for (int j = 0; j <= detail; j++) {
+                        float x = (j * 2f / detail) - 1f;
+                        float y = (i * 2f / detail) - 1f;
+
+                        Vector3 vertex = normal + right * x + up * y;
+                        newVertices[v] = vertex.normalized * radius;
+                        v++;
+
+                        if (i < detail && j < detail) {
+                            int topLeft = v - 1;
+                            int topRight = topLeft + 1;
+                            int bottomLeft = topLeft + detail + 1;
+                            int bottomRight = bottomLeft + 1;
+
+                            newTriangles[t++] = topLeft;
+                            newTriangles[t++] = bottomLeft;
+                            newTriangles[t++] = bottomRight;
+                            newTriangles[t++] = topLeft;
+                            newTriangles[t++] = bottomRight;
+                            newTriangles[t++] = topRight;
+                        }
+                    }
+                }
+            }
+
+            _vertices = newVertices.ToList();
+            _triangles = newTriangles.ToList();
+        }
+
         public void GenerateBox(Vector3 dimensions, int detail) {
             int verticesPerFace = (detail + 1) * (detail + 1);
             int totalVertices = 6 * verticesPerFace;

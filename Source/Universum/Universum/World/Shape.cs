@@ -57,8 +57,18 @@ namespace Universum.World {
         ) {
             Functionality.Mesh mesh = new Functionality.Mesh();
             switch (type) {
+                case Defs.ShapeType.PREV:
+                    mesh = _meshes[_meshes.Count - 1];
+                    mesh.Subdivide(subdivisionIterations);
+                    _materials[_materials.Count - 1] = material;
+                    break;
                 case Defs.ShapeType.SPHERE:
                     mesh.GenerateIcoSphere(radius, detail);
+                    _meshes.Add(mesh);
+                    _materials.Add(material);
+                    break;
+                case Defs.ShapeType.QUADSPHERE:
+                    mesh.GenerateQuadSphere(radius, detail);
                     _meshes.Add(mesh);
                     _materials.Add(material);
                     break;
@@ -66,11 +76,6 @@ namespace Universum.World {
                     mesh.GenerateBox(dimensions, detail);
                     _meshes.Add(mesh);
                     _materials.Add(material);
-                    break;
-                case Defs.ShapeType.PREV:
-                    mesh = _meshes[_meshes.Count - 1];
-                    mesh.Subdivide(subdivisionIterations);
-                    _materials[_materials.Count - 1] = material;
                     break;
                 default:
                     mesh.GenerateIcoSphere(radius, detail);
