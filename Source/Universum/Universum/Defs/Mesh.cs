@@ -12,6 +12,8 @@ namespace Universum.Defs {
         public Vector3 dimensions = Vector3.one;
         public Color? maxElevationColor;
         public Color? minElevationColor;
+        public float craterDepth;
+        public float craterRimHeight;
         public List<Noise> noiseLayers = new List<Noise>();
     }
 }

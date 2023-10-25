@@ -12,8 +12,8 @@ namespace Universum.Functionality {
         List<Color> _colors = new List<Color>();
         private Bounds _bounds = new Bounds();
 
-        public Mesh(int seed) {
-            _rand = new Random(seed);
+        public Mesh(Random rand) {
+            _rand = rand;
         }
 
         public UnityEngine.Mesh GetUnityMesh() {

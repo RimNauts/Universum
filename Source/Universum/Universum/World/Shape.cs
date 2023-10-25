@@ -4,13 +4,14 @@ using UnityEngine;
 
 namespace Universum.World {
     public class Shape {
+        readonly Functionality.Random _rand;
+
         public float highestElevation;
         List<Functionality.Mesh> _meshes = new List<Functionality.Mesh>();
         List<Material> _materials = new List<Material>();
-        readonly int _seed;
 
-        public Shape(int seed) {
-            _seed = seed;
+        public Shape(Functionality.Random rand) {
+            _rand = rand;
         }
 
         public void CompressData() {
@@ -46,6 +47,8 @@ namespace Universum.World {
             Vector3 dimensions,
             Color? minElevationColor,
             Color? maxElevationColor,
+            float craterDepth,
+            float craterRimHeight,
             List<bool> isMask,
             List<bool> useMask,
             List<float> noiseStrength,
@@ -55,7 +58,7 @@ namespace Universum.World {
             List<float> noiseBaseRoughness,
             List<float> noiseMinValue
         ) {
-            Functionality.Mesh mesh = new Functionality.Mesh(_seed);
+            Functionality.Mesh mesh = new Functionality.Mesh(_rand);
             switch (type) {
                 case Defs.ShapeType.PREV:
                     mesh = _meshes[_meshes.Count - 1];
@@ -79,7 +82,7 @@ namespace Universum.World {
                     break;
                 case Defs.ShapeType.VORONOI:
                     mesh = _meshes[_meshes.Count - 1];
-                    mesh.ApplyVoronoiPattern(siteCount: detail, craterDepth: 0.6f, craterRimHeight: 1.4f, (Color) minElevationColor, (Color) maxElevationColor);
+                    mesh.ApplyVoronoiPattern(siteCount: detail, craterDepth, craterRimHeight, (Color) minElevationColor, (Color) maxElevationColor);
                     _materials[_materials.Count - 1] = material;
                     break;
                 default:
@@ -90,7 +93,7 @@ namespace Universum.World {
             }
 
             mesh.ApplyNoise(
-                _seed,
+                _rand.seed,
                 isMask,
                 useMask,
                 noiseStrength,

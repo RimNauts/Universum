@@ -303,7 +303,7 @@ namespace Universum.World {
         protected virtual void _GenerateShape() {
             _generatingShape = true;
 
-            _shape = new Shape(seed);
+            _shape = new Shape(_rand);
 
             foreach (Defs.Mesh mesh in def.shape.meshes) {
                 List<bool> isMask = new List<bool>();
@@ -337,6 +337,8 @@ namespace Universum.World {
                     mesh.dimensions,
                     mesh.minElevationColor,
                     mesh.maxElevationColor,
+                    mesh.craterDepth,
+                    mesh.craterRimHeight,
                     isMask,
                     useMask,
                     noiseStrength,
