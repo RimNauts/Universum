@@ -1,8 +1,9 @@
 ﻿using System;
 using UnityEngine;
+using Verse;
 
 namespace Universum.Defs {
-    public class Component {
+    public class Component : Def {
         public Type componentClass = typeof(World.ObjectComponent);
 
         public string materialDefName;
