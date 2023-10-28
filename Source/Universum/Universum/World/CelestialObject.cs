@@ -127,7 +127,7 @@ namespace Universum.World {
                     _orbitDirection = 1;
                     break;
             }
-            _axialRotation = Quaternion.Euler(_rand.GetValueBetween(def.axialAngleBetween), 0, 0);
+            _axialRotation = Quaternion.Euler(_rand.GetValueBetween(def.axialAngleBetween), _rand.GetValueBetween(def.axialAngleBetween), _rand.GetValueBetween(def.axialAngleBetween));
             _spinRotationSpeed = _rand.GetValueBetween(def.spinRotationSpeedBetween);
             _inclinatioRotation = Quaternion.Euler(_rand.GetValueBetween(def.inclinationAngleBetween), 0, 0);
 
@@ -172,12 +172,16 @@ namespace Universum.World {
         public virtual void UpdateRotation(int tick) {
             _rotationChanged = true;
 
-            Vector3 towards_camera = Vector3.Cross(Game.MainLoop.instance.currentSphereFocusPoint, Vector3.up);
-            _billboardRotation = Quaternion.LookRotation(towards_camera, Game.MainLoop.instance.currentSphereFocusPoint);
-
             _spinRotation = Quaternion.Euler(0.5f * _spinRotationSpeed * tick * _orbitDirection * -1, _spinRotationSpeed * tick * _orbitDirection * -1, 0);
 
             _rotation = _spinRotation;
+
+            if (_addBillboardRotation) {
+                Vector3 directionFromLabelToCamera = Game.MainLoop.instance.cameraPosition - position;
+                _billboardRotation = Quaternion.LookRotation(-directionFromLabelToCamera);
+
+                _rotation = _billboardRotation * _rotation;
+            }
         }
 
         public virtual void UpdateTransformationMatrix() {
