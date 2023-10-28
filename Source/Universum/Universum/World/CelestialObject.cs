@@ -14,7 +14,7 @@ namespace Universum.World {
         protected Functionality.Random _rand;
 
         protected bool _blockRendering = false;
-        protected bool _generatingShape = false;
+        protected bool _generatingVisuals = false;
         protected bool _dirty = false;
         protected bool _positionChanged = true;
         protected bool _rotationChanged = true;
@@ -23,10 +23,14 @@ namespace Universum.World {
         public int? deathTick = null;
         public bool forceDeath = false;
 
-        protected Shape _shape;
+        protected Shape _shape = null;
+        protected bool _icon = false;
+
+        protected Texture2D _iconTexture = null;
         protected Matrix4x4 _transformationMatrix = Matrix4x4.identity;
         protected Quaternion _rotation = Quaternion.identity;
-        public Quaternion billboardRotation = Quaternion.identity;
+        protected bool _addBillboardRotation = false;
+        protected Quaternion _billboardRotation = Quaternion.identity;
         protected Quaternion _axialRotation = Quaternion.identity;
         protected Quaternion _spinRotation = Quaternion.identity;
         protected Quaternion _inclinatioRotation = Quaternion.identity;
@@ -143,7 +147,7 @@ namespace Universum.World {
 
         public virtual void Update() {
             if (Game.MainLoop.instance.unpaused || Game.MainLoop.instance.forceUpdate) UpdatePosition(Game.MainLoop.instance.tick);
-            UpdateRotation(Game.MainLoop.instance.tick, Game.MainLoop.instance.currentSphereFocusPoint);
+            UpdateRotation(Game.MainLoop.instance.tick);
             UpdateTransformationMatrix();
 
             for (int i = 0; i < _components.Length; i++) {
@@ -165,11 +169,11 @@ namespace Universum.World {
             position.z = _orbitDirection * _orbitRadius * Mathf.Sqrt(1 - _orbitEccentricity * _orbitEccentricity) * (float) Math.Sin(angularFrequencyTime);
         }
 
-        public virtual void UpdateRotation(int tick, Vector3 center) {
+        public virtual void UpdateRotation(int tick) {
             _rotationChanged = true;
 
-            Vector3 towards_camera = Vector3.Cross(center, Vector3.up);
-            billboardRotation = Quaternion.LookRotation(towards_camera, center);
+            Vector3 towards_camera = Vector3.Cross(Game.MainLoop.instance.currentSphereFocusPoint, Vector3.up);
+            _billboardRotation = Quaternion.LookRotation(towards_camera, Game.MainLoop.instance.currentSphereFocusPoint);
 
             _spinRotation = Quaternion.Euler(0.5f * _spinRotationSpeed * tick * _orbitDirection * -1, _spinRotationSpeed * tick * _orbitDirection * -1, 0);
 
@@ -219,30 +223,50 @@ namespace Universum.World {
 
         protected virtual void _Recache() {
             _dirty = false;
-            if (_generatingShape || _shape == null) return;
+            if ((_generatingVisuals || _shape == null) && (_generatingVisuals || !_icon)) return;
+            // generate game object for shape
+            if (_shape != null) {
+                Mesh[] meshes = (Mesh[]) _shape.GetMeshes().Clone();
+                Material[] materials = (Material[]) _shape.GetMaterials().Clone();
+                extraScale = _shape.highestElevation;
+                _shape = null;
 
-            Mesh[] meshes = (Mesh[]) _shape.GetMeshes().Clone();
-            Material[] materials = (Material[]) _shape.GetMaterials().Clone();
-            extraScale = _shape.highestElevation;
-            _shape = null;
+                _transforms = new Transform[meshes.Length];
+                for (int i = 0; i < meshes.Length; i++) {
+                    GameObject newGameObject = new GameObject {
+                        layer = RimWorld.Planet.WorldCameraManager.WorldLayer
+                    };
 
-            _transforms = new Transform[meshes.Length];
-            for (int i = 0; i < meshes.Length; i++) {
+                    newGameObject.SetActive(false);
+
+                    MeshFilter meshFilter = newGameObject.AddComponent<MeshFilter>();
+                    MeshRenderer meshRenderer = newGameObject.AddComponent<MeshRenderer>();
+
+                    meshFilter.mesh = meshes[i];
+                    meshRenderer.material = materials[i];
+
+                    _transforms[i] = newGameObject.transform;
+                }
+            }
+            // generate game object for icon
+            if (_icon) {
+                _icon = false;
+
                 GameObject newGameObject = new GameObject {
                     layer = RimWorld.Planet.WorldCameraManager.WorldLayer
                 };
 
-                newGameObject.SetActive(false);
+                SpriteRenderer spriteRenderer = newGameObject.AddComponent<SpriteRenderer>();
 
-                MeshFilter meshFilter = newGameObject.AddComponent<MeshFilter>();
-                MeshRenderer meshRenderer = newGameObject.AddComponent<MeshRenderer>();
+                spriteRenderer.sprite = Sprite.Create(_iconTexture, new Rect(0, 0, _iconTexture.width, _iconTexture.height), new Vector2(0.5f, 0.5f));
 
-                meshFilter.mesh = meshes[i];
-                meshRenderer.material = materials[i];
+                spriteRenderer.material.renderQueue = RimWorld.Planet.WorldMaterials.WorldObjectRenderQueue;
 
-                _transforms[i] = newGameObject.transform;
+                _transforms = new Transform[1];
+                _transforms[0] = newGameObject.transform;
+
             }
-
+            // generate components
             List<ObjectComponent> objectComponents = new List<ObjectComponent>();
             foreach (var componentDef in def.components) {
                 ObjectComponent component = (ObjectComponent) Activator.CreateInstance(
@@ -307,7 +331,7 @@ namespace Universum.World {
             if (def.shape != null) {
                 _GenerateShape();
             } else if (def.icon != null) {
-
+                _GenerateIcon();
             } else {
                 Logger.print(
                     Logger.Importance.Error,
@@ -319,7 +343,7 @@ namespace Universum.World {
         }
 
         protected virtual void _GenerateShape() {
-            _generatingShape = true;
+            _generatingVisuals = true;
 
             _shape = new Shape(_rand);
 
@@ -370,7 +394,18 @@ namespace Universum.World {
 
             _shape.CompressData();
 
-            _generatingShape = false;
+            _generatingVisuals = false;
+            _dirty = true;
+        }
+
+        protected virtual void _GenerateIcon() {
+            _generatingVisuals = true;
+            _icon = true;
+
+            _iconTexture = Assets.GetTexture(def.icon.texturePath);
+            _addBillboardRotation = true;
+
+            _generatingVisuals = false;
             _dirty = true;
         }
     }

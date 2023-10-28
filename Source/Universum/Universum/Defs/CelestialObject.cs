@@ -24,7 +24,7 @@ namespace Universum.Defs {
 
         public List<Component> components = new List<Component>();
 
-        public Shape shape;
-        public Icon icon;
+        public Shape shape = null;
+        public Icon icon = null;
     }
 }
