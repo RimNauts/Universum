@@ -45,6 +45,10 @@ namespace Universum.Utilities {
         }
 
         public static void get_world_map_render() {
+            // block celestial object rendering
+            Game.MainLoop.instance.blockRendering = true;
+            Game.MainLoop.instance.ForceRender();
+
             RenderTexture oldTexture = Find.WorldCamera.targetTexture;
             RenderTexture oldSkyboxTexture = RimWorld.Planet.WorldCameraManager.WorldSkyboxCamera.targetTexture;
 
@@ -79,6 +83,9 @@ namespace Universum.Utilities {
             RimWorld.Planet.WorldCameraManager.WorldSkyboxCamera.targetTexture = oldSkyboxTexture;
             Find.World.renderer.wantedMode = RimWorld.Planet.WorldRenderMode.None;
             Find.World.renderer.CheckActivateWorldCamera();
+            // unblock celestial object rendering
+            Game.MainLoop.instance.blockRendering = false;
+            Game.MainLoop.instance.ForceRender();
         }
     }
 

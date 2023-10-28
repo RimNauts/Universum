@@ -30,6 +30,7 @@ namespace Universum.Game {
         private World.CelestialObject[] _celestialObjectsCache = new World.CelestialObject[0];
         public bool dirtyCache = false;
 
+        public bool blockRendering = false;
         private bool _wait = false;
         public bool forceUpdate = true;
         private bool _prevWorldSceneRendered = false;
@@ -174,7 +175,11 @@ namespace Universum.Game {
         }
 
         private void _Render() {
-            for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Render();
+            for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Render(blockRendering);
+        }
+
+        public void ForceRender() {
+            for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Render(blockRendering);
         }
 
         private void _Recache() {

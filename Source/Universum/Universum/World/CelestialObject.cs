@@ -13,6 +13,7 @@ namespace Universum.World {
 
         protected Functionality.Random _rand;
 
+        protected bool _blockRendering = false;
         protected bool _generatingShape = false;
         protected bool _dirty = false;
         protected bool _positionChanged = true;
@@ -66,6 +67,11 @@ namespace Universum.World {
 
             for (int i = 0; i < _components.Length; i++) _components[i].Destroy();
             for (int i = 0; i < _transforms.Length; i++) UnityEngine.Object.Destroy(_transforms[i].gameObject);
+        }
+
+        public virtual void SetActive(bool active) {
+            for (int i = 0; i < _transforms.Length; i++) _transforms[i].gameObject.SetActive(active);
+            for (int i = 0; i < _components.Length; i++) _components[i].SetActive(active);
         }
 
         public virtual void GetExposeData(List<string> defNames, List<int?> seeds, List<Vector3?> positions, List<int?> deathTicks) {
@@ -180,7 +186,15 @@ namespace Universum.World {
             transformedPosition.z = _transformationMatrix.m23;
         }
 
-        public virtual void Render() {
+        public virtual void Render(bool blockRendering) {
+            if (blockRendering && !_blockRendering) {
+                _blockRendering = true;
+                SetActive(false);
+            }
+            if (!blockRendering && _blockRendering) {
+                _blockRendering = false;
+                SetActive(true);
+            }
             if (_dirty) _Recache();
 
             bool updatePosition = _positionChanged || Game.MainLoop.instance.forceUpdate;
@@ -218,6 +232,8 @@ namespace Universum.World {
                     layer = RimWorld.Planet.WorldCameraManager.WorldLayer
                 };
 
+                newGameObject.SetActive(false);
+
                 MeshFilter meshFilter = newGameObject.AddComponent<MeshFilter>();
                 MeshRenderer meshRenderer = newGameObject.AddComponent<MeshRenderer>();
 
@@ -237,6 +253,8 @@ namespace Universum.World {
             }
 
             _components = objectComponents.ToArray();
+
+            if (!_blockRendering) for (int i = 0; i < _transforms.Length; i++) _transforms[i].gameObject.SetActive(true);
 
             Game.MainLoop.instance.forceUpdate = true;
         }
