@@ -98,6 +98,7 @@
     <Compile Include="Defs\ObjectGenerationChance.cs" />
     <Compile Include="Defs\ObjectHolder.cs" />
     <Compile Include="Defs\OrbitDirection.cs" />
+    <Compile Include="Defs\ShaderProperties.cs" />
     <Compile Include="Defs\Shape.cs" />
     <Compile Include="Defs\DefOf.cs" />
     <Compile Include="Defs\ObjectsDef.cs" />

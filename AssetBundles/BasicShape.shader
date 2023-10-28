@@ -1,6 +1,12 @@
 ﻿Shader "Custom/BasicShape" {
     Properties {
+        _Shininess ("Shininess", float) = 10.0
+        _SpecularIntensity ("Specular Intensity", float) = 0.1
+        _DiffuseIntensity ("Diffuse Intensity", float) = 0.75
+        _DiffuseColor ("Diffuse Color", color) = (0.518, 0.397, 0.318, 1.0)
+        _AmbientColor ("Ambient Color", color) = (0.482, 0.603, 0.682, 1.0)
         _BumpMap ("Bump Map", 2D) = "white" {}
+        _BumpIntensity ("Bump Intensity", float) = 1.0
     }
 
 	SubShader {
@@ -30,7 +36,13 @@
 			};
 			
             float4 _PlanetSunLightDirection;
+            float _Shininess;
+            float _SpecularIntensity;
+            float _DiffuseIntensity;
+            float4 _DiffuseColor;
+            float4 _AmbientColor;
             sampler2D _BumpMap;
+            float _BumpIntensity;
 			 
 			fragment_data vert(vertex_data v) {
                 fragment_data f;
@@ -45,11 +57,8 @@
 			
 			fixed4 frag(fragment_data f) : SV_Target {
                 float4 pixel = float4(1.0, 1.0, 1.0, 1.0);
-                float shininess = 10.0;
-                float specularIntensity = 0.1;
-                float bumpIntensity = 1.0f;
                 // add bumps though normal mapping
-                float3 sampledNormal = bumpIntensity * (tex2D(_BumpMap, f.uv).rgb - 0.5) * 2.0;
+                float3 sampledNormal = _BumpIntensity * (tex2D(_BumpMap, f.uv).rgb - 0.5) * 2.0;
                 float3 finalNormal = normalize(f.normal + sampledNormal);
                 float3 objectNormal = normalize(-finalNormal);
 
@@ -72,13 +81,13 @@
                 }
                 // diffuse
                 float diff = max(dot(objectNormal, lightDir), 0.0);
-                float3 diffuse = 0.75 * diff * float3(0.518, 0.397, 0.318);
+                float3 diffuse = _DiffuseIntensity * diff * _DiffuseColor.rgb;
                 // specular
                 float3 reflectDir = reflect(lightDir, objectNormal);
-                float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-                float3 specular = specularIntensity * spec * float3(1.0, 1.0, 1.0);
+                float spec = pow(max(dot(viewDir, reflectDir), 0.0), _Shininess);
+                float3 specular = _SpecularIntensity * spec * float3(1.0, 1.0, 1.0);
                 // combine lighting and apply shadow
-                float3 light = (diffuse + specular + float3(0.482, 0.603, 0.682)) * shadow;
+                float3 light = (diffuse + specular + _AmbientColor.rgb) * shadow;
                 pixel.xyz = pixel.xyz * light * f.color;
 
                 return pixel;

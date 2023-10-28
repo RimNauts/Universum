@@ -21,19 +21,26 @@ namespace Universum {
             objectHolderDef = DefDatabase<RimWorld.WorldObjectDef>.GetNamed("Universum_ObjectHolder");
             oceanBiomeDef = DefDatabase<RimWorld.BiomeDef>.GetNamed("Ocean");
 
-            foreach (var (_, material) in Defs.Loader.materials) {
-                MaterialRequest req = new MaterialRequest(GetShader(material.shaderName)) {
-                    renderQueue = material.renderQueue,
-                    color = material.color
-                };
-                if (material.texturePath != null) {
-                    req.mainTex = GetTexture(material.texturePath);
-                    req.needsMainTex = true;
+            foreach (var (_, materialDef) in Defs.Loader.materials) {
+                Shader shaderInstance = GetShader(materialDef.shaderName);
+                Material material = new Material(shaderInstance);
+
+                material.renderQueue = materialDef.renderQueue;
+                material.color = materialDef.color;
+
+                if (materialDef.texturePath != null) material.mainTexture = GetTexture(materialDef.texturePath);
+
+                foreach (Defs.ShaderProperties properties in materialDef.shaderProperties) {
+                    if (properties.floatValue != null) {
+                        material.SetFloat(properties.name, (float) properties.floatValue);
+                    } else if (properties.colorValue != null) {
+                        material.SetColor(properties.name, (Color) properties.colorValue);
+                    } else if (properties.texturePathValue != null) {
+                        material.SetTexture(properties.name, GetTexture(properties.texturePathValue));
+                    }
                 }
-                materials[material.defName] = MaterialPool.MatFrom(req);
-                if (!material.bumpMap.NullOrEmpty()) {
-                    materials[material.defName].SetTexture("_BumpMap", GetTexture(material.bumpMap));
-                }
+
+                materials[materialDef.defName] = material;
             }
 
             foreach (var (_, celestialObjectDef) in Defs.Loader.celestialObjects) {
