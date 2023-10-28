@@ -31,10 +31,12 @@ namespace Universum.World.Component {
         }
 
         public override void UpdatePosition() {
-            Vector3 directionFromObjectToCamera = Game.MainLoop.instance.cameraPosition - _celestialObject.transformedPosition;
+            Vector3 position = _celestialObject.transformedPosition + _offset;
+
+            Vector3 directionFromObjectToCamera = Game.MainLoop.instance.cameraPosition - position;
             directionFromObjectToCamera.Normalize();
 
-            _position = _celestialObject.transformedPosition + directionFromObjectToCamera * (_celestialObject.scale.y + _celestialObject.extraScale) * 1.2f;
+            _position = position + directionFromObjectToCamera * (_celestialObject.scale.y + _celestialObject.extraScale) * 1.2f;
             _position -= Game.MainLoop.instance.cameraUp * (_celestialObject.scale.y + _celestialObject.extraScale) * 1.2f;
         }
 
