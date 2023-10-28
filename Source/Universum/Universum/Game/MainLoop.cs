@@ -185,6 +185,12 @@ namespace Universum.Game {
             _camera = Find.WorldCamera.GetComponent<Camera>();
             _cameraDriver = Find.WorldCameraDriver;
 
+            if (_camera != null) {
+                _camera.farClipPlane = 500.0f + CameraInfo.maxAltitude;
+                _camera.fieldOfView = CameraInfo.fieldOfView;
+                RimWorld.Planet.WorldCameraManager.worldSkyboxCameraInt.farClipPlane = 500.0f + CameraInfo.maxAltitude;
+            }
+
             for (int i = 0; i < _celestialObjects.Count; i++) {
                 if (_celestialObjects[i].ShouldDespawn()) {
                     _celestialObjects[i].Destroy();

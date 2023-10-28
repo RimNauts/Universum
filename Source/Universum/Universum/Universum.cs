@@ -19,6 +19,7 @@ namespace Universum {
             World.Patch.SettleInEmptyTileUtility.Init(harmony);
             World.Patch.TileFinder.Init(harmony);
             World.Patch.TravelingTransportPods.Init(harmony);
+            World.Patch.WorldCameraDriver.Init(harmony);
             World.Patch.WorldGrid.Init(harmony);
             World.Patch.WorldObjectSelectionUtility.Init(harmony);
             World.Patch.WorldObjectsHolder.Init(harmony);
