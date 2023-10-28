@@ -31,6 +31,9 @@ namespace Universum {
                     req.needsMainTex = true;
                 }
                 materials[material.defName] = MaterialPool.MatFrom(req);
+                if (!material.bumpMap.NullOrEmpty()) {
+                    materials[material.defName].SetTexture("_BumpMap", GetTexture(material.bumpMap));
+                }
             }
 
             foreach (var (_, celestialObjectDef) in Defs.Loader.celestialObjects) {

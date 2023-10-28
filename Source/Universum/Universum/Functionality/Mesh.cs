@@ -17,23 +17,30 @@ namespace Universum.Functionality {
         }
 
         public UnityEngine.Mesh GetUnityMesh() {
+            _CalculateBounds();
+
+            Vector2[] uvs = new Vector2[_vertices.Count];
+            for (int i = 0; i < _vertices.Count; i++) {
+                float u = (_vertices[i].x - _bounds.min.x) / (_bounds.max.x - _bounds.min.x);
+                float v = ((_vertices[i].y - _bounds.min.y) / (_bounds.max.y - _bounds.min.y) + (_vertices[i].z - _bounds.min.z) / (_bounds.max.z - _bounds.min.z)) / 2.0f;
+                uvs[i] = new Vector2(u, v);
+            }
+
             UnityEngine.Mesh unityMesh = new UnityEngine.Mesh {
                 vertices = _vertices.ToArray(),
                 triangles = _triangles.ToArray(),
-                colors = _colors.ToArray()
+                colors = _colors.ToArray(),
+                uv = uvs
             };
 
             unityMesh.RecalculateBounds();
             unityMesh.RecalculateTangents();
             unityMesh.RecalculateNormals();
-
             return unityMesh;
         }
-
         public void Merge(Mesh secondMesh) {
             int incrementValue = _vertices.Count;
             secondMesh._triangles = secondMesh._triangles.Select(x => x + incrementValue).ToList();
-
             _vertices.AddRange(secondMesh._vertices);
             _triangles.AddRange(secondMesh._triangles);
             _colors.AddRange(secondMesh._colors);

@@ -7,5 +7,6 @@ namespace Universum.Defs {
         public string texturePath;
         public Color color = Color.white;
         public int renderQueue = RimWorld.Planet.WorldMaterials.WorldObjectRenderQueue;
+        public string bumpMap;
     }
 }
