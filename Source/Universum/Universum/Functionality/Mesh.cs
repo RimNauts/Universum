@@ -21,8 +21,8 @@ namespace Universum.Functionality {
 
             Vector2[] uvs = new Vector2[_vertices.Count];
             for (int i = 0; i < _vertices.Count; i++) {
-                float u = (_vertices[i].x - _bounds.min.x) / (_bounds.max.x - _bounds.min.x);
-                float v = ((_vertices[i].y - _bounds.min.y) / (_bounds.max.y - _bounds.min.y) + (_vertices[i].z - _bounds.min.z) / (_bounds.max.z - _bounds.min.z)) / 2.0f;
+                float u = Mathf.Atan2(_vertices[i].z, _vertices[i].x) / (2 * Mathf.PI) + 0.5f;
+                float v = Mathf.Asin(_vertices[i].y) / Mathf.PI + 0.5f;
                 uvs[i] = new Vector2(u, v);
             }
 
