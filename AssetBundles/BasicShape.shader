@@ -23,13 +23,12 @@
             struct vertex_data {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
-                float2 uv : TEXCOORD0;
                 float4 color : COLOR;
             };
 
 			struct fragment_data {
                 float4 worldPos : TEXCOORD1;
-                float2 uv : TEXCOORD2;
+                float4 objPos : TEXCOORD2;
 				float4 vertex : SV_POSITION;
                 float3 normal : NORMAL;
                 float4 color : COLOR;
@@ -47,9 +46,9 @@
 			fragment_data vert(vertex_data v) {
                 fragment_data f;
                 f.worldPos = mul(unity_ObjectToWorld, v.vertex);
+                f.objPos = v.vertex;
                 f.vertex = mul(unity_MatrixVP, mul(unity_ObjectToWorld, v.vertex));
                 f.normal = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
-                f.uv = v.uv;
                 f.color = v.color;
 
                 return f;
@@ -57,11 +56,20 @@
 			
 			fixed4 frag(fragment_data f) : SV_Target {
                 float4 pixel = float4(1.0, 1.0, 1.0, 1.0);
-                // add bumps though normal mapping
-                float3 sampledNormal = _BumpIntensity * (tex2D(_BumpMap, f.uv).rgb - 0.5) * 2.0;
-                float3 finalNormal = normalize(f.normal + sampledNormal);
-                float3 objectNormal = normalize(-finalNormal);
+                // triplanar normal mapping
+                float3 objectNormal = normalize(f.normal);
+                float3 blendWeights = abs(objectNormal);
+                blendWeights /= dot(blendWeights, float3(1.0, 1.0, 1.0));
 
+                float3 sampledNormalX = _BumpIntensity * (tex2D(_BumpMap, f.objPos.yz).xyz - 0.5) * 2.0;
+                float3 sampledNormalY = _BumpIntensity * (tex2D(_BumpMap, f.objPos.xz).xyz - 0.5) * 2.0;
+                float3 sampledNormalZ = _BumpIntensity * (tex2D(_BumpMap, f.objPos.xy).xyz - 0.5) * 2.0;
+
+                float3 blendedNormal = normalize(sampledNormalX * blendWeights.x + sampledNormalY * blendWeights.y + sampledNormalZ * blendWeights.z);
+                // integrate triplanar normal mapping with the existing normal
+                float3 finalNormal = normalize(blendedNormal + objectNormal);
+                objectNormal = -finalNormal;
+                // lighting calculations
                 float3 lightDir = normalize(_PlanetSunLightDirection.xyz);
                 float3 viewDir = normalize(_WorldSpaceCameraPos - f.worldPos);
                 // shadow calculations
