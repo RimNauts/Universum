@@ -141,7 +141,7 @@ namespace Universum.World {
         }
 
         private string _GetDeathTimerLabel() {
-            if (_celestialObject.deathTick == null || !SafeDespawn()) return "";
+            if (_celestialObject.deathTick == null) return null;
 
             float timeLeft = (float) _celestialObject.deathTick - Game.MainLoop.instance.tick;
             if (timeLeft < 60000.0f) {
@@ -151,6 +151,7 @@ namespace Universum.World {
 
         public override string GetDescription() {
             StringBuilder stringBuilder = new StringBuilder();
+
             _AppendCelestialDescription(stringBuilder);
             _AppendComponentDescriptionParts(stringBuilder);
 
@@ -159,6 +160,7 @@ namespace Universum.World {
 
         public override string GetInspectString() {
             StringBuilder stringBuilder = new StringBuilder();
+
             _AppendCelestialDescription(stringBuilder);
             _AppendFactionIfApplicable(stringBuilder);
             _AppendComponentStrings(stringBuilder);
@@ -166,12 +168,12 @@ namespace Universum.World {
             _AppendCooldownInformation(stringBuilder);
             _AppendConditionCausersIfPresent(stringBuilder);
 
-            return stringBuilder.ToString();
+            return stringBuilder.ToString().Trim();
         }
 
         private void _AppendCelestialDescription(StringBuilder sb) {
             sb.AppendLine(_celestialObjectDef.objectHolder.description);
-            if (_celestialObject.deathTick == null || !SafeDespawn()) sb.Append(_GetDeathTimerLabel());
+            if (_celestialObject.deathTick != null && SafeDespawn()) sb.Append(_GetDeathTimerLabel());
         }
 
         private void _AppendFactionIfApplicable(StringBuilder sb) {
