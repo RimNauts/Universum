@@ -22,6 +22,10 @@ namespace Universum.World {
         }
 
         public static void Generate(Defs.ObjectGeneration objectGenerationStep, Vector2 despawnBetweenDays, int? amount = null) {
+            int totalObjectsAlive = 0;
+            foreach (var objectToSpawn in objectGenerationStep.objectGroup) totalObjectsAlive += Game.MainLoop.instance.GetTotal(Defs.Loader.celestialObjects[objectToSpawn.celestialDefName]);
+            if (totalObjectsAlive >= objectGenerationStep.total) return;
+
             int total = amount ?? objectGenerationStep.total;
             List<string> celestialDefNames = new List<string>();
             List<ObjectHolder> objectHolders = new List<ObjectHolder>();
