@@ -64,9 +64,12 @@ namespace Universum {
                     Utilities.Cache.clear_utility_toggle();
                 } catch { }
             }
+            if (Current.Game != null && Game.MainLoop.instance != null && buttons_view.ButtonText(TranslatorFormattedStringExtensions.Translate("Universum.Info.regenerate"))) {
+                World.Generator.Regenerate();
+            }
             buttons_view.End();
             // table header
-            UnityEngine.Rect table_header_rectangle = new UnityEngine.Rect(buttons_rectangle.x, buttons_rectangle.y + 34f, buttons_rectangle.width, 30f);
+            UnityEngine.Rect table_header_rectangle = new UnityEngine.Rect(buttons_rectangle.x, buttons_rectangle.y + 34f * 3, buttons_rectangle.width, 30f);
             Listing_Standard table_header_view = new Listing_Standard();
             Widgets.DrawHighlight(table_header_rectangle);
             table_header_view.Begin(table_header_rectangle);
@@ -79,9 +82,9 @@ namespace Universum {
             table_header_view.Label(TranslatorFormattedStringExtensions.Translate("Universum.enabled"));
             table_header_view.End();
             // table content
-            UnityEngine.Rect table_content_rectangle = new UnityEngine.Rect(buttons_rectangle.x, buttons_rectangle.y - 64f, buttons_rectangle.width, Settings.utilities.Count * 38f);
+            UnityEngine.Rect table_content_rectangle = new UnityEngine.Rect(table_header_rectangle.x, table_header_rectangle.y - 34f * 4, table_header_rectangle.width, Settings.utilities.Count * 38f);
             UnityEngine.Rect viewRect = new UnityEngine.Rect(0.0f, 0.0f, 100f, Settings.utilities.Count * 30f);
-            Widgets.BeginScrollView(new UnityEngine.Rect(buttons_rectangle.x, buttons_rectangle.y + 64f, buttons_rectangle.width, 484f), ref scrollpos, viewRect);
+            Widgets.BeginScrollView(new UnityEngine.Rect(table_content_rectangle.x, table_content_rectangle.y + 34f * 5, table_content_rectangle.width, 340f), ref scrollpos, viewRect);
             Listing_Standard table_header_content = new Listing_Standard();
             table_header_content.Begin(table_content_rectangle);
             table_header_content.verticalSpacing = 8f;

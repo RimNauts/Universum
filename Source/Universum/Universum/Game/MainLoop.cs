@@ -74,6 +74,8 @@ namespace Universum.Game {
         public override void GameComponentTick() {
             if (_tickManager == null || _tickManager.TicksGame % 10 != 0) return;
 
+            if (_visualGenerationQueue.Count > 0) dirtyCache = true;
+
             for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Tick();
 
             if (_tickManager.TicksGame < _spawnTickMin) return;
@@ -240,6 +242,14 @@ namespace Universum.Game {
         }
 
         public int GetTotal(Defs.CelestialObject def) => _celestialObjects.Where(celestialObject => celestialObject.def == def).Count();
+
+        public int GetTotal() => _celestialObjects.Count();
+
+        public void ShouldDestroy(Defs.CelestialObject def) {
+            var celestialObjectsToDestroy = _celestialObjects.Where(celestialObject => celestialObject.def == def);
+            foreach (var celestialObject in celestialObjectsToDestroy) celestialObject.forceDeath = true;
+            dirtyCache = true;
+        }
 
         private int _GetSpawnTick(float betweenDaysMin, float betweenDaysMax) => (int) Rand.Range(betweenDaysMin * 60000, betweenDaysMax * 60000) + _tickManager.TicksGame;
 

@@ -21,6 +21,27 @@ namespace Universum.World {
             }
         }
 
+        public static void Regenerate() {
+            foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationStartUpSteps.Values) {
+                bool respawnFlag = true;
+                foreach (var objectToSpawn in objectGenerationStep.objectGroup) {
+                    if (Defs.Loader.celestialObjects[objectToSpawn.celestialDefName].objectHolder != null) respawnFlag = false;
+                }
+                if (!respawnFlag) continue;
+
+                foreach (var objectToSpawn in objectGenerationStep.objectGroup) Game.MainLoop.instance.ShouldDestroy(Defs.Loader.celestialObjects[objectToSpawn.celestialDefName]);
+                Game.MainLoop.instance.GameComponentUpdate();
+
+                for (int i = 0; i < objectGenerationStep.total; i++) {
+                    string celestialDefName = objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName;
+                    if (Defs.Loader.celestialObjects[celestialDefName].objectHolder != null) {
+                        CreateObjectHolder(celestialDefName);
+                    } else Create(celestialDefName);
+                }
+            }
+            Game.MainLoop.instance.dirtyCache = true;
+        }
+
         public static void Generate(Defs.ObjectGeneration objectGenerationStep, Vector2 despawnBetweenDays, int? amount = null) {
             int totalObjectsAlive = 0;
             foreach (var objectToSpawn in objectGenerationStep.objectGroup) totalObjectsAlive += Game.MainLoop.instance.GetTotal(Defs.Loader.celestialObjects[objectToSpawn.celestialDefName]);
