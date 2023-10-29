@@ -26,6 +26,8 @@ namespace Universum.World.Component {
         }
 
         public override void Update() {
+            SetBlock(!Utilities.Cache.allowed_utility("universum.labels"));
+
             base.Update();
             hide();
         }

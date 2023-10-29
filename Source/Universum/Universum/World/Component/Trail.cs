@@ -46,6 +46,8 @@ namespace Universum.World.Component {
         }
 
         public override void Update() {
+            SetBlock(!Utilities.Cache.allowed_utility("universum.trails"));
+
             base.Update();
             TimeSpeed currentSpeed = Game.MainLoop.instance.timeSpeed;
             if (currentSpeed != _prevGameSpeed) {

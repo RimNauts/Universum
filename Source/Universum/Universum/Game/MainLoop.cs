@@ -173,9 +173,12 @@ namespace Universum.Game {
         }
 
         private void _Update() {
-            for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Update();
+            if (Utilities.Cache.allowed_utility("universum.main_loop_parallelization")) {
+                Parallel.For(0, _totalCelestialObjectsCached, new ParallelOptions { MaxDegreeOfParallelism = 4 }, i => { _celestialObjectsCache[i].Update(); });
+                return;
+            }
 
-            //Parallel.For(0, _totalCelestialObjectsCached, new ParallelOptions { MaxDegreeOfParallelism = 4 }, i => { _celestialObjectsCache[i].Update(); });
+            for (int i = 0; i < _totalCelestialObjectsCached; i++) _celestialObjectsCache[i].Update();
         }
 
         private void _Render() {
