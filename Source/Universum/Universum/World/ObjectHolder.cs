@@ -11,7 +11,7 @@ namespace Universum.World {
     [StaticConstructorOnStartup]
     public class ObjectHolder : RimWorld.Planet.MapParent {
         private CelestialObject _celestialObject;
-        private Defs.CelestialObject _celestialObjectDef;
+        public Defs.CelestialObject celestialObjectDef;
 
         private Texture2D _overlayIcon;
         public bool keepAfterAbandon;
@@ -25,7 +25,7 @@ namespace Universum.World {
         public override string Label => _celestialObject.name;
         public override Vector3 DrawPos => _celestialObject.transformedPosition;
         public override Texture2D ExpandingIcon => HasMap ? _overlayIcon : base.ExpandingIcon;
-        public override MapGeneratorDef MapGeneratorDef => _celestialObjectDef.objectHolder.mapGeneratorDef;
+        public override MapGeneratorDef MapGeneratorDef => celestialObjectDef.objectHolder.mapGeneratorDef;
 
         public void Init(
             string celestialObjectDefName,
@@ -35,10 +35,10 @@ namespace Universum.World {
             CelestialObject celestialObject = null
         ) {
             _celestialObject = celestialObject ?? Generator.Create(celestialObjectDefName, celestialObjectSeed, celestialObjectPosition, celestialObjectDeathTick);
-            _celestialObjectDef = Defs.Loader.celestialObjects[celestialObjectDefName];
+            celestialObjectDef = Defs.Loader.celestialObjects[celestialObjectDefName];
 
-            _overlayIcon = Assets.GetTexture(_celestialObjectDef.objectHolder.overlayIconPath);
-            keepAfterAbandon = _celestialObjectDef.objectHolder.keepAfterAbandon;
+            _overlayIcon = Assets.GetTexture(celestialObjectDef.objectHolder.overlayIconPath);
+            keepAfterAbandon = celestialObjectDef.objectHolder.keepAfterAbandon;
 
             _celestialObject.objectHolder = this;
         }
@@ -55,7 +55,7 @@ namespace Universum.World {
         public override void PostRemove() {
             base.PostRemove();
             if (keepAfterAbandon) {
-                ObjectHolder newObjectHolder = Generator.CreateObjectHolder(_celestialObjectDef.defName, celestialObject: _celestialObject);
+                ObjectHolder newObjectHolder = Generator.CreateObjectHolder(celestialObjectDef.defName, celestialObject: _celestialObject);
                 newObjectHolder.Tile = Tile;
             } else {
                 SignalDestruction();
@@ -172,7 +172,7 @@ namespace Universum.World {
         }
 
         private void _AppendCelestialDescription(StringBuilder sb) {
-            sb.AppendLine(_celestialObjectDef.objectHolder.description);
+            sb.AppendLine(celestialObjectDef.objectHolder.description);
             if (_celestialObject.deathTick != null && SafeDespawn()) sb.Append(_GetDeathTimerLabel());
         }
 

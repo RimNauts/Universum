@@ -23,17 +23,26 @@ namespace Universum.World {
 
         public static void Generate(Defs.ObjectGeneration objectGenerationStep, Vector2 despawnBetweenDays, int? amount = null) {
             int total = amount ?? objectGenerationStep.total;
+            List<string> celestialDefNames = new List<string>();
+            List<ObjectHolder> objectHolders = new List<ObjectHolder>();
+
             for (int i = 0; i < total; i++) {
                 string celestialDefName = objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName;
+                celestialDefNames.Add(celestialDefName);
 
                 int? deathTick = null;
                 if (despawnBetweenDays != Vector2.zero) deathTick = (int) Rand.Range(despawnBetweenDays[0] * 60000, despawnBetweenDays[1] * 60000) + Game.MainLoop.instance.tick;
 
                 if (Defs.Loader.celestialObjects[celestialDefName].objectHolder != null) {
-                    CreateObjectHolder(celestialDefName, celestialObjectDeathTick: deathTick);
+                    ObjectHolder objectHolder = CreateObjectHolder(celestialDefName, celestialObjectDeathTick: deathTick);
+                    objectHolders.Add(objectHolder);
                 } else Create(celestialDefName, deathTick: deathTick);
             }
+
+            SendLetter(objectGenerationStep, celestialDefNames, objectHolders);
         }
+
+        public static void SendLetter(Defs.ObjectGeneration objectGenerationStep, List<string> celestialDefNames, List<ObjectHolder> objectHolders) { }
 
         public static List<CelestialObject> Create(
             List<string> celestialObjectDefNames,
