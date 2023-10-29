@@ -25,8 +25,6 @@ namespace Universum.World.Objects {
             float minRadiusChange = 0.02f;
             float maxRadiusChange = 0.05f;
             _radiusChangePerTick = (1 - normalizedSpeed) * minRadiusChange + normalizedSpeed * maxRadiusChange;
-
-            if (_orbitRadius < _targetOrbitRadius) _radiusChangePerTick *= 2;
         }
 
         public override void UpdatePosition(int tick) {
