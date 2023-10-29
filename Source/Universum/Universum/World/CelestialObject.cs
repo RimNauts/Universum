@@ -339,8 +339,9 @@ namespace Universum.World {
             } else {
                 Logger.print(
                     Logger.Importance.Error,
-                    text: $"Celestial object def '{def.defName}' doesn't contain either a Icon or Shape specification",
-                    prefix: Style.name_prefix
+                    key: "Universum.Error.no_shape_icon",
+                    prefix: Style.name_prefix,
+                    args: new NamedArgument[] { def.defName }
                 );
                 return;
             }

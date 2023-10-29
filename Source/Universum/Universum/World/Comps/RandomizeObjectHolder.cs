@@ -23,7 +23,7 @@ namespace Universum.World.Comps {
         }
 
         public void RandomizeObject() {
-            ObjectHolder objectHolder = this.parent as ObjectHolder;
+            ObjectHolder objectHolder = parent as ObjectHolder;
             objectHolder.Randomize();
         }
     }
