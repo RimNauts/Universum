@@ -20,6 +20,7 @@ namespace Universum.World {
             _def = def;
 
             _gameObject = Object.Instantiate(Assets.gameObjectWorldText);
+            Object.DontDestroyOnLoad(_gameObject);
 
             _offset = def.offSet;
             _hideAtMinAltitude = def.hideAtMinAltitude;

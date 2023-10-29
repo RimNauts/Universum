@@ -240,6 +240,7 @@ namespace Universum.World {
                     GameObject newGameObject = new GameObject {
                         layer = RimWorld.Planet.WorldCameraManager.WorldLayer
                     };
+                    UnityEngine.Object.DontDestroyOnLoad(newGameObject);
 
                     newGameObject.SetActive(false);
 
@@ -259,6 +260,7 @@ namespace Universum.World {
                 GameObject newGameObject = new GameObject {
                     layer = RimWorld.Planet.WorldCameraManager.WorldLayer
                 };
+                UnityEngine.Object.DontDestroyOnLoad(newGameObject);
 
                 SpriteRenderer spriteRenderer = newGameObject.AddComponent<SpriteRenderer>();
 
