@@ -67,6 +67,10 @@ namespace Universum.Game {
             for (int i = 0; i < _celestialObjects.Count; i++) _celestialObjects[i].Destroy();
         }
 
+        public override void LoadedGame() {
+            if (_celestialObjects.NullOrEmpty()) World.Generator.GenerateOnStartUp();
+        }
+
         public override void GameComponentTick() {
             if (_tickManager == null || _tickManager.TicksGame % 10 != 0) return;
 

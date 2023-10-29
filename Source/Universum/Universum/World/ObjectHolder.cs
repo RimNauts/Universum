@@ -3,7 +3,6 @@ using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using UnityEngine;
 using Verse;
@@ -59,6 +58,7 @@ namespace Universum.World {
                 ObjectHolder newObjectHolder = Generator.CreateObjectHolder(_celestialObjectDef.defName, celestialObject: _celestialObject);
                 newObjectHolder.Tile = Tile;
             } else {
+                SignalDestruction();
                 Generator.UpdateTile(Tile, Assets.oceanBiomeDef);
             }
         }
@@ -170,8 +170,8 @@ namespace Universum.World {
         }
 
         private void _AppendCelestialDescription(StringBuilder sb) {
-            sb.Append(_celestialObjectDef.objectHolder.description);
-            sb.Append(_GetDeathTimerLabel());
+            sb.AppendLine(_celestialObjectDef.objectHolder.description);
+            if (_celestialObject.deathTick == null || !SafeDespawn()) sb.Append(_GetDeathTimerLabel());
         }
 
         private void _AppendFactionIfApplicable(StringBuilder sb) {

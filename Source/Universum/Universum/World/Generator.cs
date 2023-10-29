@@ -8,7 +8,9 @@ namespace Universum.World {
     public class Generator : WorldGenStep {
         public override int SeedPart => 0;
 
-        public override void GenerateFresh(string seed) {
+        public override void GenerateFresh(string seed) => GenerateOnStartUp();
+
+        public static void GenerateOnStartUp() {
             foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationStartUpSteps.Values) {
                 for (int i = 0; i < objectGenerationStep.total; i++) {
                     string celestialDefName = objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName;
@@ -83,9 +85,10 @@ namespace Universum.World {
             int? celestialObjectSeed = null,
             Vector3? celestialObjectPosition = null,
             int? celestialObjectDeathTick = null,
-            CelestialObject celestialObject = null
+            CelestialObject celestialObject = null,
+            int tile = -1
         ) {
-            int tile = GetFreeTile();
+            if (tile == -1) tile = GetFreeTile();
             if (tile == -1) return null;
             UpdateTile(tile, Defs.Loader.celestialObjects[celestialObjectDefName].objectHolder.biomeDef);
 
