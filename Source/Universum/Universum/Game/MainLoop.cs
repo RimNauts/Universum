@@ -232,6 +232,8 @@ namespace Universum.Game {
             }
         }
 
+        public int GetTotal(Defs.CelestialObject def) => _celestialObjects.Where(celestialObject => celestialObject.def == def).Count();
+
         private int _GetSpawnTick(float betweenDaysMin, float betweenDaysMax) => (int) Rand.Range(betweenDaysMin * 60000, betweenDaysMax * 60000) + _tickManager.TicksGame;
 
         public override void ExposeData() {
