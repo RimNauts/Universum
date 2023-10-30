@@ -15,6 +15,7 @@ namespace Universum.Patch {
         public static MethodBase TargetMethod() => AccessTools.Method("Verse.Profile.MemoryUtility:ClearAllMapsAndWorld");
 
         public static void Prefix() {
+            Game.MainLoop.instance.Destroy();
             Game.MainLoop.instance = null;
         }
     }
