@@ -61,16 +61,21 @@ namespace Universum.World {
             def = Defs.Loader.celestialObjects[celestialObjectDefName];
         }
 
-        ~CelestialObject() => Destroy();
-
         public virtual void Destroy() {
             if (objectHolder != null) {
                 objectHolder.keepAfterAbandon = false;
                 objectHolder.Destroy();
             }
 
-            for (int i = 0; i < _components.Length; i++) _components[i].Destroy();
-            for (int i = 0; i < _transforms.Length; i++) UnityEngine.Object.Destroy(_transforms[i].gameObject);
+            if (_components != null) for (int i = 0; i < _components.Length; i++) if (_components[i] != null) _components[i].Destroy();
+            if (_transforms != null) {
+                for (int i = 0; i < _transforms.Length; i++) {
+                    if (_transforms[i] != null && _transforms[i].gameObject != null) {
+                        UnityEngine.Object.Destroy(_transforms[i].gameObject);
+                        _transforms[i] = null;
+                    }
+                }
+            }
         }
 
         public virtual void SetActive(bool active) {

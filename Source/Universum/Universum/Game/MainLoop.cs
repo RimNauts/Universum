@@ -61,10 +61,16 @@ namespace Universum.Game {
             instance = this;
         }
 
-        ~MainLoop() => Destroy();
-
         public void Destroy() {
-            for (int i = 0; i < _celestialObjects.Count; i++) _celestialObjects[i].Destroy();
+            seed = Rand.Int;
+            if (_celestialObjects != null) {
+                for (int i = 0; i < _celestialObjects.Count; i++) {
+                    if (_celestialObjects[i] != null) {
+                        _celestialObjects[i].Destroy();
+                        _celestialObjects[i] = null;
+                    }
+                }
+            }
         }
 
         public override void LoadedGame() {
