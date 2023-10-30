@@ -20,11 +20,11 @@ namespace Universum {
                 args: new NamedArgument[] { Info.name, Info.version }
             );
             // load configuarations
+            Defs.Loader.Init();
             Settings.init();
             Utilities.Biome.Handler.init();
             Utilities.Terrain.Handler.init();
             if (ModsConfig.BiotechActive) Utilities.Gene.Handler.init();
-            Defs.Loader.Init();
             Assets.Init();
             // branch if camera+ patch needs to be applied
             if (ModsConfig.IsActive("brrainz.cameraplus")) {

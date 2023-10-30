@@ -12,7 +12,8 @@ namespace Universum.World {
 
         public static void GenerateOnStartUp() {
             foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationStartUpSteps.Values) {
-                for (int i = 0; i < objectGenerationStep.total; i++) {
+                int total = Settings.totalToSpawnGenStep[objectGenerationStep.defName];
+                for (int i = 0; i < total; i++) {
                     string celestialDefName = objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName;
                     if (Defs.Loader.celestialObjects[celestialDefName].objectHolder != null) {
                         CreateObjectHolder(celestialDefName);
@@ -32,7 +33,8 @@ namespace Universum.World {
                 foreach (var objectToSpawn in objectGenerationStep.objectGroup) Game.MainLoop.instance.ShouldDestroy(Defs.Loader.celestialObjects[objectToSpawn.celestialDefName]);
                 Game.MainLoop.instance.GameComponentUpdate();
 
-                for (int i = 0; i < objectGenerationStep.total; i++) {
+                int total = Settings.totalToSpawnGenStep[objectGenerationStep.defName];
+                for (int i = 0; i < total; i++) {
                     string celestialDefName = objectGenerationStep.objectGroup.RandomElementByWeight(o => o.tickets).celestialDefName;
                     if (Defs.Loader.celestialObjects[celestialDefName].objectHolder != null) {
                         CreateObjectHolder(celestialDefName);
@@ -45,9 +47,9 @@ namespace Universum.World {
         public static void Generate(Defs.ObjectGeneration objectGenerationStep, Vector2 despawnBetweenDays, int? amount = null) {
             int totalObjectsAlive = 0;
             foreach (var objectToSpawn in objectGenerationStep.objectGroup) totalObjectsAlive += Game.MainLoop.instance.GetTotal(Defs.Loader.celestialObjects[objectToSpawn.celestialDefName]);
-            if (totalObjectsAlive >= objectGenerationStep.total) return;
+            if (totalObjectsAlive >= Settings.totalToSpawnGenStep[objectGenerationStep.defName]) return;
 
-            int total = amount ?? objectGenerationStep.total;
+            int total = amount ?? Settings.totalToSpawnGenStep[objectGenerationStep.defName];
             List<string> celestialDefNames = new List<string>();
             List<ObjectHolder> objectHolders = new List<ObjectHolder>();
 
