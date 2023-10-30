@@ -9,6 +9,8 @@
 *.user
 *.userosscache
 *.sln.docstates
+AssetBuilder/*
+!AssetBuilder/Assets/BasicShape.shader
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

@@ -20,10 +20,12 @@ namespace Universum {
                 args: new NamedArgument[] { Info.name, Info.version }
             );
             // load configuarations
+            Defs.Loader.Init();
             Settings.init();
             Utilities.Biome.Handler.init();
             Utilities.Terrain.Handler.init();
             if (ModsConfig.BiotechActive) Utilities.Gene.Handler.init();
+            Assets.Init();
             // branch if camera+ patch needs to be applied
             if (ModsConfig.IsActive("brrainz.cameraplus")) {
                 Globals.planet_mat.mainTextureOffset = new Vector2(0.3f, 0.3f);
@@ -36,6 +38,14 @@ namespace Universum {
                     key: "Universum.Info.camera_patch_applied",
                     prefix: Style.tab
                 );
+            }
+        }
+
+        public class ModContent : Mod {
+            public static ModContent instance { get; private set; }
+
+            public ModContent(ModContentPack content) : base(content) {
+                instance = this;
             }
         }
     }

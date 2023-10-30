@@ -14,7 +14,7 @@ namespace Universum.Utilities {
         public Dictionary<int, float> map_temperature;
         public Dictionary<int, Vacuum_Protection> pawn_protection_level;
 
-        public Caching_Handler(Game game) : base() {
+        public Caching_Handler(Verse.Game game) : base() {
             // initilize empty caches
             clear();
             Cache.caching_handler = this;
@@ -205,7 +205,7 @@ namespace Universum.Utilities {
     /**
      * Makes sure all cache is cleared when switching between worlds.
      */
-    [HarmonyLib.HarmonyPatch(typeof(Game), "ClearCaches")]
+    [HarmonyLib.HarmonyPatch(typeof(Verse.Game), "ClearCaches")]
     public static class Game_ClearCaches {
         public static void Postfix() => Cache.clear();
     }
