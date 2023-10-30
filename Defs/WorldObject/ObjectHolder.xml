@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<WorldObjectDef>
+		<defName>Universum_ObjectHolder</defName>
+		<worldObjectClass>Universum.World.ObjectHolder</worldObjectClass>
+		<canBePlayerHome>true</canBePlayerHome>
+		<useDynamicDrawer>false</useDynamicDrawer>
+		<expandingIcon>true</expandingIcon>
+		<expandingIconTexture>Universum_Transparent</expandingIconTexture>
+		<expandingIconPriority>1003</expandingIconPriority>
+		<texture>Universum_Transparent</texture>
+		<IncidentTargetTags>
+			<li>Map_PlayerHome</li>
+		</IncidentTargetTags>
+		<comps>
+			<li Class="WorldObjectCompProperties_Abandon"/>
+			<li Class="Universum.World.Comps.DestroyObjectHolder_Properties">
+				<label>Destroy</label>
+				<desc>Blast the object out of orbit, never to be seen again.</desc>
+			</li>
+			<li Class="Universum.World.Comps.GenerateObjectHolderMap_Properties">
+				<label>Generate map</label>
+				<desc>Generate map for the object instantly.</desc>
+			</li>
+			<li Class="Universum.World.Comps.RandomizeObjectHolder_Properties">
+				<label>Randomize</label>
+				<desc>Randomize properties.</desc>
+			</li>
+		</comps>
+  	</WorldObjectDef>
+</Defs>

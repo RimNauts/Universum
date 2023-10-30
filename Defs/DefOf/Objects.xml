@@ -4,6 +4,30 @@
 		<defName>Objects</defName>
         <Utilities>
             <li>
+                <id>universum.main_loop_parallelization</id>
+                <mod_name>Universum</mod_name>
+                <label_key>Universum.Utility.Label.main_loop_parallelization</label_key>
+                <description_key>Universum.Utility.Description.main_loop_parallelization</description_key>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>false</hide_in_settings>
+            </li>
+            <li>
+                <id>universum.labels</id>
+                <mod_name>Universum</mod_name>
+                <label_key>Universum.Utility.Label.labels</label_key>
+                <description_key>Universum.Utility.Description.labels</description_key>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>false</hide_in_settings>
+            </li>
+            <li>
+                <id>universum.trails</id>
+                <mod_name>Universum</mod_name>
+                <label_key>Universum.Utility.Label.trails</label_key>
+                <description_key>Universum.Utility.Description.trails</description_key>
+                <default_toggle>true</default_toggle>
+                <hide_in_settings>false</hide_in_settings>
+            </li>
+            <li>
                 <id>universum.vacuum_decompression</id>
                 <mod_name>Universum</mod_name>
                 <label_key>Universum.Utility.Label.vacuum_decompression</label_key>
