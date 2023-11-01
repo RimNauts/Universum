@@ -8,7 +8,10 @@ namespace Universum.World {
     public class Generator : WorldGenStep {
         public override int SeedPart => 0;
 
-        public override void GenerateFresh(string seed) => GenerateOnStartUp();
+        public override void GenerateFresh(string seed) {
+            Game.MainLoop.instance.FreshGame();
+            GenerateOnStartUp();
+        }
 
         public static void GenerateOnStartUp() {
             foreach (Defs.ObjectGeneration objectGenerationStep in Defs.Loader.celestialObjectGenerationStartUpSteps.Values) {
