@@ -49,7 +49,7 @@ namespace Universum.Game {
 
         public int seed = Rand.Int;
 
-        private readonly Queue<World.CelestialObject> _visualGenerationQueue = new Queue<World.CelestialObject>();
+        private Queue<World.CelestialObject> _visualGenerationQueue = new Queue<World.CelestialObject>();
         private Thread _visualGenerationWorker;
 
         public MainLoop(Verse.Game game) : base() {
@@ -71,6 +71,30 @@ namespace Universum.Game {
                     }
                 }
             }
+        }
+
+        public void FreshGame() {
+            if (_celestialObjects.Count <= 0) return;
+            Destroy();
+            _celestialObjects = new List<World.CelestialObject>();
+            _totalCelestialObjectsCached = 0;
+            _celestialObjectsCache = new World.CelestialObject[0];
+            dirtyCache = false;
+            blockRendering = false;
+            _wait = false;
+            forceUpdate = true;
+            _prevWorldSceneRendered = false;
+            worldSceneActivated = false;
+            worldSceneDeactivated = false;
+            unpaused = false;
+            _prevTick = 0;
+            cameraMoved = false;
+            _frameChanged = false;
+            seed = Rand.Int;
+            _visualGenerationQueue = new Queue<World.CelestialObject>();
+            _visualGenerationWorker = null;
+
+            _Recache();
         }
 
         public override void LoadedGame() {
