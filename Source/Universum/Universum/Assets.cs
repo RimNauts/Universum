@@ -5,13 +5,14 @@ using Verse;
 namespace Universum {
     [StaticConstructorOnStartup]
     public static class Assets {
+        private static AssetBundle assets;
         public static Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
         public static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
         public static Dictionary<string, Material> materials = new Dictionary<string, Material>();
         public static GameObject gameObjectWorldText;
         public static RimWorld.WorldObjectDef objectHolderDef;
         public static RimWorld.BiomeDef oceanBiomeDef;
-        private static AssetBundle assets;
+        public static Quaternion billboardCorrectionRotation = Quaternion.Euler(90, 90, 0);
 
         public static void Init() {
             _GetAssets();

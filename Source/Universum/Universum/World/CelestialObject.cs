@@ -31,6 +31,7 @@ namespace Universum.World {
         protected Quaternion _rotation = Quaternion.identity;
         protected bool _addBillboardRotation = false;
         protected Quaternion _billboardRotation = Quaternion.identity;
+        protected Quaternion _billboardCorrectionRotation = Quaternion.identity;
         protected Quaternion _axialRotation = Quaternion.identity;
         protected Quaternion _spinRotation = Quaternion.identity;
         protected Quaternion _inclinatioRotation = Quaternion.identity;
@@ -132,9 +133,13 @@ namespace Universum.World {
                     _orbitDirection = 1;
                     break;
             }
-            _axialRotation = Quaternion.Euler(_rand.GetValueBetween(def.axialAngleBetween), _rand.GetValueBetween(def.axialAngleBetween), _rand.GetValueBetween(def.axialAngleBetween));
+
             _spinRotationSpeed = _rand.GetValueBetween(def.spinRotationSpeedBetween);
-            _inclinatioRotation = Quaternion.Euler(_rand.GetValueBetween(def.inclinationAngleBetween), 0, 0);
+            float axialAngle = _rand.GetValueBetween(def.axialAngleBetween);
+            _axialRotation = Quaternion.Euler(0, axialAngle, 0);
+            _billboardCorrectionRotation = Quaternion.Euler(90, 90 + axialAngle, 0);
+            float inclinationAngle = _rand.GetValueBetween(def.inclinationAngleBetween);
+            if (inclinationAngle != 0) _inclinatioRotation = _rand.GetRotation() * Quaternion.Euler(_rand.GetValueBetween(def.inclinationAngleBetween), 0, 0);
 
             if (position != null) {
                 this.position = (Vector3) position;
@@ -172,26 +177,29 @@ namespace Universum.World {
 
             position.x = _orbitDirection * _orbitRadius * (float) Math.Cos(angularFrequencyTime);
             position.z = _orbitDirection * _orbitRadius * Mathf.Sqrt(1 - _orbitEccentricity * _orbitEccentricity) * (float) Math.Sin(angularFrequencyTime);
+
+            _localPosition = _inclinatioRotation * (position + GetTargetPosition());
         }
 
         public virtual void UpdateRotation(int tick) {
             _rotationChanged = true;
 
-            _spinRotation = Quaternion.Euler(0.5f * _spinRotationSpeed * tick * _orbitDirection * -1, _spinRotationSpeed * tick * _orbitDirection * -1, 0);
-
-            _rotation = _spinRotation;
-
             if (_addBillboardRotation) {
-                Vector3 directionFromLabelToCamera = Game.MainLoop.instance.cameraPosition - position;
-                _billboardRotation = Quaternion.LookRotation(-directionFromLabelToCamera);
+                _billboardRotation = Utils.billboardRotation(
+                    position,
+                    targetPosition: Game.MainLoop.instance.cameraPosition,
+                    _billboardCorrectionRotation
+                );
 
-                _rotation = _billboardRotation * _rotation;
+                _rotation = _billboardRotation;
+            } else {
+                _spinRotation = Quaternion.Euler(0.5f * _spinRotationSpeed * tick * _orbitDirection * -1, _spinRotationSpeed * tick * _orbitDirection * -1, 0);
+
+                _rotation = _axialRotation * _spinRotation;
             }
         }
 
         public virtual void UpdateTransformationMatrix() {
-            _localPosition = _inclinatioRotation * _axialRotation * (position + GetTargetPosition());
-
             _transformationMatrix.SetTRS(_localPosition, _rotation, scale);
             // update real position
             transformedPosition.x = _transformationMatrix.m03;
