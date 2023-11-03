@@ -43,8 +43,11 @@ namespace Universum.World.Component {
         }
 
         public override void UpdateRotation() {
-            Vector3 directionFromLabelToCamera = Game.MainLoop.instance.cameraPosition - _position;
-            _rotation = Quaternion.LookRotation(-directionFromLabelToCamera);
+            _rotation = Utils.billboardRotation(
+                _position,
+                targetPosition: Game.MainLoop.instance.cameraPosition,
+                correctionRotation: Assets.billboardCorrectionRotation
+            );
         }
 
         public override void UpdateTransformationMatrix() {

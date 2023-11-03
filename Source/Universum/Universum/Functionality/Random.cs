@@ -11,6 +11,8 @@ namespace Universum.Functionality {
             _rand = new System.Random(this.seed);
         }
 
+        public Quaternion GetRotation() => Quaternion.Euler(GetFloat() * 360, GetFloat() * 360, GetFloat() * 360);
+
         public bool GetBool() {
             return _rand.NextDouble() >= 0.5;
         }

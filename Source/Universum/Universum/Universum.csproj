@@ -128,6 +128,7 @@
     <Compile Include="Utilities\Terrain\Properties.cs" />
     <Compile Include="Utilities\Vacuum_Overlay.cs" />
     <Compile Include="Utilities\Vacuum_Damage.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="World\Comps\DestroyObjectHolder.cs" />
     <Compile Include="World\Comps\GenerateObjectHolderMap.cs" />
     <Compile Include="World\Comps\RandomizeObjectHolder.cs" />
