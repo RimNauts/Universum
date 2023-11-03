@@ -11,7 +11,7 @@
 
     public static class Info {
         public static readonly string name = "Universum";
-        public static readonly string version = "2.0.2";
+        public static readonly string version = "2.1.0";
     }
 
     public static class Style {
