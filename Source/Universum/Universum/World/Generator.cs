@@ -83,6 +83,8 @@ namespace Universum.World {
             List<CelestialObject> celestialObjects = new List<CelestialObject>();
             for (int i = 0; i < celestialObjectDefNames.Count; i++) {
                 string celestialObjectDefName = celestialObjectDefNames[i];
+
+                if (!Defs.Loader.celestialObjects.ContainsKey(celestialObjectDefName)) continue;
                 
                 int? seed = null;
                 if (!seeds.NullOrEmpty()) seed = seeds[i];
