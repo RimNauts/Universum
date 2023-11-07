@@ -47,8 +47,7 @@ namespace Universum.World.Component {
         }
 
         public override void UpdateTransformationMatrix() {
-            _textComponent.transform.localPosition = _position;
-
+            _textComponent.transform.position = _position;
             _textComponent.transform.rotation = _rotation;
         }
 
