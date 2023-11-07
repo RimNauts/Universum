@@ -31,7 +31,6 @@ namespace Universum.World {
         protected Quaternion _rotation = Quaternion.identity;
         protected bool _addBillboardRotation = false;
         protected Quaternion _billboardRotation = Quaternion.identity;
-        protected Quaternion _billboardCorrectionRotation = Quaternion.identity;
         protected Quaternion _axialRotation = Quaternion.identity;
         protected Quaternion _spinRotation = Quaternion.identity;
         protected Quaternion _inclinatioRotation = Quaternion.identity;
@@ -136,8 +135,9 @@ namespace Universum.World {
 
             _spinRotationSpeed = _rand.GetValueBetween(def.spinRotationSpeedBetween);
             float axialAngle = _rand.GetValueBetween(def.axialAngleBetween);
-            _axialRotation = Quaternion.Euler(0, axialAngle, 0);
-            _billboardCorrectionRotation = Quaternion.Euler(90, 90 + axialAngle, 0);
+            if (def.shape == null && def.icon != null) {
+                _axialRotation = Quaternion.Euler(0, 0, axialAngle);
+            } else _axialRotation = Quaternion.Euler(0, axialAngle, 0);
             float inclinationAngle = _rand.GetValueBetween(def.inclinationAngleBetween);
             if (inclinationAngle != 0) _inclinatioRotation = _rand.GetRotation() * Quaternion.Euler(_rand.GetValueBetween(def.inclinationAngleBetween), 0, 0);
 
@@ -185,13 +185,8 @@ namespace Universum.World {
             _rotationChanged = true;
 
             if (_addBillboardRotation) {
-                _billboardRotation = Utils.billboardRotation(
-                    position,
-                    targetPosition: Game.MainLoop.instance.cameraPosition,
-                    _billboardCorrectionRotation
-                );
-
-                _rotation = _billboardRotation;
+                _billboardRotation = Utils.billboardRotation();
+                _rotation = _billboardRotation * _axialRotation;
             } else {
                 _spinRotation = Quaternion.Euler(0.5f * _spinRotationSpeed * tick * _orbitDirection * -1, _spinRotationSpeed * tick * _orbitDirection * -1, 0);
 
@@ -232,8 +227,8 @@ namespace Universum.World {
             if (totalTransforms <= 0) return;
 
             for (int i = 0; i < totalTransforms; i++) {
-                if (updatePosition) _transforms[i].localPosition = _localPosition;
-                if (updateRotation) _transforms[i].localRotation = _rotation;
+                if (updatePosition) _transforms[i].position = _localPosition;
+                if (updateRotation) _transforms[i].rotation = _rotation;
                 if (updateScale) _transforms[i].localScale = scale;
             }
         }
