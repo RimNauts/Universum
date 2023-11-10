@@ -7,5 +7,8 @@ namespace Universum.Defs {
         public bool keepAfterAbandon;
         public string description = "";
         public string overlayIconPath = "Universum_Transparent";
+        public string commandLabelKey = "CommandSettle";
+        public string commandDescKey = "CommandSettleDesc";
+        public string commandIconPath = "UI/Commands/Settle";
     }
 }
