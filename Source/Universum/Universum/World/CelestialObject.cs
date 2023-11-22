@@ -178,7 +178,7 @@ namespace Universum.World {
             position.x = _orbitDirection * _orbitRadius * (float) Math.Cos(angularFrequencyTime);
             position.z = _orbitDirection * _orbitRadius * Mathf.Sqrt(1 - _orbitEccentricity * _orbitEccentricity) * (float) Math.Sin(angularFrequencyTime);
 
-            _localPosition = _inclinatioRotation * (position + GetTargetPosition());
+            _localPosition = (_inclinatioRotation * position) + GetTargetPosition();
         }
 
         public virtual void UpdateRotation(int tick) {
@@ -313,10 +313,9 @@ namespace Universum.World {
         public virtual void UpdateScale() {
             _scaleChanged = true;
 
-            Vector3 orbitAroundScale = GetTargetScale();
-            scale.x = orbitAroundScale.x * _scalePercentage;
-            scale.y = orbitAroundScale.y * _scalePercentage;
-            scale.z = orbitAroundScale.z * _scalePercentage;
+            scale = GetTargetScale() * _scalePercentage;
+
+            if (def.minSize != null && scale.x < (float) def.minSize) scale = new Vector3((float) def.minSize, (float) def.minSize, (float) def.minSize);
         }
 
         public virtual void UpdateSpeed() {

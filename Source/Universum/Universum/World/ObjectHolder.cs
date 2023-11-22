@@ -10,7 +10,7 @@ using Verse;
 namespace Universum.World {
     [StaticConstructorOnStartup]
     public class ObjectHolder : RimWorld.Planet.MapParent {
-        private CelestialObject _celestialObject;
+        public CelestialObject celestialObject;
         public Defs.CelestialObject celestialObjectDef;
 
         private Texture2D _overlayIcon;
@@ -22,8 +22,8 @@ namespace Universum.World {
         private Vector3? _exposeCelestialObjectPosition;
         private int? _exposeCelestialObjectDeathTick;
 
-        public override string Label => _celestialObject.name;
-        public override Vector3 DrawPos => _celestialObject.transformedPosition;
+        public override string Label => celestialObject.name;
+        public override Vector3 DrawPos => celestialObject.transformedPosition;
         public override Texture2D ExpandingIcon => HasMap ? _overlayIcon : base.ExpandingIcon;
         public override MapGeneratorDef MapGeneratorDef => celestialObjectDef.objectHolder.mapGeneratorDef;
 
@@ -34,13 +34,13 @@ namespace Universum.World {
             int? celestialObjectDeathTick = null,
             CelestialObject celestialObject = null
         ) {
-            _celestialObject = celestialObject ?? Generator.Create(celestialObjectDefName, celestialObjectSeed, celestialObjectPosition, celestialObjectDeathTick);
+            this.celestialObject = celestialObject ?? Generator.Create(celestialObjectDefName, celestialObjectSeed, celestialObjectPosition, celestialObjectDeathTick);
             celestialObjectDef = Defs.Loader.celestialObjects[celestialObjectDefName];
 
             _overlayIcon = Assets.GetTexture(celestialObjectDef.objectHolder.overlayIconPath);
             keepAfterAbandon = celestialObjectDef.objectHolder.keepAfterAbandon;
 
-            _celestialObject.objectHolder = this;
+            this.celestialObject.objectHolder = this;
         }
 
         public override void Destroy() {
@@ -48,14 +48,14 @@ namespace Universum.World {
         }
 
         public void SignalDestruction() {
-            _celestialObject.forceDeath = true;
+            celestialObject.forceDeath = true;
             Game.MainLoop.instance.dirtyCache = true;
         }
 
         public override void PostRemove() {
             base.PostRemove();
             if (keepAfterAbandon) {
-                ObjectHolder newObjectHolder = Generator.CreateObjectHolder(celestialObjectDef.defName, celestialObject: _celestialObject);
+                ObjectHolder newObjectHolder = Generator.CreateObjectHolder(celestialObjectDef.defName, celestialObject: celestialObject);
                 newObjectHolder.Tile = Tile;
             } else {
                 SignalDestruction();
@@ -63,7 +63,7 @@ namespace Universum.World {
             }
         }
 
-        public void Randomize() => _celestialObject.Randomize();
+        public void Randomize() => celestialObject.Randomize();
 
         public override void Tick() { }
 
@@ -141,9 +141,9 @@ namespace Universum.World {
         }
 
         private string _GetDeathTimerLabel() {
-            if (_celestialObject.deathTick == null) return null;
+            if (celestialObject.deathTick == null) return null;
 
-            float timeLeft = (float) _celestialObject.deathTick - Game.MainLoop.instance.tick;
+            float timeLeft = (float) celestialObject.deathTick - Game.MainLoop.instance.tick;
             if (timeLeft < 60000.0f) {
                 return "RimNauts.hours_left".Translate(Math.Ceiling(timeLeft / 2500.0f).ToString());
             } else return "RimNauts.days_left".Translate((timeLeft / 60000.0f).ToString("0.00"));
@@ -173,7 +173,7 @@ namespace Universum.World {
 
         private void _AppendCelestialDescription(StringBuilder sb) {
             sb.AppendLine(celestialObjectDef.objectHolder.description);
-            if (_celestialObject.deathTick != null && SafeDespawn()) sb.Append(_GetDeathTimerLabel());
+            if (celestialObject.deathTick != null && SafeDespawn()) sb.Append(_GetDeathTimerLabel());
         }
 
         private void _AppendFactionIfApplicable(StringBuilder sb) {
@@ -239,10 +239,10 @@ namespace Universum.World {
         }
 
         private void _SaveData() {
-            _exposeCelestialObjectDefName = _celestialObject.def.defName;
-            _exposeCelestialObjectSeed = _celestialObject.seed;
-            _exposeCelestialObjectPosition = _celestialObject.position;
-            _exposeCelestialObjectDeathTick = _celestialObject.deathTick;
+            _exposeCelestialObjectDefName = celestialObject.def.defName;
+            _exposeCelestialObjectSeed = celestialObject.seed;
+            _exposeCelestialObjectPosition = celestialObject.position;
+            _exposeCelestialObjectDeathTick = celestialObject.deathTick;
 
             Scribe_Values.Look(ref _exposeCelestialObjectDefName, "_exposeCelestialObjectDefName");
             Scribe_Values.Look(ref _exposeCelestialObjectSeed, "_exposeCelestialObjectSeed");

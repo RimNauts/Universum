@@ -3,3 +3,5 @@
 - Cache utilities which might be called through threads
 - Improve billboarding rotation
 - Support custom parameters for the object holder settle command
+- Fix celestial object targeting
+- Add minScale property to CelestialObject def
