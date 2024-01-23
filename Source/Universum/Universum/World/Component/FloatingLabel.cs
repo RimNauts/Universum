@@ -43,15 +43,11 @@ namespace Universum.World.Component {
         }
 
         public override void UpdateRotation() {
-            _rotation = Utils.billboardRotation(
-                _position,
-                targetPosition: Game.MainLoop.instance.cameraPosition,
-                correctionRotation: Assets.billboardCorrectionRotation
-            );
+            _rotation = Utils.billboardRotation();
         }
 
         public override void UpdateTransformationMatrix() {
-            _textComponent.transform.localPosition = _position;
+            _textComponent.transform.position = _position;
             _textComponent.transform.rotation = _rotation;
         }
 

@@ -2,9 +2,9 @@
 
 namespace Universum.World.Objects {
     internal class CrashingAsteroid : CelestialObject {
-        private float _baseOrbitRadius;
-        private float _radiusChangePerTick;
-        private float _targetOrbitRadius;
+        private double _baseOrbitRadius;
+        private double _radiusChangePerTick;
+        private double _targetOrbitRadius;
 
         public CrashingAsteroid(string celestialObjectDefName) : base(celestialObjectDefName) { }
 
@@ -12,18 +12,18 @@ namespace Universum.World.Objects {
             base.Init(seed, position, deathTick);
 
             _baseOrbitRadius = _orbitRadius;
-            float minOrbitRadius = 0.0f;
-            float maxOrbitRadius = _baseOrbitRadius * 2;
+            double minOrbitRadius = 0.0;
+            double maxOrbitRadius = _baseOrbitRadius * 2;
 
             _targetOrbitRadius = _rand.GetBool() ? minOrbitRadius : maxOrbitRadius;
 
-            float minSpeed = def.speedPercentageBetween[0];
-            float maxSpeed = def.speedPercentageBetween[1];
+            double minSpeed = def.speedPercentageBetween[0];
+            double maxSpeed = def.speedPercentageBetween[1];
 
-            float normalizedSpeed = (speed - minSpeed) / (maxSpeed - minSpeed);
+            double normalizedSpeed = (speed - minSpeed) / (maxSpeed - minSpeed);
 
-            float minRadiusChange = 0.02f;
-            float maxRadiusChange = 0.05f;
+            double minRadiusChange = 0.02;
+            double maxRadiusChange = 0.05;
             _radiusChangePerTick = (1 - normalizedSpeed) * minRadiusChange + normalizedSpeed * maxRadiusChange;
         }
 
@@ -34,12 +34,12 @@ namespace Universum.World.Objects {
         }
 
         private void _AdjustOrbitRadius() {
-            float direction = (_orbitRadius < _targetOrbitRadius) ? 1.0f : -1.0f;
+            double direction = (_orbitRadius < _targetOrbitRadius) ? 1.0 : -1.0;
 
             _orbitRadius += direction * _radiusChangePerTick;
 
-            if ((direction == 1.0f && _orbitRadius > _targetOrbitRadius) ||
-                (direction == -1.0f && _orbitRadius < _targetOrbitRadius)) {
+            if ((direction == 1.0 && _orbitRadius > _targetOrbitRadius) ||
+                (direction == -1.0 && _orbitRadius < _targetOrbitRadius)) {
                 _ResetOrbitRadiusAndClearComponents();
             }
         }

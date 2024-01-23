@@ -10,6 +10,7 @@ namespace Universum.Defs {
         public string namePackDefName;
 
         public Vector2 scalePercentageBetween = Vector2.one;
+        public float? minSize = null;
         public Vector2 speedPercentageBetween = Vector2.one;
         public float orbitPathOffsetPercentage = 1.0f;
         public Vector2 orbitSpreadBetween = Vector2.one;

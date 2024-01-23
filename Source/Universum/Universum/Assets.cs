@@ -47,8 +47,8 @@ namespace Universum {
             foreach (var (_, celestialObjectDef) in Defs.Loader.celestialObjects) {
                 if (celestialObjectDef.icon != null) GetTexture(celestialObjectDef.icon.texturePath);
                 if (celestialObjectDef.objectHolder == null) continue;
-                if (celestialObjectDef.objectHolder.overlayIconPath == null) continue;
-                GetTexture(celestialObjectDef.objectHolder.overlayIconPath);
+                if (celestialObjectDef.objectHolder.overlayIconPath != null) GetTexture(celestialObjectDef.objectHolder.overlayIconPath);
+                if (celestialObjectDef.objectHolder.commandIconPath != null) GetTexture(celestialObjectDef.objectHolder.commandIconPath);
             }
         }
 

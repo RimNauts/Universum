@@ -18,6 +18,9 @@ namespace Universum.Utilities {
             // initilize empty caches
             clear();
             Cache.caching_handler = this;
+            // cache utilities which might be called through threads
+            Cache.allowed_utility("universum.labels");
+            Cache.allowed_utility("universum.trails");
         }
 
         public bool allowed_utility(string utility) {

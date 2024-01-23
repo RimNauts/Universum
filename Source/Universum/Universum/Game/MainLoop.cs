@@ -17,6 +17,7 @@ namespace Universum.Game {
         private Camera _camera;
         public Vector3 cameraPosition;
         public Vector3 cameraUp;
+        public Vector3 cameraForward;
 
         private RimWorld.Planet.WorldCameraDriver _cameraDriver;
         public Vector3 currentSphereFocusPoint;
@@ -173,6 +174,7 @@ namespace Universum.Game {
             if (_camera != null) {
                 cameraPosition = _camera.transform.position;
                 cameraUp = _camera.transform.up;
+                cameraForward = _camera.transform.forward;
             }
 
             if (_cameraDriver != null) {
