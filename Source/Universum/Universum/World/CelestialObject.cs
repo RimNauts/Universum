@@ -45,16 +45,16 @@ namespace Universum.World {
         public Vector3 scale;
         protected float _scalePercentage;
         public float extraScale;
-        public float speed;
-        protected float _speedPercentage;
+        public double speed;
+        protected double _speedPercentage;
         protected int _period;
         protected int _timeOffset;
         protected float _orbitPathOffsetPercentage;
         protected float _orbitEccentricity;
-        protected float _orbitSpread;
+        protected double _orbitSpread;
         protected int _orbitDirection;
-        protected float _spinRotationSpeed;
-        protected float _orbitRadius;
+        protected double _spinRotationSpeed;
+        protected double _orbitRadius;
         protected float _yOffset;
 
         public CelestialObject(string celestialObjectDefName) {
@@ -67,7 +67,7 @@ namespace Universum.World {
                 objectHolder.Destroy();
             }
 
-            if (_components != null) for (int i = 0; i < _components.Length; i++) if (_components[i] != null) _components[i].Destroy();
+            if (_components != null) for (int i = 0; i < _components.Length; i++) _components[i]?.Destroy();
             if (_transforms != null) {
                 for (int i = 0; i < _transforms.Length; i++) {
                     if (_transforms[i] != null && _transforms[i].gameObject != null) {
@@ -172,11 +172,11 @@ namespace Universum.World {
         public virtual void UpdatePosition(int tick) {
             _positionChanged = true;
 
-            float time = speed * tick + _timeOffset;
-            float angularFrequencyTime = 6.28f / _period * time;
+            double time = speed * tick + _timeOffset;
+            double angularFrequencyTime = 6.28 / _period * time;
 
-            position.x = _orbitDirection * _orbitRadius * (float) Math.Cos(angularFrequencyTime);
-            position.z = _orbitDirection * _orbitRadius * Mathf.Sqrt(1 - _orbitEccentricity * _orbitEccentricity) * (float) Math.Sin(angularFrequencyTime);
+            position.x = (float) (_orbitDirection * _orbitRadius * Math.Cos(angularFrequencyTime));
+            position.z = (float) (_orbitDirection * _orbitRadius * Math.Sqrt(1 - _orbitEccentricity * _orbitEccentricity) * Math.Sin(angularFrequencyTime));
 
             _localPosition = (_inclinatioRotation * position) + GetTargetPosition();
         }
@@ -188,7 +188,13 @@ namespace Universum.World {
                 _billboardRotation = Utils.billboardRotation();
                 _rotation = _billboardRotation * _axialRotation;
             } else {
-                _spinRotation = Quaternion.Euler(0.5f * _spinRotationSpeed * tick * _orbitDirection * -1, _spinRotationSpeed * tick * _orbitDirection * -1, 0);
+                double num1 = _spinRotationSpeed * tick * _orbitDirection * -1 * (Math.PI / 180);
+                Vector3 euler = new Vector3(
+                    (float) (0.5 * num1),
+                    (float) num1,
+                    0.0f
+                );
+                _spinRotation = Quaternion.Internal_FromEulerRad(euler);
 
                 _rotation = _axialRotation * _spinRotation;
             }
@@ -307,7 +313,7 @@ namespace Universum.World {
 
         public virtual void UpdateOrbitRadius() {
             Vector3 scaledOrbitOffset = GetTargetScale() * _orbitPathOffsetPercentage;
-            _orbitRadius = scaledOrbitOffset.x + (float) ((_rand.GetFloat() - 0.5f) * (scaledOrbitOffset.x * _orbitSpread));
+            _orbitRadius = scaledOrbitOffset.x + ((_rand.GetFloat() - 0.5) * (scaledOrbitOffset.x * _orbitSpread));
         }
 
         public virtual void UpdateScale() {
@@ -326,8 +332,8 @@ namespace Universum.World {
             return _target?.transformedPosition ?? Vector3.zero;
         }
 
-        public virtual float GetTargetSpeed() {
-            return _target?.speed ?? 0.8f;
+        public virtual double GetTargetSpeed() {
+            return _target?.speed ?? 0.8;
         }
 
         public virtual Vector3 GetTargetScale() {

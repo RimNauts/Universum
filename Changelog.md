@@ -5,3 +5,4 @@
 - Support custom parameters for the object holder settle command
 - Fix celestial object targeting
 - Add minScale property to CelestialObject def
+- Fix precision issues when calculating position/rotation during late-game
