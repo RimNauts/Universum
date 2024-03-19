@@ -1,5 +1,4 @@
-﻿using RimWorld;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Verse;
 
@@ -20,7 +19,7 @@ namespace Universum.Utilities {
             bool vacuum_decompression = Cache.allowed_utility(map, "universum.vacuum_decompression");
             bool vacuum_suffocation = Cache.allowed_utility(map, "universum.vacuum_suffocation");
             if (!vacuum_decompression && !vacuum_suffocation) return;
-            List<Pawn> pawns = map.mapPawns.AllPawnsSpawned;
+            IReadOnlyList<Pawn> pawns = map.mapPawns.AllPawnsSpawned;
             List<Pawn> pawns_to_suffocate = new List<Pawn>();
             List<Pawn> pawns_to_decompress = new List<Pawn>();
             foreach (Pawn pawn in pawns.Where(p => !p.Dead)) {

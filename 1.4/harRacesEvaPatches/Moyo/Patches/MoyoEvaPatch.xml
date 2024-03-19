@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+    <!-- DIVING SUIT PATCH -->
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/ThingDef[defName="Moyo_LDgear" or defName="Moyo_LDhelmet"]/apparel/tags</xpath>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/ThingDef[defName="Moyo_LDgear" or defName="Moyo_LDhelmet"]/apparel</xpath>
+            <value>
+                <tags />
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="Moyo_LDgear" or defName="Moyo_LDhelmet"]/apparel/tags</xpath>
+        <value>
+            <li>EVA</li>
+        </value>
+    </Operation>
+
+    <!-- DEEP DIVING SUIT PATCH -->
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/ThingDef[defName="Moyo_DDgear" or defName="Moyo_DDhelmet"]/apparel/tags</xpath>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/ThingDef[defName="Moyo_DDgear" or defName="Moyo_DDhelmet"]/apparel</xpath>
+            <value>
+                <tags />
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="Moyo_DDgear" or defName="Moyo_DDhelmet"]/apparel/tags</xpath>
+        <value>
+            <li>EVA</li>
+        </value>
+    </Operation>
+
+    <!-- ROYALGUARD LIGHT ARMOR PATCH -->
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/ThingDef[defName="Moyo_GSsuit" or defName="Moyo_GShelmet"]/apparel/tags</xpath>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/ThingDef[defName="Moyo_GSsuit" or defName="Moyo_GShelmet"]/apparel</xpath>
+            <value>
+                <tags />
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="Moyo_GSsuit" or defName="Moyo_GShelmet"]/apparel/tags</xpath>
+        <value>
+            <li>EVA</li>
+        </value>
+    </Operation>
+
+    <!-- ROYALGUARD ARMOR PATCH -->
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/ThingDef[defName="Moyo_GDsuit" or defName="Moyo_GDhelmet"]/apparel/tags</xpath>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/ThingDef[defName="Moyo_GDsuit" or defName="Moyo_GDhelmet"]/apparel</xpath>
+            <value>
+                <tags />
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="Moyo_GDsuit" or defName="Moyo_GDhelmet"]/apparel/tags</xpath>
+        <value>
+            <li>EVA</li>
+        </value>
+    </Operation>
+</Patch>

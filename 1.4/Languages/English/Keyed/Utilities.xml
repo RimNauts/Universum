@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <Universum.utilities>Utilities</Universum.utilities>
+    <Universum.enabled>Enabled</Universum.enabled>
+    <Universum.default>Default</Universum.default>
+    <!-- main_loop_parallelization -->
+    <Universum.Utility.Label.main_loop_parallelization>Main Loop Parallelization</Universum.Utility.Label.main_loop_parallelization>
+    <Universum.Utility.Description.main_loop_parallelization>Controls whether the main game loop runs in a separate thread.</Universum.Utility.Description.main_loop_parallelization>
+    <!-- labels -->
+    <Universum.Utility.Label.labels>Floating Labels</Universum.Utility.Label.labels>
+    <Universum.Utility.Description.labels>Handles floating labels on celestial objects.</Universum.Utility.Description.labels>
+    <!-- trails -->
+    <Universum.Utility.Label.trails>Trails</Universum.Utility.Label.trails>
+    <Universum.Utility.Description.trails>Handles trails on celestial objects.</Universum.Utility.Description.trails>
+    <!-- vacuum_decompression -->
+    <Universum.Utility.Label.vacuum_decompression>Decompression</Universum.Utility.Label.vacuum_decompression>
+    <Universum.Utility.Description.vacuum_decompression>Handles the decompression system.</Universum.Utility.Description.vacuum_decompression>
+    <!-- vacuum_suffocation -->
+    <Universum.Utility.Label.vacuum_suffocation>Suffocation</Universum.Utility.Label.vacuum_suffocation>
+    <Universum.Utility.Description.vacuum_suffocation>Handles the oxygen system.</Universum.Utility.Description.vacuum_suffocation>
+    <!-- temperature -->
+    <Universum.Utility.Label.temperature>Temperature</Universum.Utility.Label.temperature>
+    <Universum.Utility.Description.temperature>Handles the temperature system.</Universum.Utility.Description.temperature>
+    <!-- ocean_masking -->
+    <Universum.Utility.Label.ocean_masking>Ocean Masking</Universum.Utility.Label.ocean_masking>
+    <Universum.Utility.Description.ocean_masking>Hides the planet tile masking it as the ocean.</Universum.Utility.Description.ocean_masking>
+    <!-- vacuum -->
+    <Universum.Utility.Label.vacuum>Vacuum</Universum.Utility.Label.vacuum>
+    <Universum.Utility.Description.vacuum>Handles the vacuum system.</Universum.Utility.Description.vacuum>
+    <!-- vacuum_overlay -->
+    <Universum.Utility.Label.vacuum_overlay>Vacuum Overlay</Universum.Utility.Label.vacuum_overlay>
+    <Universum.Utility.Description.vacuum_overlay>Shows the planet rendered over vacuum. If you toggle this mid-game, you need to reload the save.</Universum.Utility.Description.vacuum_overlay>
+    <!-- remove_shadows -->
+    <Universum.Utility.Label.remove_shadows>Remove Shadows</Universum.Utility.Label.remove_shadows>
+    <Universum.Utility.Description.remove_shadows>Removes shadows from outer space maps.</Universum.Utility.Description.remove_shadows>
+    <!-- disable_weather_change -->
+    <Universum.Utility.Label.disable_weather_change>Disable Weather Changing</Universum.Utility.Label.disable_weather_change>
+    <Universum.Utility.Description.disable_weather_change>Disbales the weather manager from changing the weather on the biome.</Universum.Utility.Description.disable_weather_change>
+</LanguageData>
