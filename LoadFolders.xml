@@ -2,10 +2,19 @@
 <loadFolders>
     <v1.4>
         <li>/</li>
+        <li>1.4</li>
         <li IfModActive="nemonian.my">harRacesEvaPatches/Moyo</li>
         <li IfModActive="roo.antyracemod">harRacesEvaPatches/Anty</li>
         <li IfModActive="ahndemi.panieltheautomata">harRacesEvaPatches/Paniel</li>
         <li IfModActive="aoba.redmoyo">harRacesEvaPatches/RedMoyo</li>
         <li IfModActive="nemonian.mycartel">harRacesEvaPatches/MoyoCartel</li>
     </v1.4>
+    <v1.5>
+        <li>/</li>
+        <li IfModActive="nemonian.my">harRacesEvaPatches/Moyo</li>
+        <li IfModActive="roo.antyracemod">harRacesEvaPatches/Anty</li>
+        <li IfModActive="ahndemi.panieltheautomata">harRacesEvaPatches/Paniel</li>
+        <li IfModActive="aoba.redmoyo">harRacesEvaPatches/RedMoyo</li>
+        <li IfModActive="nemonian.mycartel">harRacesEvaPatches/MoyoCartel</li>
+    </v1.5>
 </loadFolders>
