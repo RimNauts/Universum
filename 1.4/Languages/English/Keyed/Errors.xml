@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <Universum.Error.failed_to_find_utility>Failed to find utility '{0}'. Adding to cache to stop spam...</Universum.Error.failed_to_find_utility>
+    <Universum.Error.thread_with_wrong_type>Tried to start a thread during recalculate_mesh() with an incorrect info object type.</Universum.Error.thread_with_wrong_type>
+    <Universum.Error.no_shape_icon>Celestial object def '{0}' doesn't contain either a Icon or Shape specification</Universum.Error.no_shape_icon>
+</LanguageData>

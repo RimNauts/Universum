@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+    <!-- ABYSS ARMOUR PATCH -->
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/ThingDef[defName="RedMoyo_AbyssArmour" or defName="RedMoyo_AbyssHelmet"]/apparel/tags</xpath>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/ThingDef[defName="RedMoyo_AbyssArmour" or defName="RedMoyo_AbyssHelmet"]/apparel</xpath>
+            <value>
+                <tags />
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="RedMoyo_AbyssArmour" or defName="RedMoyo_AbyssHelmet"]/apparel/tags</xpath>
+        <value>
+            <li>EVA</li>
+        </value>
+    </Operation>
+</Patch>

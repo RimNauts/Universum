@@ -216,8 +216,8 @@ namespace Universum.Utilities {
     /**
      * Remove map from cache when map is deleted.
      */
-    [HarmonyLib.HarmonyPatch(typeof(MapDeiniter), "Deinit_NewTemp")]
-    public static class MapParent_Deinit_NewTemp {
+    [HarmonyLib.HarmonyPatch(typeof(MapDeiniter), "Deinit")]
+    public static class MapParent_Deinit {
         public static void Postfix(Map map) => Cache.remove(map);
     }
 

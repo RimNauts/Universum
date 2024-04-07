@@ -84,7 +84,6 @@
   <ItemGroup>
     <Compile Include="Assets.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Debug_Tools\Actions.cs" />
     <Compile Include="Defs\CelestialObject.cs" />
     <Compile Include="Defs\Component.cs" />
     <Compile Include="Defs\Icon.cs" />

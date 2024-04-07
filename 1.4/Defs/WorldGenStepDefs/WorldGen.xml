@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<WorldGenStepDef>
+		<defName>Universum_Generator</defName>
+		<order>700</order>
+		<worldGenStep Class="Universum.World.Generator"/>
+	</WorldGenStepDef>
+</Defs>

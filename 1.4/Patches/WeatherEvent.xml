@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/WeatherDef[defName="Clear"]/eventMakers</xpath>
+        <match Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="Clear"]/eventMakers</xpath>
+            <value>
+                <li>
+                    <averageInterval>120</averageInterval>
+                    <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                </li>
+            </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="Clear"]</xpath>
+            <value>
+                <eventMakers>
+                    <li>
+                        <averageInterval>120</averageInterval>
+                        <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                    </li>
+                </eventMakers>
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/WeatherDef[defName="Fog"]/eventMakers</xpath>
+        <match Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="Fog"]/eventMakers</xpath>
+            <value>
+                <li>
+                    <averageInterval>120</averageInterval>
+                    <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                </li>
+            </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="Fog"]</xpath>
+            <value>
+                <eventMakers>
+                    <li>
+                        <averageInterval>120</averageInterval>
+                        <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                    </li>
+                </eventMakers>
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/WeatherDef[defName="Rain"]/eventMakers</xpath>
+        <match Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="Rain"]/eventMakers</xpath>
+            <value>
+                <li>
+                    <averageInterval>120</averageInterval>
+                    <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                </li>
+            </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="Rain"]</xpath>
+            <value>
+                <eventMakers>
+                    <li>
+                        <averageInterval>120</averageInterval>
+                        <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                    </li>
+                </eventMakers>
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/WeatherDef[defName="DryThunderstorm"]/eventMakers</xpath>
+        <match Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="DryThunderstorm"]/eventMakers</xpath>
+            <value>
+                <li>
+                    <averageInterval>120</averageInterval>
+                    <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                </li>
+            </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="DryThunderstorm"]</xpath>
+            <value>
+                <eventMakers>
+                    <li>
+                        <averageInterval>120</averageInterval>
+                        <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                    </li>
+                </eventMakers>
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/WeatherDef[defName="RainyThunderstorm"]/eventMakers</xpath>
+        <match Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="RainyThunderstorm"]/eventMakers</xpath>
+            <value>
+                <li>
+                    <averageInterval>120</averageInterval>
+                    <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                </li>
+            </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="RainyThunderstorm"]</xpath>
+            <value>
+                <eventMakers>
+                    <li>
+                        <averageInterval>120</averageInterval>
+                        <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                    </li>
+                </eventMakers>
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/WeatherDef[defName="FoggyRain"]/eventMakers</xpath>
+        <match Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="FoggyRain"]/eventMakers</xpath>
+            <value>
+                <li>
+                    <averageInterval>120</averageInterval>
+                    <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                </li>
+            </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="FoggyRain"]</xpath>
+            <value>
+                <eventMakers>
+                    <li>
+                        <averageInterval>120</averageInterval>
+                        <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                    </li>
+                </eventMakers>
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/WeatherDef[defName="SnowHard"]/eventMakers</xpath>
+        <match Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="SnowHard"]/eventMakers</xpath>
+            <value>
+                <li>
+                    <averageInterval>120</averageInterval>
+                    <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                </li>
+            </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="SnowHard"]</xpath>
+            <value>
+                <eventMakers>
+                    <li>
+                        <averageInterval>120</averageInterval>
+                        <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                    </li>
+                </eventMakers>
+            </value>
+        </nomatch>
+    </Operation>
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/WeatherDef[defName="SnowGentle"]/eventMakers</xpath>
+        <match Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="SnowGentle"]/eventMakers</xpath>
+            <value>
+                <li>
+                    <averageInterval>120</averageInterval>
+                    <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                </li>
+            </value>
+        </match>
+        <nomatch Class="PatchOperationAdd">
+            <xpath>Defs/WeatherDef[defName="SnowGentle"]</xpath>
+            <value>
+                <eventMakers>
+                    <li>
+                        <averageInterval>120</averageInterval>
+                        <eventClass>Universum.Utilities.WeatherEvent_Vacuum</eventClass>
+                    </li>
+                </eventMakers>
+            </value>
+        </nomatch>
+    </Operation>
+</Patch>

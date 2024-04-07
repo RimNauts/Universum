@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <Universum.Info.mod_loaded>{0} (v{1}) has successfully loaded.</Universum.Info.mod_loaded>
+    <Universum.Info.biome_handler_done>{0} biomes found, {1} configurations found</Universum.Info.biome_handler_done>
+    <Universum.Info.terrain_handler_done>{0} terrains found, {1} configurations found</Universum.Info.terrain_handler_done>
+    <Universum.Info.gene_handler_done>{0} genes found, {1} configurations found</Universum.Info.gene_handler_done>
+    <Universum.Info.settings_loader_done>{0} utilities found</Universum.Info.settings_loader_done>
+    <Universum.Info.camera_patch_applied>Applied patch to Camera+</Universum.Info.camera_patch_applied>
+    <Universum.Info.regenerate>Regenerate celestial objects</Universum.Info.regenerate>
+</LanguageData>
