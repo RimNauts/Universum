@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <loadFolders>
     <v1.4>
-        <li>/</li>
         <li>1.4</li>
         <li IfModActive="nemonian.my">harRacesEvaPatches/Moyo</li>
         <li IfModActive="roo.antyracemod">harRacesEvaPatches/Anty</li>
