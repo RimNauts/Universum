@@ -11,6 +11,7 @@ namespace Universum.Utilities {
     [HarmonyPatch(typeof(RimWorld.GenCelestial), "CelestialSunGlow", argumentTypes: new Type[] { typeof(int), typeof(int) })]
     public class GenCelestial_CelestialSunGlow {
         public static bool Prefix(ref float __result, int tile, int ticksAbs) {
+            if (tile == -1) return false;
             if (!Cache.allowed_utility(Find.World.grid.tiles.ElementAt(tile).biome, "universum.remove_shadows")) return true;
             __result = 1.0f;
             return false;
