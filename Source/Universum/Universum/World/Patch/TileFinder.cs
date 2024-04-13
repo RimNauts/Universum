@@ -17,7 +17,7 @@ namespace Universum.World.Patch {
         public static MethodBase TargetMethod() => AccessTools.Method("RimWorld.Planet.TileFinder:IsValidTileForNewSettlement");
 
         public static void Postfix(int tile, StringBuilder reason, ref bool __result) {
-            if (__result || reason == null || !ObjectHolderCache.Exists(tile)) return;
+            if (tile == -1 || __result || reason == null || !ObjectHolderCache.Exists(tile)) return;
 
             if (Find.WorldObjects.SettlementBaseAt(tile) != null) return;
 
