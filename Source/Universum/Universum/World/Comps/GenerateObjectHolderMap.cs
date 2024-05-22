@@ -25,7 +25,7 @@ namespace Universum.World.Comps {
 
         public void GenerateMap() {
             ObjectHolder objectHolder = parent as ObjectHolder;
-            objectHolder.CreateMap(RimWorld.Faction.OfPlayer);
+            objectHolder.CreateMap(RimWorld.Faction.OfPlayer, clearFog: true);
         }
     }
 }

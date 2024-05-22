@@ -103,9 +103,11 @@ namespace Universum.World {
             return map;
         }
 
-        public Map CreateMap(RimWorld.Faction faction) {
+        public Map CreateMap(RimWorld.Faction faction, bool clearFog = false) {
             if (faction != RimWorld.Faction.OfPlayer) return null;
             Map map = MapGenerator.GenerateMap(Find.World.info.initialMapSize, this, MapGeneratorDef, ExtraGenStepDefs, extraInitBeforeContentGen: null);
+            if (clearFog) map.fogGrid.ClearAllFog();
+
             SetFaction(faction);
             Find.World.WorldUpdate();
             return map;
