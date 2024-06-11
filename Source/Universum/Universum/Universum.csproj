@@ -140,6 +140,7 @@
     <Compile Include="World\Objects\CrashingAsteroid.cs" />
     <Compile Include="World\Objects\Basic.cs" />
     <Compile Include="World\Patch\CaravanTweenerUtility.cs" />
+    <Compile Include="World\Patch\GetOrGenerateMapUtility.cs" />
     <Compile Include="World\Patch\SettleInEmptyTileUtility.cs" />
     <Compile Include="World\Patch\TileFinder.cs" />
     <Compile Include="World\Patch\TravelingTransportPods.cs" />
