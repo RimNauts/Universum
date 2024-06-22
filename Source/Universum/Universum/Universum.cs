@@ -17,7 +17,7 @@ namespace Universum {
             Logger.print(
                 Logger.Importance.Info,
                 key: "Universum.Info.mod_loaded",
-                args: new NamedArgument[] { Info.name, Info.version }
+                args: new NamedArgument[] { Info.name, ModContent.instance.Content.ModMetaData.ModVersion }
             );
             // load configuarations
             Defs.Loader.Init();
