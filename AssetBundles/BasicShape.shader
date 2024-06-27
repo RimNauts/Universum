@@ -115,7 +115,7 @@ Shader "Custom/BasicShape" {
                 // depth = f.vertex.w;
                 // shadow calculations
                 float3 sphereCenter = float3(0, 0, 0);
-                float sphereRadius = 1.0;
+                float sphereRadius = 100.0;
 
                 
                 float3 viewClossestPoint;
