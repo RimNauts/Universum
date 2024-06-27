@@ -125,7 +125,7 @@ Shader "Custom/BasicShape" {
 
 
                 float shadow = 1.0;
-                if(l < sphereRadius)
+                if(l < sphereRadius && dot(f.worldPos, lightDir) < 0.0)
                 {
                     float d = sqrt(sphereRadius * sphereRadius - l * l) / length(cross(lightDir,viewDir));
                     shadow = lerp(0.8,shadow,step(d,distance(viewClossestPoint,f.worldPos)));
