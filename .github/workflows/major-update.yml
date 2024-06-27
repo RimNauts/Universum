@@ -70,3 +70,18 @@ jobs:
       with:
         webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
         filename: Changelog.md
+
+    - name: Clear ChangeLog.md
+      run: |
+        # remove tmp files created by workflow
+        git clean -fd
+        # update ChangeLog.md
+        echo "# Changelog" > ChangeLog.md
+        echo "" >> ChangeLog.md
+        # configure git user
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config user.name "github-actions[bot]"
+        # commit and push changes
+        git add .
+        git commit -m "Update ChangeLog.md"
+        git push
