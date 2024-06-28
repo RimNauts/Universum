@@ -9,18 +9,18 @@
         _BumpIntensity ("Bump Intensity", float) = 1.0
     }
 
-	SubShader {
+    SubShader {
         Tags { "RenderType" = "Opaque" }
         LOD 100
         
-		Pass {
-			CGPROGRAM
-			#include "UnityCG.cginc"
+        Pass {
+            CGPROGRAM
+            #include "UnityCG.cginc"
 
             #define PI 3.1415926535897932384626433832795
 
-			#pragma vertex vert
-			#pragma fragment frag
+            #pragma vertex vert
+            #pragma fragment frag
 
             struct vertexData {
                 float4 vertex : POSITION;
@@ -29,15 +29,15 @@
                 float4 color : COLOR;
             };
 
-			struct fragmentData {
-				float4 vertex : SV_POSITION;
+            struct fragmentData {
+                float4 vertex : SV_POSITION;
                 float3 normal : NORMAL;
                 float4 tangent : TANGENT;
                 float4 color : COLOR;
                 float4 worldPos : TEXCOORD1;
                 float4 objPos : TEXCOORD2;
-			};
-			
+            };
+
             uniform float4 _PlanetSunLightDirection;
             float _Shininess;
             float _SpecularIntensity;
@@ -46,8 +46,8 @@
             float4 _AmbientColor;
             sampler2D _BumpMap;
             float _BumpIntensity;
-			 
-			fragmentData vert(vertexData vertex) {
+
+            fragmentData vert(vertexData vertex) {
                 fragmentData fragment;
                 fragment.worldPos = mul(unity_ObjectToWorld, vertex.vertex);
                 fragment.objPos = vertex.vertex;
@@ -58,7 +58,7 @@
                 fragment.color = vertex.color;
 
                 return fragment;
-			}
+            }
 
             float3x3 CreateOrthonormalBasis(float3 baseVectorX, float3 inputVectorY) {
                 baseVectorX = normalize(baseVectorX);
@@ -139,8 +139,8 @@
 
                 return hdrColor;
             }
-			
-			fixed4 frag(fragmentData fragment) : SV_Target {
+            
+            fixed4 frag(fragmentData fragment) : SV_Target {
                 float4 outputColor = float4(1.0, 1.0, 1.0, 1.0);
 
                 // normalize and compute bi-normal and tangent
@@ -169,7 +169,7 @@
                 float planetRadius = 100.0;
                 if (distanceBetweenPoints < planetRadius && dot(fragment.worldPos, lightDirection) < 0.0) {
                     float shadowFade = sqrt(planetRadius * planetRadius - distanceBetweenPoints * distanceBetweenPoints) / length(cross(lightDirection, viewerDirection));
-                    shadowIntensity = lerp(0.8, 1.0, step(shadowFade, distance(closestPointToViewer, fragment.worldPos)));
+                    shadowIntensity = lerp(0.5, 1.0, step(shadowFade, distance(closestPointToViewer, fragment.worldPos)));
                 }
 
                 // diffuse lighting calculation
@@ -182,7 +182,8 @@
                 float3 specularLight = (_SpecularIntensity * specularIntensity).xxx;
 
                 // combine lighting components and apply shadow
-                float3 totalLight = (diffuseLight + specularLight + _AmbientColor.rgb) * shadowIntensity;
+                float3 ambientLight = _AmbientColor.rgb * 0.7;
+                float3 totalLight = (diffuseLight + specularLight + ambientLight) * shadowIntensity;
                 outputColor.xyz = outputColor.xyz * totalLight * fragment.color;
 
                 // apply tone mapping
@@ -190,7 +191,7 @@
 
                 return outputColor;
             }
-			ENDCG
-		}
-	}
+            ENDCG
+        }
+    }
 }
