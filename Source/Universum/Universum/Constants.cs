@@ -9,12 +9,8 @@
         public static readonly float dragVelocityMultiplier = 0.50f;
     }
 
-    public static class Info {
-        public static readonly string name = "Universum";
-    }
-
     public static class Style {
-        public static readonly string name_prefix = Info.name + ": ";
+        public static readonly string name_prefix = Universum.ModContent.instance.Content.ModMetaData.Name + ": ";
         public static readonly string tab = "        ";
     }
 }
