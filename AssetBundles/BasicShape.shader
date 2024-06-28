@@ -93,6 +93,40 @@ Shader "Custom/BasicShape" {
                 return uv;
             }
             
+            float3 ACESTonemap(float3 color){
+                const float a = 2.51;  // Default: 2.51f
+                const float b = 0.03;  // Default: 0.03f
+                const float c = 2.43;  // Default: 2.43f
+                const float d = 0.59;  // Default: 0.59f
+                const float e = 0.14;  // Default: 0.14f
+                const float p = 1.3;
+                const float overlap = 0.2;
+                
+                const float rgOverlap = 0.1 * 0.2;
+                const float rbOverlap = 0.01 * 0.2;
+                const float gbOverlap = 0.04 * 0.2;
+                
+                const float3x3 coneOverlap =     float3x3(
+                                                float3(1.0          , 0.1 * 0.2 , 0.01 * 0.2),
+                                                float3(0.1 * 0.2    , 1.0       , 0.04 * 0.2),
+                                                float3(0.01 * 0.2   , 0.1 * 0.2 , 1.0       )
+                                                );
+                
+                const float3x3 coneOverlapInverse = float3x3(
+                                                float3(    1.0 + (0.1 * 0.2 + 0.01 * 0.2)  ,                         -0.1 * 0.2  ,    -0.01 * 0.2                        ),
+                                                float3(    -0.1 * 0.2                        ,   1.0 + (0.1 * 0.2 + 0.04 * 0.2)  ,    -0.04 * 0.2                        ),
+                                                float3(    -0.01 * 0.2                        ,                         -0.1 * 0.2  ,    1.0 + (0.01 * 0.2 + 0.1 * 0.2)  )
+                                                );
+                
+                color = mul(coneOverlap,color);
+                color = pow(color, float3(p,p,p));
+                color = (color * (a * color + b)) / (color * (c * color + d) + e);
+                color = pow(color, float3(1.0,1.0,1.0)/p);
+                color = mul(coneOverlapInverse,color);
+                color = clamp(color,float3(0.0,0.0,0.0),float3(1.0,1.0,1.0));
+                return color;
+            }
+
             fixed4 frag(fragment_data f) : SV_Target {
                 float4 pixel = float4(1.0, 1.0, 1.0, 1.0);
                 // triplanar normal mapping
@@ -140,6 +174,7 @@ Shader "Custom/BasicShape" {
                 // combine lighting and apply shadow
                 float3 light = (diffuse + specular + _AmbientColor.rgb) * shadow;
                 pixel.xyz = pixel.xyz * light * f.color;
+                pixel.xyz = ACESTonemap(pixel.xyz);
 
                 return pixel;
             }
