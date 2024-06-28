@@ -109,7 +109,7 @@ Shader "Custom/BasicShape" {
                 // return pixel;
 
                 // lighting calculations
-                float3 lightDir = normalize(_PlanetSunLightDirection.xyz);
+                float3 lightDir = normalize(-_PlanetSunLightDirection.xyz);
                 // float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
                 float3 viewDir = normalize(_WorldSpaceCameraPos - f.worldPos);
                 // depth = f.vertex.w;
