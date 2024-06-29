@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1502946713
+CRC: 1512378648
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 55f0619de7fac6dcae16e43863c66c23
+    Hash: fe71829575711440445920b91c0c591c
   TypeTreeHash:
     serializedVersion: 2
     Hash: 7e9ee104d6bb707fb2602b751e6f78b1
@@ -12,5 +12,7 @@ ClassTypes:
 - Class: 48
   Script: {instanceID: 0}
 Assets:
+- Assets/BasicShapeTransparent.shader
 - Assets/BasicShape.shader
+- Assets/AsteroidRing.shader
 Dependencies: []
