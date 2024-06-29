@@ -90,6 +90,11 @@ namespace Universum.World {
                     _meshes.Add(mesh);
                     _materials.Add(material);
                     break;
+                case Defs.ShapeType.PLANE:
+                    mesh.GeneratePlane(dimensions, subdivisions: subdivisionIterations);
+                    _meshes.Add(mesh);
+                    _materials.Add(material);
+                    break;
                 default:
                     mesh.GenerateIcoSphere(radius, detail);
                     _meshes.Add(mesh);

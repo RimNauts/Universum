@@ -422,6 +422,64 @@ namespace Universum.Functionality {
             _colors = colors;
         }
 
+        public void GeneratePlane(Vector3 dimensions, int subdivisions) {
+            List<Vector3> vertices = new List<Vector3>();
+            List<int> triangles = new List<int>();
+            List<Vector2> uvs = new List<Vector2>();
+
+            float width = dimensions.x;
+            float height = dimensions.z;
+
+            float deltaX = width / subdivisions;
+            float deltaZ = height / subdivisions;
+
+            // create vertices and UVs
+            for (int i = 0; i <= subdivisions; i++) {
+                for (int j = 0; j <= subdivisions; j++) {
+                    float x = -width / 2 + j * deltaX;
+                    float z = -height / 2 + i * deltaZ;
+                    vertices.Add(new Vector3(x, 0, z));
+                    uvs.Add(new Vector2((float) j / subdivisions, (float) i / subdivisions));
+                }
+            }
+
+            // create triangles for the front face
+            for (int i = 0; i < subdivisions; i++) {
+                for (int j = 0; j < subdivisions; j++) {
+                    int topLeft = i * (subdivisions + 1) + j;
+                    int topRight = topLeft + 1;
+                    int bottomLeft = (i + 1) * (subdivisions + 1) + j;
+                    int bottomRight = bottomLeft + 1;
+
+                    triangles.Add(topLeft);
+                    triangles.Add(bottomLeft);
+                    triangles.Add(topRight);
+
+                    triangles.Add(topRight);
+                    triangles.Add(bottomLeft);
+                    triangles.Add(bottomRight);
+                }
+            }
+
+            // duplicate vertices and UVs for the back face
+            int vertexCount = vertices.Count;
+            vertices.AddRange(vertices.GetRange(0, vertexCount));
+            uvs.AddRange(uvs.GetRange(0, vertexCount));
+
+            // create triangles for the back face (reverse winding)
+            int[] initialTriangles = triangles.ToArray();
+            for (int i = 0; i < initialTriangles.Length; i += 3) {
+                int offset = vertexCount;
+                triangles.Add(initialTriangles[i + 2] + offset);
+                triangles.Add(initialTriangles[i + 1] + offset);
+                triangles.Add(initialTriangles[i] + offset);
+            }
+
+            _vertices = vertices;
+            _triangles = triangles;
+            _uvs = uvs;
+        }
+
         private int _GetMidpointIndex(int i1, int i2, List<Vector3> vertices, Dictionary<string, int> edgeMidpoints) {
             string edgeKey = i1 < i2 ? i1 + "_" + i2 : i2 + "_" + i1;
 
