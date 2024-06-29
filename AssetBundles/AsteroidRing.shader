@@ -155,6 +155,13 @@
                 // apply tone mapping
                 outputColor.xyz = ApplyAcesFilmicTonemap(outputColor.xyz);
 
+                // calculate transparency based on camera distance
+                float cameraDistance = distance(_WorldSpaceCameraPos, fragment.worldPos);
+                float fadeStartDistance = 450.0;
+                float fadeEndDistance = 150.0;
+                float alphaFade = saturate((cameraDistance - fadeEndDistance) / (fadeStartDistance - fadeEndDistance));
+                outputColor.w *= alphaFade;
+
                 return outputColor;
             }
             ENDCG
