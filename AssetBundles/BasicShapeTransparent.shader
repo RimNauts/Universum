@@ -10,7 +10,10 @@
     }
 
     SubShader {
-        Tags { "RenderType" = "Opaque" }
+        Tags { "Queue"="Transparent" "RenderType"="Transparent" }
+        ZWrite Off
+        Blend SrcAlpha One
+        Cull front 
         LOD 100
         
         Pass {
@@ -141,7 +144,7 @@
             }
             
             fixed4 frag(fragmentData fragment) : SV_Target {
-                float4 outputColor = float4(1.0, 1.0, 1.0, 1.0);
+                float4 outputColor = fragment.color;
 
                 // normalize and compute bi-normal and tangent
                 fragment.normal = normalize(fragment.normal);
@@ -184,7 +187,7 @@
                 // combine lighting components and apply shadow
                 float3 ambientLight = _AmbientColor.rgb * 0.7;
                 float3 totalLight = (diffuseLight + specularLight + ambientLight) * shadowIntensity;
-                outputColor.xyz = outputColor.xyz * totalLight * fragment.color;
+                outputColor.xyz = outputColor.xyz * totalLight;
 
                 // apply tone mapping
                 outputColor.xyz = ApplyAcesFilmicTonemap(outputColor.xyz);

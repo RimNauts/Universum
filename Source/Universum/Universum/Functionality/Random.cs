@@ -22,26 +22,35 @@ namespace Universum.Functionality {
         }
 
         public float GetValueBetween(Vector2 range) {
-            float min = range[0];
-            float max = range[1];
+            float min = range.x;
+            float max = range.y;
+
             if (min == max) return min;
+
             if (min > max) {
-                min = range[1];
-                max = range[0];
+                float tmp = min;
+
+                min = max;
+                max = tmp;
             }
-            return GetFloat() * (min - max) + min;
+
+            return GetFloat() * (max - min) + min;
         }
 
         public int GetValueBetween(Vector2Int range) {
-            int min = range[0];
-            int max = range[1];
-            if (min > max) {
-                min = range[1];
-                max = range[0];
-            }
-            max++;
+            int min = range.x;
+            int max = range.y;
+
             if (min == max) return min;
-            return min + Mathf.Abs(_rand.Next() % (max - min));
+
+            if (min > max) {
+                int tmp = min;
+
+                min = max;
+                max = tmp;
+            }
+
+            return Mathf.Abs(_rand.Next(min, max + 1));
         }
 
         public T GetElement<T>(List<T> array) {

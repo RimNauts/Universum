@@ -4,6 +4,8 @@
         SPHERE = 1,
         QUADSPHERE = 2,
         BOX = 3,
-        VORONOI = 4
+        VORONOI = 4,
+        TORUS = 5,
+        PLANE = 6
     }
 }

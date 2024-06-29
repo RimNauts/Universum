@@ -9,6 +9,7 @@ namespace Universum.Functionality {
         public float maxElevation;
         List<Vector3> _vertices = new List<Vector3>();
         List<int> _triangles = new List<int>();
+        List<Vector2> _uvs = null;
         List<Color> _colors = new List<Color>();
         private Bounds _bounds = new Bounds();
 
@@ -17,9 +18,13 @@ namespace Universum.Functionality {
         }
 
         public UnityEngine.Mesh GetUnityMesh() {
+            Vector2[] uvs = null;
+            if (_uvs != null) uvs = _uvs.ToArray();
+
             UnityEngine.Mesh unityMesh = new UnityEngine.Mesh {
                 vertices = _vertices.ToArray(),
                 triangles = _triangles.ToArray(),
+                uv = uvs,
                 colors = _colors.ToArray()
             };
 
@@ -28,6 +33,7 @@ namespace Universum.Functionality {
             unityMesh.RecalculateNormals();
             return unityMesh;
         }
+
         public void Merge(Mesh secondMesh) {
             int incrementValue = _vertices.Count;
             secondMesh._triangles = secondMesh._triangles.Select(x => x + incrementValue).ToList();
@@ -360,6 +366,120 @@ namespace Universum.Functionality {
             _triangles = newTriangles.ToList();
         }
 
+        public void GenerateTorus(float radius, float tubeRadius, float thickness, int radialSegments, int tubularSegments, Color color) {
+            List<Vector3> vertices = new List<Vector3>();
+            List<int> triangles = new List<int>();
+            List<Vector2> uvs = new List<Vector2>();
+            List<Color> colors = new List<Color>();
+
+            float radialStep = 2 * Mathf.PI / radialSegments;
+            float tubularStep = 2 * Mathf.PI / tubularSegments;
+
+            for (int i = 0; i <= radialSegments; i++) {
+                float u = i * radialStep;
+                float cu = Mathf.Cos(u);
+                float su = Mathf.Sin(u);
+
+                for (int j = 0; j <= tubularSegments; j++) {
+                    float v = j * tubularStep;
+                    float cv = Mathf.Cos(v);
+                    float sv = Mathf.Sin(v);
+
+                    Vector3 vertex = new Vector3(
+                        (radius + tubeRadius * cv) * cu,
+                        sv * thickness,
+                        (radius + tubeRadius * cv) * su
+                    );
+
+                    vertices.Add(vertex);
+                    uvs.Add(new Vector2((float) i / radialSegments, (float) j / tubularSegments));
+
+                    float normalizedJ = (float) j / tubularSegments;
+                    float alpha = Mathf.Pow(0.3f * Mathf.Cos(normalizedJ * Mathf.PI), 2);
+                    colors.Add(new Color(color.r, color.g, color.b, alpha));
+                }
+            }
+
+            for (int j = 1; j <= radialSegments; j++) {
+                for (int i = 1; i <= tubularSegments; i++) {
+                    int a = (tubularSegments + 1) * j + i - 1;
+                    int b = (tubularSegments + 1) * (j - 1) + i - 1;
+                    int c = (tubularSegments + 1) * (j - 1) + i;
+                    int d = (tubularSegments + 1) * j + i;
+
+                    triangles.Add(a);
+                    triangles.Add(d);
+                    triangles.Add(b);
+                    triangles.Add(b);
+                    triangles.Add(d);
+                    triangles.Add(c);
+                }
+            }
+
+            _vertices = vertices;
+            _triangles = triangles;
+            _uvs = uvs;
+            _colors = colors;
+        }
+
+        public void GeneratePlane(Vector3 dimensions, int subdivisions) {
+            List<Vector3> vertices = new List<Vector3>();
+            List<int> triangles = new List<int>();
+            List<Vector2> uvs = new List<Vector2>();
+
+            float width = dimensions.x;
+            float height = dimensions.z;
+
+            float deltaX = width / subdivisions;
+            float deltaZ = height / subdivisions;
+
+            // create vertices and UVs
+            for (int i = 0; i <= subdivisions; i++) {
+                for (int j = 0; j <= subdivisions; j++) {
+                    float x = -width / 2 + j * deltaX;
+                    float z = -height / 2 + i * deltaZ;
+                    vertices.Add(new Vector3(x, 0, z));
+                    uvs.Add(new Vector2((float) j / subdivisions, (float) i / subdivisions));
+                }
+            }
+
+            // create triangles for the front face
+            for (int i = 0; i < subdivisions; i++) {
+                for (int j = 0; j < subdivisions; j++) {
+                    int topLeft = i * (subdivisions + 1) + j;
+                    int topRight = topLeft + 1;
+                    int bottomLeft = (i + 1) * (subdivisions + 1) + j;
+                    int bottomRight = bottomLeft + 1;
+
+                    triangles.Add(topLeft);
+                    triangles.Add(bottomLeft);
+                    triangles.Add(topRight);
+
+                    triangles.Add(topRight);
+                    triangles.Add(bottomLeft);
+                    triangles.Add(bottomRight);
+                }
+            }
+
+            // duplicate vertices and UVs for the back face
+            int vertexCount = vertices.Count;
+            vertices.AddRange(vertices.GetRange(0, vertexCount));
+            uvs.AddRange(uvs.GetRange(0, vertexCount));
+
+            // create triangles for the back face (reverse winding)
+            int[] initialTriangles = triangles.ToArray();
+            for (int i = 0; i < initialTriangles.Length; i += 3) {
+                int offset = vertexCount;
+                triangles.Add(initialTriangles[i + 2] + offset);
+                triangles.Add(initialTriangles[i + 1] + offset);
+                triangles.Add(initialTriangles[i] + offset);
+            }
+
+            _vertices = vertices;
+            _triangles = triangles;
+            _uvs = uvs;
+        }
+
         private int _GetMidpointIndex(int i1, int i2, List<Vector3> vertices, Dictionary<string, int> edgeMidpoints) {
             string edgeKey = i1 < i2 ? i1 + "_" + i2 : i2 + "_" + i1;
 
@@ -409,7 +529,7 @@ namespace Universum.Functionality {
 
             Vector3 asteroidCenter = _bounds.center;
 
-            // 1. Generate random seed points.
+            // generate random seed points
             List<Vector3> seeds = new List<Vector3>();
             for (int i = 0; i < siteCount; i++) {
                 Vector3 seed = new Vector3(
@@ -423,11 +543,11 @@ namespace Universum.Functionality {
             Color[] newColors = new Color[_vertices.Count];
             float maxDistanceFromSeed = _bounds.size.magnitude / 2;
 
-            // 2 & 3. Displace vertices and color them.
+            // displace vertices and color them
             for (int i = 0; i < _vertices.Count; i++) {
                 Vector3 vertex = _vertices[i];
 
-                // Find the nearest seed.
+                // find the nearest seed
                 float minDistance = float.MaxValue;
                 for (int j = 0; j < seeds.Count; j++) {
                     float distance = Vector3.Distance(vertex, seeds[j]);
@@ -436,17 +556,16 @@ namespace Universum.Functionality {
                     }
                 }
 
-                // Direction from the center of the asteroid to the vertex.
+                // direction from the center of the asteroid to the vertex
                 Vector3 directionFromCenter = (vertex - asteroidCenter).normalized;
 
-                // Calculate displacement to create the crater effect.
+                // calculate displacement to create the crater effect
                 float normalizedDistance = minDistance / _bounds.size.magnitude;
                 float displacement = -craterDepth + (craterDepth + craterRimHeight) * normalizedDistance;
 
-                // Apply the displacement.
                 vertex += directionFromCenter * displacement;
 
-                // Color interpolation based on distance from the nearest seed.
+                // color interpolation based on distance from the nearest seed
                 float colorFactor = Mathf.Clamp01(minDistance / maxDistanceFromSeed);
                 newColors[i] = Color.Lerp(craterBottomColor, craterRimColor, colorFactor);
 
