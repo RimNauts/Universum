@@ -85,6 +85,11 @@ namespace Universum.World {
                     mesh.ApplyVoronoiPattern(siteCount: detail, craterDepth, craterRimHeight, (Color) minElevationColor, (Color) maxElevationColor);
                     _materials[_materials.Count - 1] = material;
                     break;
+                case Defs.ShapeType.TORUS:
+                    mesh.GenerateTorus(radius: 1.0f, tubeRadius: radius, thickness: 0.001f, radialSegments: detail, tubularSegments: detail, color: (Color) minElevationColor);
+                    _meshes.Add(mesh);
+                    _materials.Add(material);
+                    break;
                 default:
                     mesh.GenerateIcoSphere(radius, detail);
                     _meshes.Add(mesh);
