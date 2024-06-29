@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <ModMetaData>
 	<packageId>sindre0830.universum</packageId>
 	<name>Universum</name>
 	<author>sindre0830</author>
-	<modVersion>2.3.4</modVersion>
+	<modVersion>2.4.0</modVersion>
 	<supportedVersions>
 		<li>1.4</li>
 		<li>1.5</li>
