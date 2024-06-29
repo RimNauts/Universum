@@ -4,7 +4,6 @@
         _RingMap ("Map", 2D) = "White" {}
         _RingStart ("Ring Start", Float) = 200
         _RingLength ("Ring Length", Float) = 100
-        _RingTransparencyReduction ("Ring Transparency Reduction", Float) = 0.6
         _PlanetRadius ("Planet Radius", Float) = 100
     }
 
@@ -13,7 +12,7 @@
         Cull Off
         ZWrite Off
 
-        Blend SrcAlpha OneMinusSrcAlpha
+        Blend SrcAlpha One
         LOD 100
 
         Pass {
@@ -40,7 +39,6 @@
             sampler2D _RingMap;
             float _RingStart;
             float _RingLength;
-            float _RingTransparencyReduction;
             float _PlanetRadius;
 
             fragmentData vert(vertexData vertex) {
@@ -134,8 +132,6 @@
 
                 // fetch texture color with UV and apply cutoff via step function
                 float4 outputColor = tex2Dlod(_RingMap, float4(uv, 0.0, 0.0, 0.0)) * step(0.0, uv) * step(uv, 1.0);
-                outputColor.w = outputColor.w - _RingTransparencyReduction;
-
                 if (outputColor.w <= 0.0) discard;
 
                 // calculate closest points for shadow calculations

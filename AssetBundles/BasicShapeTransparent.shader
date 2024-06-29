@@ -12,7 +12,7 @@
     SubShader {
         Tags { "Queue"="Transparent" "RenderType"="Transparent" }
         ZWrite Off
-        Blend SrcAlpha OneMinusSrcAlpha
+        Blend SrcAlpha One
         Cull front 
         LOD 100
         
