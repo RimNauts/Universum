@@ -2,13 +2,13 @@
     Properties {
         _SunColor ("Sun Color", Color) = (1.0, 1.0, 1.0, 1.0)
         _RingMap ("Map", 2D) = "White" {}
-        _RingStart ("Ring Start", Float) = 200
-        _RingLength ("Ring Length", Float) = 100
         _PlanetRadius ("Planet Radius", Float) = 100
+        _PlanetRadiusOffsetFactor ("Planet Radius Offset Factor", Float) = 1.5
+        _PlanetRadiusMaxSpreadFactor ("Planet Radius Max Spread Factor", Float) = 0.05
     }
 
     SubShader {
-        Tags {"Queue"="Transparent" "RenderType" = "Opaque" }
+        Tags {"Queue"="Transparent" "RenderType"="Opaque" }
         Cull Off
         ZWrite Off
 
@@ -37,9 +37,9 @@
             uniform float4 _PlanetSunLightDirection;
             float4 _SunColor;
             sampler2D _RingMap;
-            float _RingStart;
-            float _RingLength;
             float _PlanetRadius;
+            float _PlanetRadiusOffsetFactor;
+            float _PlanetRadiusMaxSpreadFactor;
 
             fragmentData vert(vertexData vertex) {
                 fragmentData fragment;
@@ -128,7 +128,9 @@
                 float3 sphereCenter = float3(0, 0, 0);
 
                 // compute UV coordinates based on sphere distance
-                float uv = (distance(fragment.worldPos, sphereCenter) - _RingStart) / _RingLength;
+                float ringStart = _PlanetRadius * _PlanetRadiusOffsetFactor - (_PlanetRadius * _PlanetRadiusMaxSpreadFactor);
+                float ringlength = (_PlanetRadius * _PlanetRadiusMaxSpreadFactor) * 2.0;
+                float uv = (distance(fragment.worldPos, sphereCenter) - ringStart) / ringlength;
 
                 // fetch texture color with UV and apply cutoff via step function
                 float4 outputColor = tex2Dlod(_RingMap, float4(uv, 0.0, 0.0, 0.0)) * step(0.0, uv) * step(uv, 1.0);
